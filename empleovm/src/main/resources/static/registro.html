@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Villa María Empleos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/registro.css?v=1.2"> <!-- Forzamos carga -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" href="data:,">
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="logo-header">
+            Villa María <span>Empleos</span>
+        </div>
+        <h2>Crear Cuenta</h2>
+        <p class="subtitle">Seleccioná cómo querés unirte a la red.</p>
+        
+        <!-- SELECTOR DE ROL -->
+        <div class="role-selector">
+            <button type="button" id="btnUser" class="role-btn active" onclick="setRole('USUARIO')">
+                <i data-lucide="user"></i> Usuario
+            </button>
+            <button type="button" id="btnEmp" class="role-btn" onclick="setRole('EMPRESA')">
+                <i data-lucide="building-2"></i> Empresa
+            </button>
+        </div>
+
+        <form id="formRegistro">
+            <div class="form-group">
+                <i data-lucide="user"></i>
+                <input type="text" id="nombre" placeholder="Nombre completo o Empresa" required>
+            </div>
+
+            <div class="form-group">
+                <i data-lucide="mail"></i>
+                <input type="email" id="email" placeholder="Correo Electrónico" required>
+            </div>
+            
+            <div class="form-group">
+                <i data-lucide="lock"></i>
+                <input type="password" id="password" placeholder="Contraseña" required>
+            </div>
+            
+            <button type="button" class="btn-primary" onclick="registrarNuevo()">
+                CREAR CUENTA <i data-lucide="user-plus"></i>
+            </button>
+        </form>
+        
+        <p id="msg"></p>
+        
+        <div class="footer-links">
+            ¿Ya tenés cuenta? <a href="login.html">Iniciá sesión</a>
+        </div>
+    </div>
+
+    
+    <script>
+    lucide.createIcons();
+    let rolSeleccionado = 'USER';
+
+    function setRole(rol) {
+    rolSeleccionado = rol;
+    document.getElementById('btnUser').classList.toggle('active', rol === 'USER');
+    document.getElementById('btnEmp').classList.toggle('active', rol === 'EMPRESA');
+}
+</script>
+<script src="js/registro.js"></script>
+</body>
+</html>

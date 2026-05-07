@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Vacante - Villa María Empleos</title>
+    <!-- Enlace al CSS separado -->
+    <link rel="stylesheet" href="css/detalle.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <h1>Villa María Empleos</h1>
+        <a href="index.html" style="color: white; text-decoration: none; font-weight: bold;">← Volver al listado</a>
+    </nav>
+
+    <div class="detalle-container">
+        <div class="info-header">
+            <h2 id="tituloPuesto">Cargando vacante...</h2>
+            <p><strong>Empresa:</strong> <span id="nombreEmpresa">-</span></p>
+            <p><strong>Ubicación:</strong> <span id="ubicacionTexto">-</span></p>
+            <div class="sueldo-destacado" id="sueldoTexto"></div>
+        </div>
+
+        <div class="cuerpo-detalle">
+            <h3>Descripción del Puesto</h3>
+            <div id="descripcionLarga" class="descripcion-box">
+                Cargando detalles del puesto...
+            </div>
+        </div>
+
+        <h3>Ubicación en el Mapa</h3>
+        <div id="map"></div>
+
+        <div class="card-postulacion">
+            <h3>¿Te interesa esta propuesta?</h3>
+            <p>Adjuntá tu Currículum Vitae para que la empresa pueda contactarte.</p>
+            
+            <form id="formPostular">
+                <div class="input-file-container">
+                    <input type="file" id="cvArchivo" accept=".pdf, .jpg, .jpeg, .png" required>
+                </div>
+                <button type="button" class="btn-postular" onclick="enviarPostulacion()">
+                    Enviar mi Postulación
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initApp" async defer></script>
+    <script src="js/detalle.js"></script>
+</body>
+</html>

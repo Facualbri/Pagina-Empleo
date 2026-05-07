@@ -1,0 +1,259 @@
+/* --- VARIABLES DE DISEÑO --- */
+:root {
+    --navy: #0f172a;
+    --navy-light: #1e293b;
+    --primary: #2563eb;
+    --primary-soft: #eff6ff;
+    --danger: #ef4444;
+    --bg-panel: #f1f5f9;
+    --white: #ffffff;
+    --border: #e2e8f0;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --radius-xl: 24px;
+    --radius-md: 12px;
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* --- RESET Y BASE --- */
+body.admin-body {
+    background-color: var(--bg-panel);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+    margin: 0;
+}
+
+/* --- LAYOUT EN COLUMNAS --- */
+.admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 32px;
+    margin-top: 40px;
+    align-items: start;
+}
+
+/* --- TARJETAS (CONTAINERS) --- */
+.admin-card {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: 35px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.admin-card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+/* --- ENCABEZADOS DE SECCIÓN --- */
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--bg-panel);
+}
+
+.card-header h3 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--navy);
+    margin: 0;
+}
+
+.card-header p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 4px 0 0 0;
+}
+
+/* --- FORMULARIO DE PUBLICACIÓN --- */
+.form-grid-admin {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.input-group-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group-admin.full-width {
+    grid-column: span 2;
+}
+
+.input-group-admin label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-group-admin input, 
+.input-group-admin textarea {
+    padding: 14px 18px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    background: #fcfcfc;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.input-group-admin input:focus, 
+.input-group-admin textarea:focus {
+    border-color: var(--primary);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+/* --- BOTÓN DE PUBLICAR (Navy & Big) --- */
+.btn-primary-admin {
+    grid-column: span 2;
+    background: var(--navy);
+    color: var(--white);
+    padding: 18px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 10px;
+}
+
+.btn-primary-admin:hover {
+    background: var(--navy-light);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3);
+}
+
+/* --- TABLA DE GESTIÓN (Estilo Listado) --- */
+.table-container {
+    margin-top: 10px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px; /* Espacio entre filas */
+}
+
+.admin-table th {
+    padding: 0 15px 10px;
+    text-align: left;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 700;
+}
+
+.admin-table tr td {
+    background: var(--white);
+    padding: 20px 15px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.95rem;
+}
+
+.admin-table tr td:first-child {
+    border-left: 1px solid var(--border);
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+    font-weight: 700;
+    color: var(--navy);
+}
+
+.admin-table tr td:last-child {
+    border-right: 1px solid var(--border);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    text-align: right;
+}
+
+/* --- BOTONES DE ACCIÓN EN TABLA --- */
+.btn-ver {
+    background: var(--primary-soft);
+    color: var(--primary);
+    border: 1px solid transparent;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-ver:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+
+/* --- MODAL POSTULANTES (Ajustes) --- */
+.admin-modal {
+    max-width: 500px !important;
+}
+
+.postulante-item {
+    background: var(--bg-panel);
+    padding: 20px;
+    border-radius: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1024px) {
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+
+/* Contenedor de acciones en la celda */
+.acciones-flex {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* Estilo para el botón eliminar */
+.btn-eliminar {
+    background: #fff1f2;
+    color: #e11d48;
+    border: 1px solid #fecdd3;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-eliminar:hover {
+    background: #e11d48;
+    color: white;
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.2);
+}
+
+/* Ajuste para que Lucide se vea bien en botones */
+.btn-eliminar i, .btn-ver i {
+    width: 16px;
+    height: 16px;
+}
+}

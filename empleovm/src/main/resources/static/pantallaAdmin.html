@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Villa María Empleos</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tus estilos unificados -->
+    <link rel="stylesheet" href="css/usuario.css"> 
+    <link rel="stylesheet" href="css/admin.css">
+    
+    <!-- Iconos Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="admin-body">
+    <!-- NAVBAR (Navy) -->
+    <nav class="main-navbar">
+        <div class="nav-container">
+            <div class="logo">Villa María <span>Empresas</span></div>
+            <div class="nav-right">
+                <div class="user-info">
+                    <i data-lucide="building-2"></i>
+                    <span id="nombreEmpresaHeader">Cargando...</span>
+                </div>
+                <button onclick="cerrarSesion()" class="btn-logout">Cerrar Sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="admin-grid">
+            
+            <!-- FORMULARIO DE PUBLICACIÓN -->
+            <section class="admin-card">
+                <div class="card-header">
+                    <div class="header-icon">
+                        <i data-lucide="plus-circle"></i>
+                    </div>
+                    <div>
+                        <h3>Publicar Nueva Vacante</h3>
+                        <p>Llegá a miles de candidatos locales.</p>
+                    </div>
+                </div>
+                
+                <div class="form-grid-admin">
+                    <div class="input-group-admin">
+                        <label><i data-lucide="briefcase"></i> Puesto</label>
+                        <input type="text" id="titulo" placeholder="Ej: Mozo/a para eventos">
+                    </div>
+
+                    <div class="input-group-admin">
+                        <label><i data-lucide="map-pin"></i> Ubicación</label>
+                        <input type="text" id="ubicacion" placeholder="Ej: San Martín 150">
+                    </div>
+
+                    <div class="input-group-admin">
+                        <label><i data-lucide="banknote"></i> Sueldo Mensual</label>
+                        <input type="number" id="sueldo" placeholder="Ej: 500000">
+                    </div>
+
+                    <div class="input-group-admin">
+                        <label><i data-lucide="image"></i> Imagen del Local</label>
+                        <input type="file" id="fotoArchivo" accept="image/*" class="custom-file-input">
+                    </div>
+
+                    <div class="input-group-admin full-width">
+                        <label><i data-lucide="align-left"></i> Descripción y Requisitos</label>
+                        <textarea id="descripcion" rows="4" placeholder="Describí las tareas y qué buscás..."></textarea>
+                    </div>
+
+                    <button onclick="publicarAviso()" class="btn-primary-admin">
+                        <i data-lucide="send"></i> Publicar Vacante Ahora
+                    </button>
+                </div>
+            </section>
+
+            <!-- TABLA DE GESTIÓN (Alineada) -->
+            <section class="admin-card">
+                <div class="card-header">
+                    <div class="header-icon">
+                        <i data-lucide="clipboard-list"></i>
+                    </div>
+                    <h3>Mis Publicaciones</h3>
+                </div>
+                
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Puesto</th>
+                                <th>Ubicación</th> <!-- Agregada para que no se mezcle -->
+                                <th>Sueldo</th>
+                                <th>Estado</th>
+                                <th>Postulantes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaOfertas">
+                            <!-- JS dinámico -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- MODAL POSTULANTES -->
+    <div id="modalPostulantes" class="modal-fondo">
+        <div class="modal-contenido admin-modal">
+            <button class="cerrar-boton" onclick="cerrarModal()">&times;</button>
+            <div class="modal-header-admin">
+                <i data-lucide="users"></i>
+                <h3>Postulantes interesados</h3>
+            </div>
+            <div id="listaPostulantes" class="postulantes-list">
+                <!-- Dinámico -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

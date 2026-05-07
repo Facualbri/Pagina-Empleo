@@ -1,0 +1,164 @@
+/* --- VARIABLES DE DISEÑO NAVY --- */
+:root {
+    --navy: #0f172a;
+    --navy-light: #1e293b;
+    --primary: #2563eb;
+    --white: #ffffff;
+    --bg-auth: #f8fafc;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --radius-xl: 24px;
+    --radius-md: 12px;
+}
+
+/* --- ESTRUCTURA BASE --- */
+body {
+    background: radial-gradient(circle at top right, #f1f5f9, #ffffff);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* --- TARJETA DE LOGIN --- */
+.login-card {
+    background: var(--white);
+    width: 100%;
+    max-width: 400px;
+    padding: 50px 40px;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.12);
+}
+
+.logo-header {
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--navy);
+    margin-bottom: 25px;
+    letter-spacing: -0.025em;
+}
+
+.logo-header span {
+    color: var(--primary);
+}
+
+h2 {
+    color: var(--navy);
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 35px;
+    line-height: 1.5;
+}
+
+/* --- INPUTS CON ICONOS --- */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 16px;
+    color: var(--text-muted);
+    width: 18px;
+    transition: color 0.2s ease;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px 16px 14px 48px; /* Espacio para el ícono de Lucide */
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    background: #fcfcfc;
+}
+
+.form-group input:focus {
+    border-color: var(--primary);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.form-group input:focus + i {
+    color: var(--primary);
+}
+
+/* --- BOTÓN ENTRAR (Estilo Navy Admin) --- */
+.btn-primary {
+    width: 100%;
+    background: var(--navy);
+    color: var(--white);
+    padding: 16px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    background: var(--navy-light);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3);
+}
+
+/* --- FOOTER --- */
+.footer-links {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #f1f5f9;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.footer-links a {
+    color: var(--primary);
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 5px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+#msg {
+    margin-top: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-height: 20px;
+}

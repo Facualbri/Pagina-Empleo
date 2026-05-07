@@ -1,0 +1,188 @@
+/* --- VARIABLES MAESTRAS --- */
+:root {
+    /* Mantenemos tus variables pero agregamos las nuevas */
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-soft: #eff6ff;
+    
+    /* El Navy que pediste para el Header y etiquetas */
+    --header-bg: #0f172a; 
+    --header-text: #ffffff;
+    
+    /* El Rojo para el botón de logout */
+    --danger: #ef4444;
+    --danger-hover: #dc2626;
+
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --bg-main: #f8fafc;
+    --white: #ffffff;
+    --border: #e2e8f0;
+    --radius-lg: 1.25rem;
+    --radius-md: 0.75rem;
+    --shadow-subtle: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    --shadow-float: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    background-color: var(--bg-main);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* --- NAVBAR (Ahora en Navy como pediste) --- */
+.main-navbar {
+    background: var(--header-bg); /* Cambiado a Navy */
+    padding: 0.75rem 5%;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--header-text); /* Texto en blanco */
+}
+
+.logo span {
+    color: #60a5fa; /* Un azul más clarito para que resalte */
+}
+
+/* --- BOTÓN CERRAR SESIÓN (Ahora Rojo y más lindo) --- */
+.btn-logout {
+    background: var(--danger);
+    color: var(--white);
+    border: none;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+    background: var(--danger-hover);
+    transform: scale(1.05);
+}
+
+.user-info {
+    color: var(--header-text);
+    margin-right: 10px;
+}
+
+/* --- HERO & BUSCADOR --- */
+.hero {
+    background: white;
+    padding: 80px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+
+.search-box {
+    max-width: 650px;
+    margin: 30px auto;
+    display: flex;
+    gap: 10px;
+    padding: 8px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    border: 1px solid #eee;
+}
+
+.search-box input {
+    flex: 1;
+    border: none;
+    padding: 12px 20px;
+    outline: none;
+}
+
+.search-box button {
+    background: var(--header-bg); /* Botón buscar también Navy */
+    color: var(--white);
+    border: none;
+    padding: 0 32px;
+    border-radius: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* --- GRILLA Y TARJETAS --- */
+.container {
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.ofertas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 32px;
+}
+
+.empleo-item {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.empleo-item:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-float);
+}
+
+.empleo-item h3 {
+    margin: 0 0 12px 0;
+    font-weight: 700;
+}
+
+/* --- ETIQUETAS DE SUELDO (Color del Header) --- */
+.sueldo-tag {
+    background: var(--header-bg); /* Navy como el header */
+    color: var(--white);
+    padding: 6px 16px;
+    border-radius: 99px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    align-self: flex-start;
+    margin-top: 16px;
+}
+
+.btn-postular {
+    margin-top: 32px;
+    background: var(--bg-main);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    padding: 14px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.empleo-item:hover .btn-postular {
+    background: var(--primary);
+    color: var(--white);
+}

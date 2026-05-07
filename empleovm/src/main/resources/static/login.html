@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Villa María Empleos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/registro.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" href="data:,">
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="logo-header" style="margin-bottom: 20px; font-weight: 800; font-size: 1.4rem; color: #0f172a;">
+            Villa María <span style="color: #2563eb;">Empleos</span>
+        </div>
+        <h2>Ingreso al Sistema</h2>
+        <p class="subtitle">Gestioná tus búsquedas laborales</p>
+        
+        <div class="form-group">
+            <div class="input-wrapper">
+                <i data-lucide="mail"></i>
+                <input type="email" id="email" placeholder="Correo Electrónico">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <div class="input-wrapper">
+                <i data-lucide="lock"></i>
+                <input type="password" id="password" placeholder="Contraseña">
+            </div>
+        </div>
+        
+        <button class="btn-primary" onclick="iniciarSesion()">
+            ENTRAR <i data-lucide="arrow-right" style="width: 18px;"></i>
+        </button>
+        
+        <p id="msg"></p>
+        
+        <div class="footer-links">
+            ¿Sos una empresa nueva? <a href="registro.html">Crear cuenta</a>
+        </div>
+    </div>
+
+    <script src="js/login.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

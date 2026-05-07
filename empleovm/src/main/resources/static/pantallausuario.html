@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Villa María Empleos - Tu oportunidad está acá</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/usuario.css">
+    <link rel="stylesheet" href="css/detalle.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" href="data:,">
+</head>
+<body>
+    <nav class="main-navbar">
+        <div class="nav-container">
+            <div class="logo">Villa María <span>Empleos</span></div>
+            <div class="nav-right">
+                <div class="user-info">
+                    <i data-lucide="user"></i>
+                    <span id="nombreUser">Cargando...</span>
+                </div>
+                <button onclick="cerrarSesion()" class="btn-logout">Cerrar Sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Encontrá tu próximo <span>desafío</span></h1>
+            <p>Las mejores vacantes en Villa María y zona, en un solo lugar.</p>
+            <div class="search-box">
+                <div class="input-wrapper">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="busqueda" placeholder="¿Qué trabajo buscás? (ej: Vendedor, Mozo)">
+                </div>
+                <button onclick="buscar()" class="btn-primary">Buscar Ahora</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="section-header">
+            <h2>Ofertas destacadas hoy</h2>
+            <div class="line"></div>
+        </div>
+        <div id="resultados" class="ofertas-grid">
+            <div class="loading-state">
+                <p>Buscando vacantes recientes...</p>
+            </div>
+        </div>
+    </main>
+
+    <div id="modalDetalle" class="modal-fondo">
+        <div class="modal-contenido">
+            <button class="cerrar-boton" onclick="cerrarModal()">&times;</button>
+            <div class="modal-header">
+                
+                <div class="modal-foto-wrapper" style="width: 100%; height: 200px; border-radius: 12px; overflow: hidden; margin-bottom: 15px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                    <img id="modalFoto" src="" alt="Foto del empleo" 
+                         style="width: 100%; height: 100%; object-fit: cover;" 
+                         onerror="this.style.display='none'"> 
+                         </div>
+
+                <div class="header-top">
+                    <span class="badge">Nuevo</span>
+                </div>
+                <h2 id="modalTitulo">Cargando puesto...</h2>
+                <div class="modal-meta">
+                    <p><i data-lucide="building"></i> <strong>Empresa:</strong> <span id="modalEmpresa">-</span></p>
+                    <p><i data-lucide="map-pin"></i> <strong>Ubicación:</strong> <span id="modalUbicacion">-</span></p>
+                    <p id="itemSueldo"><i data-lucide="banknote"></i> <strong>Sueldo:</strong> <span id="modalSueldo">-</span></p>
+                </div>
+            </div>
+            <div class="modal-body">
+                <h3>Descripción del puesto</h3>
+                <div id="modalDescripcion" class="descripcion-box"></div>
+                <h3>Ubicación en el mapa</h3>
+                <div id="modalMapa" style="height: 250px;"></div>
+                <div class="postulacion-box">
+                    <h3>¿Te interesa esta vacante?</h3>
+                    <p>Subí tu CV actualizado para aplicar directamente.</p>
+                    <form id="formPostular">
+                        <div class="file-upload">
+                            <input type="file" id="cvArchivo" accept=".pdf, .jpg, .jpeg, .png" required>
+                        </div>
+                        <button type="button" class="btn-enviar" onclick="enviarPostulacionFinal()">Enviar mi Postulación</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/usuario.js"></script>
+    <script src="js/detalle.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

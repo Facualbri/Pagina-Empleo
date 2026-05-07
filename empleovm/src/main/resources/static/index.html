@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Villa María Empleos - Inicio</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; }
+        button { background: #007bff; color: white; border: none; padding: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sistema de Empleos Villa María 🚀</h1>
+        <p>Bienvenido. Probando conexión con el Backend...</p>
+        
+        <button onclick="listarUsuarios()">Ver Empresas Registradas</button>
+        
+        <ul id="lista-usuarios"></ul>
+    </div>
+
+    <script>
+        async function listarUsuarios() {
+            try {
+                // Cambia esta URL si tu endpoint de listado es diferente (ej: /api/usuarios)
+                const response = await fetch('http://localhost:8080/api/usuarios');
+                const usuarios = await response.json();
+                
+                const lista = document.getElementById('lista-usuarios');
+                lista.innerHTML = ''; 
+
+                usuarios.forEach(u => {
+                    lista.innerHTML += `<li>${u.nombre} - ${u.email}</li>`;
+                });
+            } catch (error) {
+                alert("Error: Asegurate que Spring Boot esté corriendo");
+            }
+        }
+    </script>
+</body>
+</html>
