@@ -10,12 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/postulaciones")
-@CrossOrigin(origins = "*") // Para evitar bloqueos de navegador
+@CrossOrigin(origins = "*")
 public class PostulacionController {
 
     @Autowired
@@ -27,48 +33,147 @@ public class PostulacionController {
     @Autowired
     private EmpleoRepository empleoRepository;
 
-    // 1. Endpoint para que un usuario se postule
+    // ─── 1. Postularse a un empleo ────────────────────────────────────────────
     @PostMapping("/aplicar")
-    public ResponseEntity<String> postular(@RequestParam Long idUsuario, @RequestParam Long idEmpleo) {
-        
-        // Validar si ya existe la postulación para evitar duplicados
+    public ResponseEntity<?> postular(
+            @RequestParam("idUsuario") Long idUsuario,
+            @RequestParam("idEmpleo") Long idEmpleo,
+            @RequestParam("archivoCv") MultipartFile archivo) {
+
+        // Validar que el archivo no esté vacío
+        if (archivo == null || archivo.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Debés adjuntar tu CV para postularte."));
+        }
+
+        // Validar tipo de archivo (solo PDF e imágenes)
+        String contentType = archivo.getContentType();
+        if (contentType == null ||
+                (!contentType.equals("application/pdf") && !contentType.startsWith("image/"))) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Solo se aceptan archivos PDF, JPG o PNG."));
+        }
+
+        // Verificar postulación duplicada
         if (postulacionRepository.existsByPostulanteIdAndEmpleoId(idUsuario, idEmpleo)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Ya te has postulado a este empleo anteriormente.");
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Ya te postulaste a este empleo anteriormente."));
         }
 
-        // Buscar el usuario y el empleo en la base de datos
-        Usuario postulante = usuarioRepository.findById(idUsuario)
-                .orElse(null);
-        Empleo empleo = empleoRepository.findById(idEmpleo)
-                .orElse(null);
+        // Buscar usuario y empleo
+        Usuario postulante = usuarioRepository.findById(idUsuario).orElse(null);
+        Empleo empleo = empleoRepository.findById(idEmpleo).orElse(null);
 
-        if (postulante == null || empleo == null) {
+        if (postulante == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Usuario o Empleo no encontrado.");
+                    .body(Map.of("error", "Usuario no encontrado. Cerrá sesión e ingresá de nuevo."));
+        }
+        if (empleo == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "El empleo no existe o fue eliminado."));
+        }
+        if (!empleo.isActivo()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Esta vacante está pausada y no acepta postulaciones."));
         }
 
-        // Crear la nueva postulación
-        Postulacion nuevaPostulacion = new Postulacion();
-        nuevaPostulacion.setPostulante(postulante);
-        nuevaPostulacion.setEmpleo(empleo);
-        
-        postulacionRepository.save(nuevaPostulacion);
+        try {
+            // Guardar el archivo CV
+            String nombreLimpio = archivo.getOriginalFilename() != null
+                    ? archivo.getOriginalFilename().replaceAll("[^a-zA-Z0-9._-]", "_")
+                    : "cv.pdf";
+            String nombreArchivo = System.currentTimeMillis() + "_" + nombreLimpio;
 
-        return ResponseEntity.ok("¡Postulación registrada con éxito en Villa María Empleos!");
+            Path rutaCvs = Paths.get("uploads", "cvs").toAbsolutePath();
+            if (!Files.exists(rutaCvs))
+                Files.createDirectories(rutaCvs);
+            Files.copy(archivo.getInputStream(), rutaCvs.resolve(nombreArchivo), StandardCopyOption.REPLACE_EXISTING);
+
+            // Crear y guardar la postulación
+            Postulacion nueva = new Postulacion();
+            nueva.setPostulante(postulante);
+            nueva.setEmpleo(empleo);
+            nueva.setArchivoCv(nombreArchivo);
+            postulacionRepository.save(nueva);
+
+            return ResponseEntity.ok(Map.of("mensaje", "¡Postulación registrada con éxito!"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al procesar el CV: " + e.getMessage()));
+        }
     }
 
-    // 2. Endpoint para que la empresa vea quiénes se postularon a un empleo suyo
+    // ─── 2. Ver postulantes de un empleo (para la empresa) ───────────────────
     @GetMapping("/por-empleo/{idEmpleo}")
-    public ResponseEntity<List<Postulacion>> listarPorEmpleo(@PathVariable Long idEmpleo) {
-        List<Postulacion> lista = postulacionRepository.findByEmpleoId(idEmpleo);
-        return ResponseEntity.ok(lista);
+    public ResponseEntity<?> listarPorEmpleo(@PathVariable Long idEmpleo) {
+        try {
+            List<Postulacion> lista = postulacionRepository.findByEmpleoId(idEmpleo);
+            return ResponseEntity.ok(lista);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al obtener postulantes: " + e.getMessage()));
+        }
     }
 
-    // 3. Endpoint para que el usuario vea sus propias postulaciones
+    // ─── 3. Ver mis postulaciones (para el usuario) ───────────────────────────
     @GetMapping("/mis-postulaciones/{idUsuario}")
-    public ResponseEntity<List<Postulacion>> listarPorUsuario(@PathVariable Long idUsuario) {
-        List<Postulacion> lista = postulacionRepository.findByPostulanteId(idUsuario);
-        return ResponseEntity.ok(lista);
+    public ResponseEntity<?> obtenerMisPostulaciones(@PathVariable Long idUsuario) {
+        try {
+            List<Postulacion> lista = postulacionRepository.findByPostulanteId(idUsuario);
+            return ResponseEntity.ok(lista);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al obtener tus postulaciones: " + e.getMessage()));
+        }
+    }
+
+    // ─── 4. Marcar como visto (empresa lee el CV) ─────────────────────────────
+    @PatchMapping("/{id}/marcar-visto")
+    public ResponseEntity<?> marcarComoVisto(@PathVariable Long id) {
+        return postulacionRepository.findById(id)
+                .map(p -> {
+                    p.setVisto(true);
+                    postulacionRepository.save(p);
+                    return ResponseEntity.ok(Map.of("mensaje", "Marcado como visto."));
+                })
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "Postulación no encontrada.")));
+    }
+
+    // ─── 5. Eliminar postulación (el usuario retira su candidatura) ───────────
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+        if (!postulacionRepository.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Postulación no encontrada."));
+        }
+        postulacionRepository.deleteById(id);
+        return ResponseEntity.ok(Map.of("mensaje", "Postulación eliminada correctamente."));
+    }
+
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<?> cambiarEstadoCandidato(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body) {
+
+        String nuevoEstado = body.get("estado");
+        List<String> estadosValidos = List.of("PENDIENTE", "EN_PROCESO", "CONTACTADO", "DESCARTADO");
+
+        if (nuevoEstado == null || !estadosValidos.contains(nuevoEstado)) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Estado inválido."));
+        }
+
+        return postulacionRepository.findById(id).map(p -> {
+            p.setEstadoCandidato(nuevoEstado);
+            p.setVisto(true); // si cambiás el estado, ya lo viste
+            postulacionRepository.save(p);
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", "Estado actualizado.",
+                    "estado", nuevoEstado));
+        }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", "Postulación no encontrada.")));
     }
 }

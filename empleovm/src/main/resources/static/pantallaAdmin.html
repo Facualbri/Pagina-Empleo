@@ -4,127 +4,1307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin - Villa María Empleos</title>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Tus estilos unificados -->
-    <link rel="stylesheet" href="css/usuario.css"> 
-    <link rel="stylesheet" href="css/admin.css">
-    
-    <!-- Iconos Lucide -->
+    <title>Panel Empresa - Villa María Empleos</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" href="data:,">
+    <style>
+        :root {
+            --ink: #0a0a0f;
+            --ink2: #1c1c2e;
+            --primary: #5b5ef4;
+            --primary-l: #ededff;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --bg: #f7f7fb;
+            --white: #ffffff;
+            --r-lg: 1rem;
+            --r-xl: 1.5rem;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.12);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--ink);
+        }
+
+        /* ── Toast ── */
+        #toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: var(--ink2);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-lg);
+            animation: slideIn .3s ease;
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--primary);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+
+            to {
+                transform: none;
+                opacity: 1;
+            }
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            background: var(--ink2);
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav-user {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-nav {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: .2s;
+        }
+
+        .btn-nav:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-nav.danger-nav {
+            border-color: rgba(239, 68, 68, .4);
+            color: #fca5a5;
+        }
+
+        .btn-nav.danger-nav:hover {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        /* ── Layout ── */
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* ── Stats ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--r-xl);
+            border: 1px solid var(--border);
+            padding: 22px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: .2s;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.blue {
+            background: var(--primary-l);
+            color: var(--primary);
+        }
+
+        .stat-icon.green {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        .stat-icon.orange {
+            background: #fff7ed;
+            color: var(--warning);
+        }
+
+        .stat-icon.red {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .stat-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .stat-top {
+            font-size: 0.75rem;
+            color: var(--primary);
+            margin-top: 4px;
+            font-style: italic;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 130px;
+        }
+
+        /* ── Card ── */
+        .card {
+            background: white;
+            border-radius: var(--r-xl);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .card-header-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--primary-l);
+            color: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-header h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .card-header p {
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        /* ── Formulario publicar ── */
+        .form-body {
+            padding: 24px 28px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--ink2);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 11px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: .2s;
+            background: #fafafa;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px var(--primary-l);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-input-custom {
+            padding: 11px 14px;
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: .2s;
+            background: #fafafa;
+            width: 100%;
+        }
+
+        .file-input-custom:hover {
+            border-color: var(--primary);
+            background: var(--primary-l);
+        }
+
+        .btn-publicar {
+            grid-column: span 2;
+            background: var(--ink2);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: .2s;
+        }
+
+        .btn-publicar:hover {
+            background: var(--primary);
+        }
+
+        .btn-publicar:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        /* ── Tabla ── */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 0.72rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            border-bottom: 2px solid var(--bg);
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover td {
+            background: #fafbff;
+        }
+
+        .td-titulo {
+            font-weight: 700;
+        }
+
+        .td-ubicacion {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .badge-activa {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-pausada {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .estado-select {
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            transition: .2s;
+            background: white;
+        }
+
+        .estado-select:focus {
+            border-color: var(--primary);
+        }
+
+        .badge-pendiente {
+            background: #f1f5f9;
+            color: var(--muted);
+        }
+
+        .badge-en-proceso {
+            background: #fff7ed;
+            color: #c2410c;
+        }
+
+        .badge-contactado {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .badge-descartado {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .candidato-card {
+            flex-direction: column;
+            /* cambiamos a columna para más espacio */
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .candidato-card-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-accion {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-azul {
+            background: var(--primary-l);
+            color: var(--primary);
+            border-color: #d1d5fc;
+        }
+
+        .btn-azul:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-gris {
+            background: #f8fafc;
+            color: var(--muted);
+        }
+
+        .btn-gris:hover {
+            background: var(--muted);
+            color: white;
+        }
+
+        .btn-rojo {
+            background: #fff1f2;
+            color: var(--danger);
+            border-color: #fecaca;
+        }
+
+        .btn-rojo:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* ── Modal candidatos ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-box {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            border-radius: var(--r-xl);
+            overflow: hidden;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        .modal-head {
+            padding: 22px 28px;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .modal-head-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-head h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .modal-head p {
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .modal-body {
+            padding: 20px 28px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-cerrar {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            background: #f1f5f9;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: .2s;
+            z-index: 10;
+        }
+
+        .btn-cerrar:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .candidato-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: .2s;
+        }
+
+        .candidato-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .candidato-nombre {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .candidato-fecha {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .btn-cv {
+            background: var(--primary-l);
+            color: var(--primary);
+            text-decoration: none;
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: .2s;
+        }
+
+        .btn-cv:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ── Modal perfil ── */
+        .perfil-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .perfil-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .perfil-group.full {
+            grid-column: span 2;
+        }
+
+        .perfil-group label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .perfil-group input {
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            transition: .2s;
+        }
+
+        .perfil-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-guardar {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: .2s;
+        }
+
+        .btn-guardar:hover {
+            background: #4a4de0;
+        }
+
+        /* ── Empty ── */
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+        }
+
+        .empty i {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 12px;
+        }
+    </style>
 </head>
 
-<body class="admin-body">
-    <!-- NAVBAR (Navy) -->
-    <nav class="main-navbar">
-        <div class="nav-container">
-            <div class="logo">Villa María <span>Empresas</span></div>
-            <div class="nav-right">
-                <div class="user-info">
-                    <i data-lucide="building-2"></i>
-                    <span id="nombreEmpresaHeader">Cargando...</span>
-                </div>
-                <button onclick="cerrarSesion()" class="btn-logout">Cerrar Sesión</button>
-            </div>
+<body>
+    <div id="toast-container"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">Villa María <span>Empresas</span></div>
+        <div class="nav-right">
+            <span class="nav-user">
+                <i data-lucide="building-2" style="width:15px"></i>
+                <span id="nombreEmpresa">Cargando...</span>
+            </span>
+            <button class="btn-nav" onclick="window.location.href='pantallaUsuario.html'"
+                style="border-color: var(--primary); color: var(--primary); background: rgba(91, 94, 244, 0.1); display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="eye" style="width:16px; height:16px;"></i>
+                Ver como Usuario
+            </button>
+            <button class="btn-nav" onclick="abrirPerfil()">Mi Perfil</button>
+            <button class="btn-nav danger-nav" onclick="cerrarSesion()">Cerrar Sesión</button>
         </div>
     </nav>
 
-    <main class="container">
-        <div class="admin-grid">
-            
-            <!-- FORMULARIO DE PUBLICACIÓN -->
-            <section class="admin-card">
-                <div class="card-header">
-                    <div class="header-icon">
-                        <i data-lucide="plus-circle"></i>
-                    </div>
-                    <div>
-                        <h3>Publicar Nueva Vacante</h3>
-                        <p>Llegá a miles de candidatos locales.</p>
-                    </div>
+    <div class="page">
+
+        <!-- Stats -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i data-lucide="briefcase"></i></div>
+                <div>
+                    <div class="stat-value" id="statTotal">—</div>
+                    <div class="stat-label">Avisos totales</div>
                 </div>
-                
-                <div class="form-grid-admin">
-                    <div class="input-group-admin">
-                        <label><i data-lucide="briefcase"></i> Puesto</label>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i data-lucide="check-circle"></i></div>
+                <div>
+                    <div class="stat-value" id="statActivos">—</div>
+                    <div class="stat-label">Activos</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i data-lucide="pause-circle"></i></div>
+                <div>
+                    <div class="stat-value" id="statPausados">—</div>
+                    <div class="stat-label">Pausados</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue"><i data-lucide="users"></i></div>
+                <div>
+                    <div class="stat-value" id="statPostulantes">—</div>
+                    <div class="stat-label">Postulantes totales</div>
+                    <div class="stat-top" id="statTop" title="">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Publicar vacante -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-icon"><i data-lucide="plus-circle"></i></div>
+                <div>
+                    <h2>Publicar nueva vacante</h2>
+                    <p>Llegá a miles de candidatos locales.</p>
+                </div>
+            </div>
+            <div class="form-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i data-lucide="briefcase" style="width:13px"></i> Puesto</label>
                         <input type="text" id="titulo" placeholder="Ej: Mozo/a para eventos">
                     </div>
-
-                    <div class="input-group-admin">
-                        <label><i data-lucide="map-pin"></i> Ubicación</label>
-                        <input type="text" id="ubicacion" placeholder="Ej: San Martín 150">
+                    <div class="form-group">
+                        <label><i data-lucide="map-pin" style="width:13px"></i> Ubicación</label>
+                        <input type="text" id="ubicacion" placeholder="Ej: San Martín 150, Centro">
                     </div>
-
-                    <div class="input-group-admin">
-                        <label><i data-lucide="banknote"></i> Sueldo Mensual</label>
+                    <div class="form-group">
+                        <label><i data-lucide="banknote" style="width:13px"></i> Sueldo mensual</label>
                         <input type="number" id="sueldo" placeholder="Ej: 500000">
                     </div>
-
-                    <div class="input-group-admin">
-                        <label><i data-lucide="image"></i> Imagen del Local</label>
-                        <input type="file" id="fotoArchivo" accept="image/*" class="custom-file-input">
+                    <div class="form-group">
+                        <label><i data-lucide="image" style="width:13px"></i> Imagen del local</label>
+                        <input type="file" id="fotoArchivo" accept="image/*" class="file-input-custom">
                     </div>
-
-                    <div class="input-group-admin full-width">
-                        <label><i data-lucide="align-left"></i> Descripción y Requisitos</label>
-                        <textarea id="descripcion" rows="4" placeholder="Describí las tareas y qué buscás..."></textarea>
+                    <div class="form-group full">
+                        <label><i data-lucide="align-left" style="width:13px"></i> Descripción y requisitos</label>
+                        <textarea id="descripcion"
+                            placeholder="Describí las tareas, horarios y qué buscás en el candidato..."></textarea>
                     </div>
-
-                    <button onclick="publicarAviso()" class="btn-primary-admin">
-                        <i data-lucide="send"></i> Publicar Vacante Ahora
+                    <button class="btn-publicar" id="btnPublicar" onclick="publicarAviso()">
+                        <i data-lucide="send" style="width:18px"></i> Publicar Vacante
                     </button>
                 </div>
-            </section>
-
-            <!-- TABLA DE GESTIÓN (Alineada) -->
-            <section class="admin-card">
-                <div class="card-header">
-                    <div class="header-icon">
-                        <i data-lucide="clipboard-list"></i>
-                    </div>
-                    <h3>Mis Publicaciones</h3>
-                </div>
-                
-                <div class="table-container">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Puesto</th>
-                                <th>Ubicación</th> <!-- Agregada para que no se mezcle -->
-                                <th>Sueldo</th>
-                                <th>Estado</th>
-                                <th>Postulantes</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaOfertas">
-                            <!-- JS dinámico -->
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <!-- MODAL POSTULANTES -->
-    <div id="modalPostulantes" class="modal-fondo">
-        <div class="modal-contenido admin-modal">
-            <button class="cerrar-boton" onclick="cerrarModal()">&times;</button>
-            <div class="modal-header-admin">
-                <i data-lucide="users"></i>
-                <h3>Postulantes interesados</h3>
             </div>
-            <div id="listaPostulantes" class="postulantes-list">
-                <!-- Dinámico -->
+        </div>
+
+        <!-- Mis publicaciones -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-icon"><i data-lucide="clipboard-list"></i></div>
+                <div>
+                    <h2>Mis publicaciones</h2>
+                    <p>Gestioná el estado de cada vacante.</p>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Puesto</th>
+                            <th>Ubicación</th>
+                            <th>Sueldo</th>
+                            <th>Estado</th>
+                            <th style="text-align:right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaOfertas">
+                        <tr>
+                            <td colspan="5" class="empty">Cargando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div><!-- /page -->
+
+    <!-- Modal candidatos -->
+    <div id="modalCandidatos" class="modal-overlay">
+        <div class="modal-box">
+            <button class="btn-cerrar" onclick="cerrarModalCandidatos()">&times;</button>
+            <div class="modal-head">
+                <div class="modal-head-icon"><i data-lucide="users"></i></div>
+                <div>
+                    <h3 id="modalCandidatosTitulo">Candidatos</h3>
+                    <p id="modalCandidatosSubtitulo">Gestioná los postulantes para esta vacante</p>
+                </div>
+            </div>
+            <div class="modal-body" id="listaCandidatos">
+                <p class="empty">Cargando...</p>
             </div>
         </div>
     </div>
 
-    <script src="js/admin.js"></script>
+    <!-- Modal perfil -->
+    <div id="modalPerfil" class="modal-overlay">
+        <div class="modal-box" style="max-width:500px">
+            <button class="btn-cerrar" onclick="cerrarModalPerfil()">&times;</button>
+            <div class="modal-head">
+                <div class="modal-head-icon"><i data-lucide="user"></i></div>
+                <div>
+                    <h3>Mi Perfil</h3>
+                    <p>Actualizá tus datos de empresa</p>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="perfil-grid">
+                    <div class="perfil-group full">
+                        <label>Nombre / Razón social</label>
+                        <input type="text" id="perfilNombre" placeholder="Nombre de tu empresa">
+                    </div>
+                    <div class="perfil-group full">
+                        <label>Email</label>
+                        <input type="email" id="perfilEmail" placeholder="email@empresa.com">
+                    </div>
+                    <div class="perfil-group full" style="margin-top:8px">
+                        <label>Contraseña actual</label>
+                        <input type="password" id="perfilPassActual" placeholder="Contraseña actual">
+                    </div>
+                    <div class="perfil-group">
+                        <label>Nueva contraseña</label>
+                        <input type="password" id="perfilPassNueva" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <div class="perfil-group">
+                        <label>Confirmar contraseña</label>
+                        <input type="password" id="perfilPassConfirm" placeholder="Repetir nueva contraseña">
+                    </div>
+                </div>
+                <div style="display:flex;gap:12px;margin-top:20px">
+                    <button class="btn-guardar" onclick="guardarPerfil()">Guardar cambios</button>
+                    <button class="btn-guardar" style="background:#f1f5f9;color:var(--muted)"
+                        onclick="cerrarModalPerfil()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        lucide.createIcons();
+        // ── Toast ───────────────────────────────────────────────────────────────
+        function toast(msg, tipo = 'info') {
+            const el = document.createElement('div');
+            el.className = `toast ${tipo}`;
+            const icon = tipo === 'success' ? '✓' : tipo === 'error' ? '✗' : 'ℹ';
+            el.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+            document.getElementById('toast-container').appendChild(el);
+            setTimeout(() => el.remove(), 4000);
+        }
+
+        // ── Init ────────────────────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            const id = localStorage.getItem('usuarioId');
+            const nombre = localStorage.getItem('usuarioNombre');
+            if (!id) { window.location.href = 'login.html'; return; }
+            document.getElementById('nombreEmpresa').innerText = nombre || '—';
+            cargarEstadisticas(id);
+            cargarMisEmpleos(id);
+        });
+
+        // ── Estadísticas ─────────────────────────────────────────────────────────
+        async function cargarEstadisticas(id) {
+            try {
+                const res = await fetch(`/api/estadisticas/empresa/${id}`);
+                const s = await res.json();
+                document.getElementById('statTotal').innerText = s.totalAvisos ?? '—';
+                document.getElementById('statActivos').innerText = s.activos ?? '—';
+                document.getElementById('statPausados').innerText = s.pausados ?? '—';
+                document.getElementById('statPostulantes').innerText = s.totalPostulantes ?? '—';
+                const topEl = document.getElementById('statTop');
+                topEl.innerText = s.avisoMasPopular ? `★ ${s.avisoMasPopular}` : '';
+                topEl.title = s.avisoMasPopular || '';
+            } catch {
+                // silencioso — las tarjetas quedan en —
+            }
+        }
+
+        // ── Publicar aviso ───────────────────────────────────────────────────────
+        async function publicarAviso() {
+            const titulo = document.getElementById('titulo').value.trim();
+            const descripcion = document.getElementById('descripcion').value.trim();
+            const ubicacion = document.getElementById('ubicacion').value.trim();
+            const sueldo = document.getElementById('sueldo').value;
+            const foto = document.getElementById('fotoArchivo').files[0];
+            const idEmpresa = localStorage.getItem('usuarioId');
+            const nombreEmp = localStorage.getItem('usuarioNombre');
+
+            if (!titulo || !descripcion || !sueldo) {
+                toast('Completá título, descripción y sueldo.', 'error'); return;
+            }
+
+            const btn = document.getElementById('btnPublicar');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader" style="width:18px"></i> Publicando...';
+            lucide.createIcons();
+
+            const fd = new FormData();
+            fd.append('titulo', titulo);
+            fd.append('descripcion', descripcion);
+            fd.append('ubicacion', ubicacion);
+            fd.append('empresa', nombreEmp);
+            fd.append('idUsuario', idEmpresa);
+            fd.append('sueldo', sueldo);
+            if (foto) fd.append('archivo', foto);
+
+            try {
+                const res = await fetch('/api/empleos/con-foto', { method: 'POST', body: fd });
+                if (res.ok) {
+                    toast('¡Vacante publicada con éxito!', 'success');
+                    ['titulo', 'descripcion', 'ubicacion', 'sueldo'].forEach(id => document.getElementById(id).value = '');
+                    document.getElementById('fotoArchivo').value = '';
+                    const id = localStorage.getItem('usuarioId');
+                    cargarMisEmpleos(id);
+                    cargarEstadisticas(id);
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    toast(err.error || 'Error al publicar.', 'error');
+                }
+            } catch {
+                toast('Error de conexión.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="send" style="width:18px"></i> Publicar Vacante';
+                lucide.createIcons();
+            }
+        }
+
+        // ── Cargar mis empleos ───────────────────────────────────────────────────
+        async function cargarMisEmpleos(idEmpresa) {
+            const tbody = document.getElementById('tablaOfertas');
+            try {
+                const res = await fetch('/api/empleos');
+                const lista = await res.json();
+                const mios = lista.filter(e => String(e.idUsuario) === String(idEmpresa));
+
+                if (!mios.length) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="empty">
+                    <div style="text-align:center;padding:30px;color:var(--muted)">
+                        Todavía no publicaste ninguna vacante.
+                    </div></td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = mios.map(e => {
+                    const sueldo = e.sueldo ? `$${Number(e.sueldo).toLocaleString('es-AR')}` : '—';
+                    const badge = e.activo
+                        ? '<span class="badge badge-activa">● Activa</span>'
+                        : '<span class="badge badge-pausada">● Pausada</span>';
+                    return `<tr>
+                    <td>
+                        <div class="td-titulo">${e.titulo}</div>
+                    </td>
+                    <td class="td-ubicacion">${e.ubicacion || '—'}</td>
+                    <td>${sueldo}</td>
+                    <td>${badge}</td>
+                    <td>
+                        <div class="acciones">
+                            <button class="btn-accion btn-azul" onclick="verCandidatos(${e.id},'${escHtml(e.titulo)}')">
+                                <i data-lucide="users" style="width:13px"></i> ${e.cantidadPostulantes || 0}
+                            </button>
+                            <button class="btn-accion btn-gris" onclick="cambiarEstado(${e.id})">
+                                ${e.activo ? 'Pausar' : 'Activar'}
+                            </button>
+                            <button class="btn-accion btn-rojo" onclick="eliminarEmpleo(${e.id})">
+                                <i data-lucide="trash-2" style="width:13px"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+                }).join('');
+                lucide.createIcons();
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="5" class="empty">Error al cargar las publicaciones.</td></tr>`;
+            }
+        }
+
+        function escHtml(str) {
+            return str.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+        }
+
+        // ── Cambiar estado ───────────────────────────────────────────────────────
+        async function cambiarEstado(id) {
+            try {
+                const res = await fetch(`/api/empleos/${id}/cambiar-estado`, { method: 'PATCH' });
+                const data = await res.json();
+                toast(data.mensaje || 'Estado actualizado.', 'success');
+                const idE = localStorage.getItem('usuarioId');
+                cargarMisEmpleos(idE);
+                cargarEstadisticas(idE);
+            } catch {
+                toast('Error al cambiar el estado.', 'error');
+            }
+        }
+
+        // ── Eliminar ─────────────────────────────────────────────────────────────
+        async function eliminarEmpleo(id) {
+            if (!confirm('¿Borrar esta vacante? Esta acción no se puede deshacer.')) return;
+            try {
+                await fetch(`/api/empleos/${id}`, { method: 'DELETE' });
+                toast('Vacante eliminada.', 'info');
+                const idE = localStorage.getItem('usuarioId');
+                cargarMisEmpleos(idE);
+                cargarEstadisticas(idE);
+            } catch {
+                toast('Error al eliminar.', 'error');
+            }
+        }
+
+        // ── Candidatos ───────────────────────────────────────────────────────────
+        async function verCandidatos(id, titulo) {
+            document.getElementById('modalCandidatosTitulo').innerText = titulo;
+            document.getElementById('modalCandidatosSubtitulo').innerText = 'Postulantes para esta vacante';
+            document.getElementById('listaCandidatos').innerHTML = '<p class="empty">Cargando...</p>';
+            document.getElementById('modalCandidatos').style.display = 'flex';
+
+            try {
+                const res = await fetch(`/api/postulaciones/por-empleo/${id}`);
+                const lista = await res.json();
+                const cont = document.getElementById('listaCandidatos');
+
+                if (!lista.length) {
+                    cont.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted)">
+                Aún no hay postulantes para esta vacante.</div>`;
+                    return;
+                }
+
+                cont.innerHTML = lista.map(p => {
+                    const fecha = p.fechaPostulacion
+                        ? new Date(p.fechaPostulacion).toLocaleDateString('es-AR')
+                        : '';
+
+                    // Badge de estado actual
+                    const estadoClass = {
+                        'PENDIENTE': 'badge-pendiente',
+                        'EN_PROCESO': 'badge-en-proceso',
+                        'CONTACTADO': 'badge-contactado',
+                        'DESCARTADO': 'badge-descartado'
+                    }[p.estadoCandidato] || 'badge-pendiente';
+
+                    const estadoLabel = {
+                        'PENDIENTE': '⏳ Pendiente',
+                        'EN_PROCESO': '🔄 En proceso',
+                        'CONTACTADO': '✓ Contactado',
+                        'DESCARTADO': '✗ Descartado'
+                    }[p.estadoCandidato] || '⏳ Pendiente';
+
+                    return `
+            <div class="candidato-card" id="card-postulacion-${p.id}">
+                <div class="candidato-card-row">
+                    <div>
+                        <div class="candidato-nombre">${p.postulante?.nombre || 'Sin nombre'}</div>
+                        <div class="candidato-fecha">
+                            ${p.postulante?.email || ''} ${fecha ? '· ' + fecha : ''}
+                        </div>
+                    </div>
+                    <span class="badge ${estadoClass}" id="badge-estado-${p.id}">
+                        ${estadoLabel}
+                    </span>
+                </div>
+                <div class="candidato-card-row">
+                    <select class="estado-select" onchange="cambiarEstadoCandidato(${p.id}, this.value)">
+                        <option value="PENDIENTE"  ${p.estadoCandidato === 'PENDIENTE' ? 'selected' : ''}>⏳ Pendiente</option>
+                        <option value="EN_PROCESO" ${p.estadoCandidato === 'EN_PROCESO' ? 'selected' : ''}>🔄 En proceso</option>
+                        <option value="CONTACTADO" ${p.estadoCandidato === 'CONTACTADO' ? 'selected' : ''}>✓ Contactado</option>
+                        <option value="DESCARTADO" ${p.estadoCandidato === 'DESCARTADO' ? 'selected' : ''}>✗ Descartado</option>
+                    </select>
+                    <a href="/uploads/cvs/${p.archivoCv}" target="_blank" class="btn-cv">
+                        <i data-lucide="file-text" style="width:14px"></i> Ver CV
+                    </a>
+                </div>
+            </div>`;
+                }).join('');
+
+                lucide.createIcons();
+            } catch {
+                toast('Error al cargar candidatos.', 'error');
+            }
+        }
+
+        // ── Cambiar estado de un candidato ──────────────────────────────────────────
+        async function cambiarEstadoCandidato(idPostulacion, nuevoEstado) {
+            try {
+                const res = await fetch(`/api/postulaciones/${idPostulacion}/estado`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ estado: nuevoEstado })
+                });
+
+                if (res.ok) {
+                    // Actualizar el badge sin recargar todo
+                    const estadoClass = {
+                        'PENDIENTE': 'badge-pendiente',
+                        'EN_PROCESO': 'badge-en-proceso',
+                        'CONTACTADO': 'badge-contactado',
+                        'DESCARTADO': 'badge-descartado'
+                    }[nuevoEstado];
+
+                    const estadoLabel = {
+                        'PENDIENTE': '⏳ Pendiente',
+                        'EN_PROCESO': '🔄 En proceso',
+                        'CONTACTADO': '✓ Contactado',
+                        'DESCARTADO': '✗ Descartado'
+                    }[nuevoEstado];
+
+                    const badge = document.getElementById(`badge-estado-${idPostulacion}`);
+                    if (badge) {
+                        badge.className = `badge ${estadoClass}`;
+                        badge.innerText = estadoLabel;
+                    }
+
+                    toast('Estado actualizado.', 'success');
+                } else {
+                    toast('Error al actualizar el estado.', 'error');
+                }
+            } catch {
+                toast('Error de conexión.', 'error');
+            }
+        }
+
+        function cerrarModalCandidatos() {
+            document.getElementById('modalCandidatos').style.display = 'none';
+        }
+
+        // ── Perfil ───────────────────────────────────────────────────────────────
+        function abrirPerfil() {
+            document.getElementById('perfilNombre').value = localStorage.getItem('usuarioNombre') || '';
+            document.getElementById('perfilEmail').value = localStorage.getItem('usuarioEmail') || '';
+            document.getElementById('perfilPassActual').value = '';
+            document.getElementById('perfilPassNueva').value = '';
+            document.getElementById('perfilPassConfirm').value = '';
+            document.getElementById('modalPerfil').style.display = 'flex';
+        }
+
+        function cerrarModalPerfil() {
+            document.getElementById('modalPerfil').style.display = 'none';
+        }
+
+        async function guardarPerfil() {
+            const id = localStorage.getItem('usuarioId');
+            const nombre = document.getElementById('perfilNombre').value.trim();
+            const email = document.getElementById('perfilEmail').value.trim();
+            const actual = document.getElementById('perfilPassActual').value;
+            const nueva = document.getElementById('perfilPassNueva').value;
+            const confirm = document.getElementById('perfilPassConfirm').value;
+
+            // Actualizar nombre/email
+            try {
+                const res = await fetch(`/api/usuarios/${id}/perfil`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, email })
+                });
+                if (res.ok) {
+                    const u = await res.json();
+                    localStorage.setItem('usuarioNombre', u.nombre);
+                    localStorage.setItem('usuarioEmail', u.email);
+                    document.getElementById('nombreEmpresa').innerText = u.nombre;
+                    toast('Datos actualizados correctamente.', 'success');
+                } else {
+                    const err = await res.text();
+                    toast(err || 'Error al actualizar.', 'error');
+                    return;
+                }
+            } catch {
+                toast('Error de conexión.', 'error'); return;
+            }
+
+            // Cambiar contraseña (solo si completó los campos)
+            if (actual || nueva || confirm) {
+                if (nueva !== confirm) {
+                    toast('Las contraseñas nuevas no coinciden.', 'error'); return;
+                }
+                try {
+                    const res = await fetch(`/api/usuarios/${id}/cambiar-password`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ passwordActual: actual, passwordNueva: nueva })
+                    });
+                    if (res.ok) {
+                        toast('Contraseña actualizada.', 'success');
+                    } else {
+                        const err = await res.text();
+                        toast(err || 'Error al cambiar contraseña.', 'error');
+                        return;
+                    }
+                } catch {
+                    toast('Error de conexión.', 'error'); return;
+                }
+            }
+
+            cerrarModalPerfil();
+        }
+
+        function cerrarSesion() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
     </script>
+    <script>lucide.createIcons();</script>
 </body>
+
 </html>

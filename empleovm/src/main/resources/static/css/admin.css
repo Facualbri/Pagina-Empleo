@@ -1,80 +1,133 @@
-/* --- VARIABLES DE DISEÑO --- */
-:root {
-    --navy: #0f172a;
-    --navy-light: #1e293b;
-    --primary: #2563eb;
-    --primary-soft: #eff6ff;
-    --danger: #ef4444;
-    --bg-panel: #f1f5f9;
-    --white: #ffffff;
-    --border: #e2e8f0;
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --radius-xl: 24px;
-    --radius-md: 12px;
-    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-    --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-}
+/* ─────────────────────────────────────────────────────────────────
+   admin.css  —  Unificado con la identidad visual de usuario.css
+   Requiere que usuario.css se cargue PRIMERO (define las variables).
+   ───────────────────────────────────────────────────────────────── */
 
-/* --- RESET Y BASE --- */
+/* ── Base ── */
 body.admin-body {
-    background-color: var(--bg-panel);
-    font-family: 'Inter', sans-serif;
-    color: var(--text-main);
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
     margin: 0;
 }
 
-/* --- LAYOUT EN COLUMNAS --- */
-.admin-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.3fr;
-    gap: 32px;
-    margin-top: 40px;
-    align-items: start;
+/* ── Navbar principal ── */
+.main-navbar {
+    background: var(--ink2);
+    height: 64px;
+    padding: 0 5%;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
 }
 
-/* --- TARJETAS (CONTAINERS) --- */
+.nav-content-web {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Reutiliza .logo de usuario.css — sólo necesita existir en el HTML */
+
+.nav-right-column {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.user-info-simple {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-logout-small {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: white;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: .2s;
+}
+
+.btn-logout-small:hover {
+    background: var(--danger);
+    border-color: var(--danger);
+}
+
+/* ── Layout ── */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.admin-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+/* ── Cards ── */
 .admin-card {
     background: var(--white);
-    border-radius: var(--radius-xl);
-    padding: 35px;
+    border-radius: var(--r-xl);
     border: 1px solid var(--border);
-    box-shadow: var(--shadow-card);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: var(--shadow);
+    padding: 30px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.admin-card:hover {
-    box-shadow: var(--shadow-hover);
-}
-
-/* --- ENCABEZADOS DE SECCIÓN --- */
+/* ── Cabecera de card ── */
 .card-header {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid var(--bg-panel);
+    gap: 15px;
+    margin-bottom: 25px;
 }
 
 .card-header h3 {
-    font-size: 1.25rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.15rem;
     font-weight: 800;
-    color: var(--navy);
+    color: var(--ink);
     margin: 0;
 }
 
 .card-header p {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin: 4px 0 0 0;
+    color: var(--muted);
+    font-size: 0.88rem;
+    margin: 4px 0 0;
 }
 
-/* --- FORMULARIO DE PUBLICACIÓN --- */
+.header-icon {
+    width: 46px;
+    height: 46px;
+    background: var(--primary-l);
+    color: var(--primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* ── Formulario ── */
 .form-grid-admin {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    gap: 20px;
 }
 
 .input-group-admin {
@@ -90,170 +143,384 @@ body.admin-body {
 .input-group-admin label {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
+    font-size: 0.75rem;
     font-weight: 700;
-    font-size: 0.85rem;
-    color: var(--navy);
+    color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: .04em;
 }
 
-.input-group-admin input, 
+.input-group-admin input,
 .input-group-admin textarea {
-    padding: 14px 18px;
+    padding: 11px 13px;
     border: 1.5px solid var(--border);
-    border-radius: var(--radius-md);
-    background: #fcfcfc;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-family: inherit;
     outline: none;
+    color: var(--ink);
+    background: var(--white);
+    transition: border-color .2s;
 }
 
-.input-group-admin input:focus, 
+.input-group-admin input:focus,
 .input-group-admin textarea:focus {
     border-color: var(--primary);
-    background: var(--white);
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
-/* --- BOTÓN DE PUBLICAR (Navy & Big) --- */
+/* File input reutiliza .file-input de usuario.css */
+.custom-file-input {
+    width: 100%;
+    padding: 11px 13px;
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.88rem;
+    transition: .2s;
+}
+
+.custom-file-input:hover {
+    border-color: var(--primary);
+}
+
 .btn-primary-admin {
     grid-column: span 2;
-    background: var(--navy);
-    color: var(--white);
-    padding: 18px;
+    background: var(--ink2);
+    color: white;
+    padding: 14px;
     border: none;
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     font-weight: 700;
-    font-size: 1rem;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 12px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 10px;
+    gap: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: .2s;
 }
 
 .btn-primary-admin:hover {
-    background: var(--navy-light);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3);
+    background: var(--primary);
 }
 
-/* --- TABLA DE GESTIÓN (Estilo Listado) --- */
+/* ── Tabla ── */
 .table-container {
-    margin-top: 10px;
+    width: 100%;
+    overflow-x: auto;
 }
 
 .admin-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 12px; /* Espacio entre filas */
+    border-collapse: collapse;
 }
 
 .admin-table th {
-    padding: 0 15px 10px;
     text-align: left;
-    font-size: 0.75rem;
+    padding: 10px 12px;
+    font-size: 0.73rem;
+    color: var(--muted);
     text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 700;
+    letter-spacing: .05em;
+    border-bottom: 2px solid var(--bg);
 }
 
-.admin-table tr td {
-    background: var(--white);
-    padding: 20px 15px;
-    border-top: 1px solid var(--border);
+.admin-table td {
+    padding: 15px 12px;
     border-bottom: 1px solid var(--border);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    vertical-align: middle;
 }
 
-.admin-table tr td:first-child {
-    border-left: 1px solid var(--border);
-    border-radius: var(--radius-md) 0 0 var(--radius-md);
-    font-weight: 700;
-    color: var(--navy);
+.admin-table tbody tr:hover {
+    background: #f9f9ff;
 }
 
-.admin-table tr td:last-child {
-    border-right: 1px solid var(--border);
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
-    text-align: right;
-}
-
-/* --- BOTONES DE ACCIÓN EN TABLA --- */
-.btn-ver {
-    background: var(--primary-soft);
-    color: var(--primary);
-    border: 1px solid transparent;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.btn-ver:hover {
-    background: var(--primary);
-    color: var(--white);
-}
-
-/* --- MODAL POSTULANTES (Ajustes) --- */
-.admin-modal {
-    max-width: 500px !important;
-}
-
-.postulante-item {
-    background: var(--bg-panel);
-    padding: 20px;
-    border-radius: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    border: 1px solid var(--border);
-}
-
-/* --- RESPONSIVE --- */
-@media (max-width: 1024px) {
-    .admin-grid {
-        grid-template-columns: 1fr;
-    }
-
-/* Contenedor de acciones en la celda */
+/* ── Botones de acción ── */
 .acciones-flex {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     justify-content: flex-end;
 }
 
-/* Estilo para el botón eliminar */
-.btn-eliminar {
-    background: #fff1f2;
-    color: #e11d48;
-    border: 1px solid #fecdd3;
-    padding: 10px 15px;
+.btn-tabla {
+    padding: 6px 12px;
     border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.85rem;
+    border: 1.5px solid var(--border);
+    font-size: 0.78rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    font-family: inherit;
+    transition: .2s;
+}
+
+.btn-azul {
+    background: var(--primary-l);
+    color: var(--primary);
+    border-color: #dde0ff;
+}
+
+.btn-azul:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.btn-gris {
+    background: #f1f5f9;
+    color: var(--muted);
+    border-color: var(--border);
+}
+
+.btn-gris:hover {
+    background: var(--ink2);
+    color: white;
+    border-color: var(--ink2);
+}
+
+.btn-rojo {
+    background: #fff1f2;
+    color: var(--danger);
+    border-color: #fecaca;
+}
+
+.btn-rojo:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+}
+
+/* ── Badges de estado ── */
+.badge-activa {
+    background: #dcfce7;
+    color: #15803d;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.73rem;
+    font-weight: 800;
+    display: inline-block;
+}
+
+.badge-pausada {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.73rem;
+    font-weight: 800;
+    display: inline-block;
+}
+
+/* ── Modal de postulantes ── */
+.modal-fondo {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(10, 10, 15, 0.8);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-modal {
+    background: var(--white);
+    width: 90%;
+    max-width: 650px;
+    border-radius: var(--r-xl);
+    position: relative;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.cerrar-boton {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--muted);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    transition: .2s;
+}
+
+.cerrar-boton:hover {
+    background: var(--danger);
+    color: white;
+}
+
+.modal-header-admin {
+    padding: 28px 30px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+}
+
+.header-title-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.icon-box-admin {
+    background: var(--primary);
+    color: white;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.modal-header-admin h3 {
+    margin: 0;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--ink);
+}
+
+.modal-header-admin p {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.modal-body-admin {
+    padding: 24px 30px;
+    max-height: 52vh;
+    overflow-y: auto;
+}
+
+.postulantes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* ── Card de postulante ── */
+.postulante-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: .2s;
+}
+
+.postulante-card:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow);
+}
+
+.p-info h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.p-info p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 0.87rem;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-cv-view {
+    background: var(--primary-l);
+    color: var(--primary);
+    text-decoration: none;
+    padding: 9px 15px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.83rem;
     display: flex;
     align-items: center;
     gap: 6px;
+    transition: .2s;
 }
 
-.btn-eliminar:hover {
-    background: #e11d48;
+.btn-cv-view:hover {
+    background: var(--primary);
     color: white;
-    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.2);
 }
 
-/* Ajuste para que Lucide se vea bien en botones */
-.btn-eliminar i, .btn-ver i {
-    width: 16px;
-    height: 16px;
+.btn-mark-seen {
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    padding: 9px 15px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.83rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: .2s;
 }
+
+.btn-mark-seen:hover {
+    background: var(--ink2);
+    color: white;
+    border-color: var(--ink2);
+}
+
+.btn-revisado {
+    background: #dcfce7 !important;
+    color: #15803d !important;
+    border-color: #bbf7d0 !important;
+}
+
+/* ── Toast (por si admin.html no incluye usuario.css) ── */
+#toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .form-grid-admin {
+        grid-template-columns: 1fr;
+    }
+
+    .input-group-admin.full-width,
+    .btn-primary-admin {
+        grid-column: span 1;
+    }
+
+    .main-navbar {
+        padding: 0 4%;
+        height: auto;
+        min-height: 64px;
+    }
+
+    .admin-card {
+        padding: 20px;
+    }
 }

@@ -1,188 +1,270 @@
-/* --- VARIABLES MAESTRAS --- */
-:root {
-    /* Mantenemos tus variables pero agregamos las nuevas */
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --primary-soft: #eff6ff;
-    
-    /* El Navy que pediste para el Header y etiquetas */
-    --header-bg: #0f172a; 
-    --header-text: #ffffff;
-    
-    /* El Rojo para el botón de logout */
-    --danger: #ef4444;
-    --danger-hover: #dc2626;
+ /* ── Variables ── */
+        :root {
+            --ink:       #0a0a0f;
+            --ink2:      #1c1c2e;
+            --primary:   #5b5ef4;
+            --primary-l: #ededff;
+            --success:   #10b981;
+            --danger:    #ef4444;
+            --muted:     #6b7280;
+            --border:    #e5e7eb;
+            --bg:        #f7f7fb;
+            --white:     #ffffff;
+            --r-lg:      1.25rem;
+            --r-xl:      1.75rem;
+            --shadow:    0 4px 20px rgba(0,0,0,0.07);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.12);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--ink); }
 
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --bg-main: #f8fafc;
-    --white: #ffffff;
-    --border: #e2e8f0;
-    --radius-lg: 1.25rem;
-    --radius-md: 0.75rem;
-    --shadow-subtle: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-    --shadow-float: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-}
+        /* ── Toast ── */
+        #toast-container {
+            position: fixed; bottom: 24px; right: 24px;
+            display: flex; flex-direction: column; gap: 10px; z-index: 9999;
+        }
+        .toast {
+            background: var(--ink2); color: white;
+            padding: 14px 20px; border-radius: 12px;
+            font-size: 0.9rem; font-weight: 500;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: var(--shadow-lg);
+            animation: slideIn .3s ease;
+        }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error   { border-left: 4px solid var(--danger);  }
+        .toast.info    { border-left: 4px solid var(--primary); }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-* {
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-}
+        /* ── Navbar ── */
+        .navbar {
+            background: var(--ink2);
+            padding: 0 5%;
+            position: sticky; top: 0; z-index: 1000;
+            display: flex; justify-content: space-between; align-items: center;
+            height: 64px;
+        }
+        .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: white; }
+        .logo span { color: var(--primary); }
+        .nav-actions { display: flex; align-items: center; gap: 12px; }
+        .nav-user { color: #94a3b8; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
+        .btn-nav {
+            background: transparent; border: 1px solid rgba(255,255,255,0.15);
+            color: white; padding: 7px 14px; border-radius: 8px;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; transition: .2s;
+            font-family: inherit;
+        }
+        .btn-nav:hover { background: rgba(255,255,255,0.1); }
+        .btn-nav.accent { background: var(--primary); border-color: var(--primary); }
+        .btn-nav.accent:hover { background: #4a4de0; }
 
-body {
-    background-color: var(--bg-main);
-    font-family: 'Inter', sans-serif;
-    color: var(--text-main);
-    line-height: 1.5;
-    margin: 0;
-}
+        /* ── Hero ── */
+        .hero {
+            background: var(--ink2);
+            padding: 60px 20px 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 70% 50%, rgba(91,94,244,.25) 0%, transparent 70%);
+        }
+        .hero-content { position: relative; z-index: 1; }
+        .hero h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800; color: white;
+            line-height: 1.1; margin-bottom: 12px;
+        }
+        .hero h1 span { color: var(--primary); }
+        .hero p { color: #94a3b8; font-size: 1.1rem; margin-bottom: 36px; }
 
-/* --- NAVBAR (Ahora en Navy como pediste) --- */
-.main-navbar {
-    background: var(--header-bg); /* Cambiado a Navy */
-    padding: 0.75rem 5%;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
+        /* ── Buscador ── */
+        .search-wrap {
+            max-width: 680px; margin: 0 auto;
+            display: flex; gap: 10px;
+            background: white; padding: 8px; border-radius: var(--r-xl);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.1), var(--shadow-lg);
+        }
+        .search-wrap input {
+            flex: 1; border: none; outline: none; padding: 10px 14px;
+            font-size: 1rem; font-family: inherit; background: transparent; color: var(--ink);
+        }
+        .btn-search {
+            background: var(--primary); color: white; border: none;
+            padding: 12px 24px; border-radius: 14px;
+            font-weight: 700; cursor: pointer; font-family: inherit;
+            white-space: nowrap; transition: .2s;
+        }
+        .btn-search:hover { background: #4a4de0; }
 
-.logo {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--header-text); /* Texto en blanco */
-}
+        /* ── Filtros avanzados ── */
+        .filtros-bar {
+            max-width: 1200px; margin: -28px auto 0;
+            padding: 0 20px; position: relative; z-index: 2;
+        }
+        .filtros-card {
+            background: white; border-radius: var(--r-lg);
+            border: 1px solid var(--border); box-shadow: var(--shadow);
+            padding: 18px 24px;
+            display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;
+        }
+        .filtros-card label { font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; display: block; margin-bottom: 6px; }
+        .filtros-card input, .filtros-card select {
+            padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px;
+            font-size: 0.9rem; font-family: inherit; outline: none; transition: .2s;
+            min-width: 140px;
+        }
+        .filtros-card input:focus, .filtros-card select:focus { border-color: var(--primary); }
+        .btn-filtrar {
+            background: var(--ink2); color: white; border: none;
+            padding: 10px 20px; border-radius: 10px; font-weight: 700;
+            cursor: pointer; font-family: inherit; transition: .2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-filtrar:hover { background: var(--primary); }
+        .btn-limpiar {
+            background: #f1f5f9; color: var(--muted); border: none;
+            padding: 10px 16px; border-radius: 10px; font-weight: 600;
+            cursor: pointer; font-family: inherit; font-size: 0.85rem;
+        }
 
-.logo span {
-    color: #60a5fa; /* Un azul más clarito para que resalte */
-}
+        /* ── Main grid ── */
+        .main { max-width: 1200px; margin: 32px auto; padding: 0 20px; }
+        .section-title {
+            font-family: 'Syne', sans-serif; font-size: 1.4rem;
+            font-weight: 800; margin-bottom: 20px; display: flex;
+            align-items: center; gap: 10px;
+        }
+        .count-badge {
+            background: var(--primary-l); color: var(--primary);
+            padding: 3px 10px; border-radius: 20px; font-size: 0.8rem;
+            font-weight: 700; font-family: 'DM Sans', sans-serif;
+        }
+        .ofertas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 22px;
+        }
 
-/* --- BOTÓN CERRAR SESIÓN (Ahora Rojo y más lindo) --- */
-.btn-logout {
-    background: var(--danger);
-    color: var(--white);
-    border: none;
-    padding: 8px 18px;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+        /* ── Card de empleo ── */
+        .empleo-card {
+            background: white; border-radius: var(--r-xl);
+            border: 1px solid var(--border); overflow: hidden;
+            transition: .25s; cursor: pointer;
+        }
+        .empleo-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+        .card-img { width: 100%; height: 160px; object-fit: cover; background: #f1f5f9; display: block; }
+        .card-img-placeholder {
+            width: 100%; height: 160px; background: linear-gradient(135deg,#f0f0ff,#e8e8ff);
+            display: flex; align-items: center; justify-content: center; color: var(--primary);
+        }
+        .card-body { padding: 20px; }
+        .card-empresa { font-size: 0.8rem; color: var(--muted); font-weight: 600; text-transform: uppercase; margin-bottom: 6px; }
+        .card-titulo { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+        .card-meta { display: flex; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+        .card-meta span { font-size: 0.82rem; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+        .card-meta i { width: 14px; }
+        .sueldo-tag {
+            background: var(--ink2); color: white;
+            padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;
+            font-weight: 700; display: inline-block; margin-bottom: 14px;
+        }
+        .btn-ver {
+            width: 100%; background: var(--primary-l); color: var(--primary);
+            border: none; padding: 11px; border-radius: 10px;
+            font-weight: 700; cursor: pointer; font-family: inherit;
+            font-size: 0.9rem; transition: .2s;
+        }
+        .btn-ver:hover { background: var(--primary); color: white; }
 
-.btn-logout:hover {
-    background: var(--danger-hover);
-    transform: scale(1.05);
-}
+        /* ── Estado vacío ── */
+        .empty-state {
+            grid-column: 1/-1; text-align: center; padding: 60px 20px;
+            color: var(--muted);
+        }
+        .empty-state i { width: 48px; height: 48px; margin-bottom: 16px; }
 
-.user-info {
-    color: var(--header-text);
-    margin-right: 10px;
-}
+        /* ── Modal ── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; z-index: 2000;
+            background: rgba(10,10,15,0.8); backdrop-filter: blur(8px);
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-box {
+            background: white; width: 100%; max-width: 620px;
+            border-radius: var(--r-xl); overflow: hidden;
+            max-height: 90vh; display: flex; flex-direction: column;
+            box-shadow: var(--shadow-lg);
+        }
+        .modal-img { width: 100%; height: 200px; object-fit: cover; }
+        .modal-scroll { overflow-y: auto; padding: 30px; flex: 1; }
+        .modal-titulo { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; margin: 8px 0; }
+        .modal-empresa { color: var(--muted); font-size: 0.95rem; }
+        .modal-meta { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+        .modal-meta p { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.95rem; }
+        .modal-meta strong { color: var(--ink); }
+        .modal-sueldo {
+            background: var(--ink2); color: white;
+            display: inline-block; padding: 10px 20px; border-radius: 12px;
+            font-weight: 700; font-size: 1.1rem; margin-bottom: 20px;
+        }
+        .modal-section-title {
+            font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800;
+            color: var(--ink2); margin: 24px 0 12px;
+            padding-bottom: 8px; border-bottom: 2px solid var(--bg);
+        }
+        .modal-descripcion {
+            background: var(--bg); padding: 20px; border-radius: 12px;
+            line-height: 1.7; color: #334155; font-size: 0.95rem;
+        }
+        #modalMapa { height: 240px; border-radius: 12px; margin: 16px 0; border: 1px solid var(--border); }
+        .postulacion-box {
+            background: var(--bg); border-radius: 16px; padding: 24px;
+            margin-top: 24px; border: 1px solid var(--border); text-align: center;
+        }
+        .postulacion-box h3 { font-family: 'Syne', sans-serif; margin-bottom: 6px; }
+        .postulacion-box p { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; }
+        .file-input {
+            width: 100%; padding: 12px; border: 2px dashed var(--border);
+            border-radius: 10px; background: white; cursor: pointer;
+            font-family: inherit; margin-bottom: 14px; transition: .2s;
+        }
+        .file-input:hover { border-color: var(--primary); }
+        .btn-postular {
+            width: 100%; background: var(--success); color: white; border: none;
+            padding: 15px; border-radius: 12px; font-weight: 700; cursor: pointer;
+            font-size: 1rem; font-family: inherit; transition: .3s;
+        }
+        .btn-postular:hover { background: #059669; transform: translateY(-2px); }
+        .btn-cerrar {
+            position: absolute; top: 16px; right: 16px;
+            width: 36px; height: 36px; border-radius: 50%; border: none;
+            background: rgba(255,255,255,0.9); cursor: pointer; font-size: 20px;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(4px); z-index: 10;
+        }
+        .btn-cerrar:hover { background: var(--danger); color: white; }
 
-/* --- HERO & BUSCADOR --- */
-.hero {
-    background: white;
-    padding: 80px 20px;
-    text-align: center;
-    border-bottom: 1px solid var(--border);
-}
+        /* ── Modal Mis Postulaciones ── */
+        .postulacion-item {
+            background: white; border: 1px solid var(--border);
+            border-radius: 14px; padding: 16px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: .2s;
+        }
+        .postulacion-item:hover { border-color: var(--primary); }
+        .pi-titulo { font-weight: 700; margin-bottom: 4px; }
+        .pi-empresa { font-size: 0.85rem; color: var(--muted); }
+        .badge-visto { background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+        .badge-pendiente { background: #f1f5f9; color: var(--muted); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
 
-.hero h1 {
-    font-size: 3.5rem;
-    font-weight: 800;
-    margin-bottom: 1rem;
-}
-
-.search-box {
-    max-width: 650px;
-    margin: 30px auto;
-    display: flex;
-    gap: 10px;
-    padding: 8px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    border: 1px solid #eee;
-}
-
-.search-box input {
-    flex: 1;
-    border: none;
-    padding: 12px 20px;
-    outline: none;
-}
-
-.search-box button {
-    background: var(--header-bg); /* Botón buscar también Navy */
-    color: var(--white);
-    border: none;
-    padding: 0 32px;
-    border-radius: 14px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-/* --- GRILLA Y TARJETAS --- */
-.container {
-    max-width: 1200px;
-    margin: 60px auto;
-    padding: 0 20px;
-}
-
-.ofertas-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 32px;
-}
-
-.empleo-item {
-    background: var(--white);
-    border-radius: var(--radius-lg);
-    padding: 32px;
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-}
-
-.empleo-item:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-float);
-}
-
-.empleo-item h3 {
-    margin: 0 0 12px 0;
-    font-weight: 700;
-}
-
-/* --- ETIQUETAS DE SUELDO (Color del Header) --- */
-.sueldo-tag {
-    background: var(--header-bg); /* Navy como el header */
-    color: var(--white);
-    padding: 6px 16px;
-    border-radius: 99px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    align-self: flex-start;
-    margin-top: 16px;
-}
-
-.btn-postular {
-    margin-top: 32px;
-    background: var(--bg-main);
-    color: var(--text-main);
-    border: 1px solid var(--border);
-    padding: 14px;
-    border-radius: var(--radius-md);
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.empleo-item:hover .btn-postular {
-    background: var(--primary);
-    color: var(--white);
-}
+        /* ── Aviso pausado ── */
+        .aviso-pausado {
+            background: #fff7ed; color: #9a3412; padding: 12px 16px;
+            border-radius: 10px; border: 1px solid #ffedd5;
+            font-weight: 600; text-align: center; margin-bottom: 20px;
+        }

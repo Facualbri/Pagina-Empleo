@@ -27,41 +27,37 @@ public class EmpleoServiceImpl implements IEmpleoService {
     @Autowired
     private EmpleoMapper empleoMapper;
 
+    // ─── Publicar empleo ──────────────────────────────────────────────────────
     @Override
     public EmpleoResponseDTO publicarEmpleo(EmpleoRequestDTO dto) {
-
-        // 🔥 VALIDACIÓN IMPORTANTE
         if (dto.getIdUsuario() == null) {
-            throw new RuntimeException("Error: El ID del usuario es obligatorio.");
+            throw new RuntimeException("El ID del usuario es obligatorio para publicar un empleo.");
         }
 
-        System.out.println("DEBUG -> ID USUARIO: " + dto.getIdUsuario());
-
-        // 🔍 Buscar usuario (empresa)
         Usuario empresa = usuarioRepository.findById(dto.getIdUsuario())
-                .orElseThrow(
-                        () -> new RuntimeException("Error: La empresa con ID " + dto.getIdUsuario() + " no existe."));
+                .orElseThrow(() -> new RuntimeException(
+                        "No existe una empresa con ID: " + dto.getIdUsuario()));
 
-        // 🧱 Crear empleo
+        // Verificar que sea una cuenta de empresa
+        if (empresa.getTipo() == null ||
+                !empresa.getTipo().name().equals("ROLE_EMPRESA")) {
+            throw new RuntimeException("Solo las cuentas de empresa pueden publicar vacantes.");
+        }
+
         Empleo empleo = new Empleo();
-        empleo.setTitulo(dto.getTitulo());
-        empleo.setDescripcion(dto.getDescripcion());
-        empleo.setEmpresa(dto.getEmpresa());
-        empleo.setUbicacion(dto.getUbicacion());
+        empleo.setTitulo(dto.getTitulo().trim());
+        empleo.setDescripcion(dto.getDescripcion().trim());
+        empleo.setEmpresa(dto.getEmpresa() != null ? dto.getEmpresa().trim() : empresa.getNombre());
+        empleo.setUbicacion(dto.getUbicacion() != null ? dto.getUbicacion().trim() : "");
         empleo.setSueldo(dto.getSueldo());
-
-        // 📸 IMAGEN (IMPORTANTE SI ESTÁS SUBIENDO ARCHIVOS)
-        empleo.setImagenUrl(dto.getImagenUrl()); // <- asegurate que el DTO lo tenga
-
-        // 🔗 Relación
+        empleo.setImagenUrl(dto.getImagenUrl());
         empleo.setUsuario(empresa);
+        empleo.setActivo(true);
 
-        // 💾 Guardar
-        Empleo guardado = empleoRepository.save(empleo);
-
-        return empleoMapper.toResponseDTO(guardado);
+        return empleoMapper.toResponseDTO(empleoRepository.save(empleo));
     }
 
+    // ─── Listar todos ─────────────────────────────────────────────────────────
     @Override
     public List<EmpleoResponseDTO> listarTodos() {
         return empleoRepository.findAll()
@@ -70,32 +66,32 @@ public class EmpleoServiceImpl implements IEmpleoService {
                 .collect(Collectors.toList());
     }
 
+    // ─── Buscar por ID ────────────────────────────────────────────────────────
     @Override
     public EmpleoResponseDTO buscarPorId(Long id) {
-        if (id == null) {
-            throw new RuntimeException("El ID del empleo no puede ser null");
-        }
-
-        Empleo empleo = empleoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Empleo no encontrado"));
-
-        return empleoMapper.toResponseDTO(empleo);
+        if (id == null) throw new RuntimeException("El ID no puede ser nulo.");
+        return empleoMapper.toResponseDTO(
+                empleoRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Empleo no encontrado con ID: " + id))
+        );
     }
 
+    // ─── Buscar por título ────────────────────────────────────────────────────
     @Override
     public List<EmpleoResponseDTO> buscarPorTitulo(String titulo) {
-        System.out.println("DEBUG: Buscando -> " + titulo);
-
         return empleoRepository.findByTituloContainingIgnoreCase(titulo)
                 .stream()
                 .map(empleoMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
+    // ─── Eliminar ─────────────────────────────────────────────────────────────
     @Override
     @Transactional
     public void eliminar(Long id) {
-        // Usamos el método manual que creamos para asegurar el borrado
+        if (!empleoRepository.existsById(id)) {
+            throw new RuntimeException("No existe un empleo con ID: " + id);
+        }
         empleoRepository.deleteByIdManual(id);
     }
 }

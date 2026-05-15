@@ -8,30 +8,48 @@ import org.springframework.stereotype.Component;
 @Component
 public class UsuarioMapper {
 
-    // De DTO a Entidad (para guardar en la base de datos)
+    // ─── RequestDTO → Entidad ─────────────────────────────────────────────────
     public Usuario toEntity(UsuarioRequestDTO dto) {
-    Usuario usuario = new Usuario();
-    usuario.setNombre(dto.getNombre());
-    usuario.setEmail(dto.getEmail());
-    usuario.setPassword(dto.getPassword());
-    
-    // Si el tipo no es nulo, lo convierte. Si es nulo, evita el error.
-    if (dto.getTipo() != null) {
-        usuario.setTipo(Usuario.Rol.valueOf(dto.getTipo().toUpperCase()));
-    }
-    
-    return usuario;
-}
+        if (dto == null) return null;
 
-    // De Entidad a DTO (para responderle al usuario sin mostrar la contraseña)
+        Usuario usuario = new Usuario();
+        usuario.setNombre(dto.getNombre().trim());
+        usuario.setEmail(dto.getEmail().trim().toLowerCase());
+        usuario.setPassword(dto.getPassword());
+
+        if (dto.getTipo() != null && !dto.getTipo().isBlank()) {
+            try {
+                usuario.setTipo(Usuario.Rol.valueOf(dto.getTipo().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                usuario.setTipo(Usuario.Rol.ROLE_USER);
+            }
+        } else {
+            usuario.setTipo(Usuario.Rol.ROLE_USER);
+        }
+
+        return usuario;
+    }
+
+    // ─── Entidad → ResponseDTO (incluye perfil) ───────────────────────────────
     public UsuarioResponseDTO toResponseDTO(Usuario usuario) {
+        if (usuario == null) return null;
+
         UsuarioResponseDTO dto = new UsuarioResponseDTO();
         dto.setId(usuario.getId());
         dto.setNombre(usuario.getNombre());
         dto.setEmail(usuario.getEmail());
-        dto.setTipo(usuario.getTipo().toString());
+        dto.setTipo(usuario.getTipo() != null ? usuario.getTipo().name() : "ROLE_USER");
+        dto.setTipo(usuario.getTipo() != null ? usuario.getTipo().name() : "ROLE_USER");
+        dto.setFechaRegistro(usuario.getFechaRegistro());
+
+        // Campos de perfil
+        dto.setFotoPerfil(usuario.getFotoPerfil());
+        dto.setDescripcion(usuario.getDescripcion());
+        dto.setExperiencia(usuario.getExperiencia());
+        dto.setTelefono(usuario.getTelefono());
+        dto.setLocalidad(usuario.getLocalidad());
+        dto.setEstadoSolicitud(usuario.getEstadoSolicitud());
+
         return dto;
     }
-
-    
 }

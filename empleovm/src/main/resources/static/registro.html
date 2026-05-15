@@ -1,73 +1,251 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro - Villa María Empleos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/registro.css?v=1.2"> <!-- Forzamos carga -->
+    <title>Crear cuenta - Villa María Empleos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" href="data:,">
+    <style>
+        :root {
+            --ink:     #0a0a0f;
+            --ink2:    #1c1c2e;
+            --primary: #5b5ef4;
+            --pl:      #ededff;
+            --danger:  #ef4444;
+            --success: #10b981;
+            --muted:   #6b7280;
+            --border:  #e5e7eb;
+            --white:   #ffffff;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            background: var(--ink2);
+            font-family: 'DM Sans', sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 20%, rgba(91,94,244,.2) 0%, transparent 60%),
+                              radial-gradient(ellipse at 80% 80%, rgba(91,94,244,.1) 0%, transparent 60%);
+        }
+        .card {
+            background: white; width: 100%; max-width: 440px;
+            border-radius: 24px; padding: 44px;
+            box-shadow: 0 40px 80px rgba(0,0,0,.4);
+        }
+        .logo {
+            font-family: 'Syne', sans-serif; font-size: 1.1rem;
+            font-weight: 800; color: var(--ink2); text-align: center;
+            margin-bottom: 24px;
+        }
+        .logo span { color: var(--primary); }
+        h2 {
+            font-family: 'Syne', sans-serif; font-size: 1.8rem;
+            font-weight: 800; color: var(--ink); text-align: center;
+            letter-spacing: -.04em; margin-bottom: 4px;
+        }
+        .sub { text-align: center; color: var(--muted); font-size: 0.88rem; margin-bottom: 24px; }
+
+        /* Role selector */
+        .role-tabs {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 8px; background: #f1f5f9; padding: 6px;
+            border-radius: 14px; margin-bottom: 26px;
+        }
+        .role-tab {
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; padding: 10px; border-radius: 10px; border: none;
+            cursor: pointer; font-family: inherit; font-size: 0.9rem;
+            font-weight: 700; color: var(--muted); background: transparent;
+            transition: .2s;
+        }
+        .role-tab.active {
+            background: white; color: var(--ink2);
+            box-shadow: 0 2px 8px rgba(0,0,0,.1);
+        }
+        .role-tab i { width: 16px; }
+
+        /* Fields */
+        .field { margin-bottom: 16px; }
+        .field label {
+            display: block; font-size: 0.72rem; font-weight: 700;
+            color: var(--muted); text-transform: uppercase;
+            letter-spacing: .05em; margin-bottom: 7px;
+        }
+        .input-wrap { position: relative; }
+        .input-wrap i {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            color: var(--muted); width: 17px; pointer-events: none;
+        }
+        .input-wrap input {
+            width: 100%; padding: 13px 14px 13px 44px;
+            border: 1.5px solid var(--border); border-radius: 12px;
+            font-size: 1rem; font-family: inherit; outline: none;
+            transition: .2s; background: #fafafa; color: var(--ink);
+        }
+        .input-wrap input:focus {
+            border-color: var(--primary); background: white;
+            box-shadow: 0 0 0 4px rgba(91,94,244,.1);
+        }
+
+        .btn-register {
+            width: 100%; background: var(--primary); color: white;
+            border: none; padding: 15px; border-radius: 12px;
+            font-weight: 700; font-size: 1rem; cursor: pointer;
+            font-family: inherit; display: flex; align-items: center;
+            justify-content: center; gap: 10px; transition: .2s; margin-top: 8px;
+        }
+        .btn-register:hover { background: #4a4de0; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(91,94,244,.3); }
+        .btn-register:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+        .msg {
+            min-height: 20px; text-align: center; font-size: 0.85rem;
+            font-weight: 600; margin-top: 14px;
+        }
+        .msg.error   { color: var(--danger); }
+        .msg.success { color: var(--success); }
+
+        .footer {
+            text-align: center; margin-top: 24px; padding-top: 20px;
+            border-top: 1px solid var(--border); font-size: 0.88rem; color: var(--muted);
+        }
+        .footer a { color: var(--primary); font-weight: 700; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+
+        /* hint box para empresa */
+        .hint-box {
+            background: var(--pl); border: 1px solid #c7d2fe;
+            border-radius: 10px; padding: 12px 14px; font-size: 0.82rem;
+            color: #4338ca; margin-bottom: 16px; display: none;
+        }
+        .hint-box.visible { display: block; }
+    </style>
 </head>
 <body>
+<div class="card">
+    <div class="logo">Villa María <span>Empleos</span></div>
+    <h2>Crear cuenta</h2>
+    <p class="sub">Elegí cómo querés unirte a la plataforma.</p>
 
-    <div class="login-card">
-        <div class="logo-header">
-            Villa María <span>Empleos</span>
-        </div>
-        <h2>Crear Cuenta</h2>
-        <p class="subtitle">Seleccioná cómo querés unirte a la red.</p>
-        
-        <!-- SELECTOR DE ROL -->
-        <div class="role-selector">
-            <button type="button" id="btnUser" class="role-btn active" onclick="setRole('USUARIO')">
-                <i data-lucide="user"></i> Usuario
-            </button>
-            <button type="button" id="btnEmp" class="role-btn" onclick="setRole('EMPRESA')">
-                <i data-lucide="building-2"></i> Empresa
-            </button>
-        </div>
+    <!-- Selector de rol -->
+    <div class="role-tabs">
+        <button class="role-tab active" id="tabUser" onclick="setRol('USER')">
+            <i data-lucide="user"></i> Busco trabajo
+        </button>
+        <button class="role-tab" id="tabEmpresa" onclick="setRol('EMPRESA')">
+            <i data-lucide="building-2"></i> Soy empresa
+        </button>
+    </div>
 
-        <form id="formRegistro">
-            <div class="form-group">
-                <i data-lucide="user"></i>
-                <input type="text" id="nombre" placeholder="Nombre completo o Empresa" required>
-            </div>
+    <div class="hint-box" id="hintEmpresa">
+        ℹ️ Las cuentas de empresa permiten publicar vacantes y gestionar candidatos.
+    </div>
 
-            <div class="form-group">
-                <i data-lucide="mail"></i>
-                <input type="email" id="email" placeholder="Correo Electrónico" required>
-            </div>
-            
-            <div class="form-group">
-                <i data-lucide="lock"></i>
-                <input type="password" id="password" placeholder="Contraseña" required>
-            </div>
-            
-            <button type="button" class="btn-primary" onclick="registrarNuevo()">
-                CREAR CUENTA <i data-lucide="user-plus"></i>
-            </button>
-        </form>
-        
-        <p id="msg"></p>
-        
-        <div class="footer-links">
-            ¿Ya tenés cuenta? <a href="login.html">Iniciá sesión</a>
+    <div class="field">
+        <label id="labelNombre">Nombre completo</label>
+        <div class="input-wrap">
+            <i data-lucide="user"></i>
+            <input type="text" id="nombre" placeholder="Tu nombre completo">
         </div>
     </div>
 
-    
-    <script>
-    lucide.createIcons();
+    <div class="field">
+        <label>Email</label>
+        <div class="input-wrap">
+            <i data-lucide="mail"></i>
+            <input type="email" id="email" placeholder="tu@email.com">
+        </div>
+    </div>
+
+    <div class="field">
+        <label>Contraseña</label>
+        <div class="input-wrap">
+            <i data-lucide="lock"></i>
+            <input type="password" id="password" placeholder="Mínimo 6 caracteres">
+        </div>
+    </div>
+
+    <button class="btn-register" id="btnRegister" onclick="registrar()">
+        <i data-lucide="user-plus" style="width:18px"></i> Crear cuenta
+    </button>
+
+    <p class="msg" id="msg"></p>
+
+    <div class="footer">
+        ¿Ya tenés cuenta? <a href="login.html">Iniciá sesión</a>
+    </div>
+</div>
+
+<script>
     let rolSeleccionado = 'USER';
 
-    function setRole(rol) {
-    rolSeleccionado = rol;
-    document.getElementById('btnUser').classList.toggle('active', rol === 'USER');
-    document.getElementById('btnEmp').classList.toggle('active', rol === 'EMPRESA');
-}
+    function setRol(rol) {
+        rolSeleccionado = rol;
+        document.getElementById('tabUser').classList.toggle('active', rol === 'USER');
+        document.getElementById('tabEmpresa').classList.toggle('active', rol === 'EMPRESA');
+        document.getElementById('hintEmpresa').classList.toggle('visible', rol === 'EMPRESA');
+        document.getElementById('labelNombre').innerText = rol === 'EMPRESA'
+            ? 'Nombre de la empresa'
+            : 'Nombre completo';
+        document.getElementById('nombre').placeholder = rol === 'EMPRESA'
+            ? 'Ej: Pizzería El Rancho'
+            : 'Tu nombre completo';
+    }
+
+    async function registrar() {
+        const nombre   = document.getElementById('nombre').value.trim();
+        const email    = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const msg      = document.getElementById('msg');
+        const btn      = document.getElementById('btnRegister');
+
+        msg.className = 'msg';
+
+        if (!nombre) { msg.className='msg error'; msg.innerText='El nombre es obligatorio.'; return; }
+        if (!email || !email.includes('@')) { msg.className='msg error'; msg.innerText='Ingresá un email válido.'; return; }
+        if (!password || password.length < 6) { msg.className='msg error'; msg.innerText='La contraseña debe tener al menos 6 caracteres.'; return; }
+
+        btn.disabled = true;
+        btn.innerHTML = 'Creando cuenta...';
+
+        const dto = {
+            nombre,
+            email,
+            password,
+            tipo: rolSeleccionado === 'EMPRESA' ? 'ROLE_EMPRESA' : 'ROLE_USER'
+        };
+
+        try {
+            const res = await fetch('/api/usuarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dto)
+            });
+
+            if (res.ok) {
+                msg.className = 'msg success';
+                msg.innerText = rolSeleccionado === 'EMPRESA'
+                    ? '✓ Cuenta de empresa creada. ¡Ya podés iniciar sesión!'
+                    : '✓ ¡Registro exitoso! Redirigiendo...';
+                setTimeout(() => window.location.href = 'login.html', 2000);
+            } else {
+                const txt = await res.text();
+                msg.className = 'msg error';
+                msg.innerText = txt || 'Error al registrarse.';
+                btn.disabled  = false;
+                btn.innerHTML = '<i data-lucide="user-plus" style="width:18px"></i> Crear cuenta';
+                lucide.createIcons();
+            }
+        } catch {
+            msg.className = 'msg error';
+            msg.innerText = 'Error de conexión. Intentá de nuevo.';
+            btn.disabled  = false;
+            btn.innerHTML = '<i data-lucide="user-plus" style="width:18px"></i> Crear cuenta';
+            lucide.createIcons();
+        }
+    }
 </script>
-<script src="js/registro.js"></script>
+<script>lucide.createIcons();</script>
 </body>
 </html>

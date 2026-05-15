@@ -67,19 +67,32 @@ async function enviarPostulacionFinal() {
         alert("Por favor, seleccioná tu archivo de CV.");
         return;
     }
+
+    const idUsuario = localStorage.getItem('usuarioId'); // Obtenemos tu ID de sesión
+    
     const formData = new FormData();
     formData.append('archivoCv', fileInput.files[0]);
-    formData.append('empleoId', idEmpleoActual);
+    formData.append('idUsuario', idUsuario); 
+    formData.append('idEmpleo', idEmpleoActual); // La variable que seteás al abrir el modal
 
     try {
-        const response = await fetch('/api/postulaciones/enviar', { method: 'POST', body: formData });
+        // CAMBIO CLAVE: La URL debe ser /aplicar, no /enviar
+        const response = await fetch('/api/postulaciones/aplicar', { 
+            method: 'POST', 
+            body: formData 
+        });
+
         if (response.ok) {
-            alert("¡Postulación enviada!");
+            alert("¡Postulación enviada con éxito!");
             cerrarModal();
         } else {
-            alert("Error al enviar postulación.");
+            const errorMsg = await response.text();
+            alert("Error: " + errorMsg);
         }
-    } catch (error) { console.error(error); }
+    } catch (error) {
+        console.error("Error de red:", error);
+        alert("No se pudo conectar con el servidor.");
+    }
 }
 
 function cerrarModal() {

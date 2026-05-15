@@ -1,49 +1,314 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Villa María Empleos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/registro.css">
+    <title>Ingresar - Villa María Empleos</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" href="data:,">
-</head>
-<body>
+    <style>
+        :root {
+            --ink: #0a0a0f;
+            --ink2: #1c1c2e;
+            --primary: #5b5ef4;
+            --pl: #ededff;
+            --danger: #ef4444;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --white: #ffffff;
+        }
 
-    <div class="login-card">
-        <div class="logo-header" style="margin-bottom: 20px; font-weight: 800; font-size: 1.4rem; color: #0f172a;">
-            Villa María <span style="color: #2563eb;">Empleos</span>
-        </div>
-        <h2>Ingreso al Sistema</h2>
-        <p class="subtitle">Gestioná tus búsquedas laborales</p>
-        
-        <div class="form-group">
-            <div class="input-wrapper">
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--ink2);
+            font-family: 'DM Sans', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 80% 20%, rgba(91, 94, 244, .2) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(91, 94, 244, .1) 0%, transparent 60%);
+        }
+
+        .card {
+            background: white;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 24px;
+            padding: 48px 44px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, .4);
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--ink2);
+            text-align: center;
+            margin-bottom: 28px;
+            letter-spacing: -.02em;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--ink);
+            text-align: center;
+            letter-spacing: -.04em;
+            margin-bottom: 6px;
+        }
+
+        .sub {
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 32px;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 7px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            width: 17px;
+            pointer-events: none;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            padding: 13px 14px 13px 44px;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+            transition: .2s;
+            background: #fafafa;
+            color: var(--ink);
+        }
+
+        .input-wrap input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(91, 94, 244, .1);
+        }
+
+        .btn-login {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: .2s;
+            margin-top: 8px;
+        }
+
+        .btn-login:hover {
+            background: #4a4de0;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(91, 94, 244, .3);
+        }
+
+        .btn-login:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .msg {
+            min-height: 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 14px;
+        }
+
+        .msg.error {
+            color: var(--danger);
+        }
+
+        .msg.success {
+            color: #10b981;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.88rem;
+            color: var(--muted);
+        }
+
+        .footer a {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="logo">Villa María <span>Empleos</span></div>
+        <h2>Bienvenido</h2>
+        <p class="sub">Ingresá con tu cuenta para continuar</p>
+
+        <div class="field">
+            <label>Email</label>
+            <div class="input-wrap">
                 <i data-lucide="mail"></i>
-                <input type="email" id="email" placeholder="Correo Electrónico">
+                <input type="email" id="email" placeholder="tu@email.com"
+                    onkeydown="if(event.key==='Enter')iniciarSesion()">
             </div>
         </div>
-        
-        <div class="form-group">
-            <div class="input-wrapper">
+
+        <div class="field">
+            <label>Contraseña</label>
+            <div class="input-wrap">
                 <i data-lucide="lock"></i>
-                <input type="password" id="password" placeholder="Contraseña">
+                <input type="password" id="password" placeholder="••••••••"
+                    onkeydown="if(event.key==='Enter')iniciarSesion()">
             </div>
         </div>
-        
-        <button class="btn-primary" onclick="iniciarSesion()">
-            ENTRAR <i data-lucide="arrow-right" style="width: 18px;"></i>
+
+        <button class="btn-login" id="btnLogin" onclick="iniciarSesion()">
+            <i data-lucide="log-in" style="width:18px"></i> Ingresar
         </button>
-        
-        <p id="msg"></p>
-        
-        <div class="footer-links">
-            ¿Sos una empresa nueva? <a href="registro.html">Crear cuenta</a>
+
+        <p class="msg" id="msg"></p>
+
+        <div class="footer">
+            ¿No tenés cuenta? <a href="registro.html">Registrarse</a>
         </div>
     </div>
 
-    <script src="js/login.js"></script>
+    <script>
+        async function iniciarSesion() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const msg = document.getElementById('msg');
+            const btn = document.getElementById('btnLogin');
+
+            msg.className = 'msg';
+            if (!email || !password) {
+                msg.className = 'msg error';
+                msg.innerText = 'Completá email y contraseña.';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = 'Ingresando...';
+
+            try {
+                const res = await fetch('/api/usuarios/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (res.ok) {
+                    const u = await res.json();
+                    localStorage.setItem('usuarioNombre', u.nombre);
+                    localStorage.setItem('usuarioId', u.id);
+                    localStorage.setItem('usuarioRol', u.tipo);
+                    localStorage.setItem('usuarioEmail', u.email);
+
+                    msg.className = 'msg success';
+                    msg.innerText = `¡Bienvenido/a, ${u.nombre}!`;
+
+                    setTimeout(() => {
+                        if (u.tipo === 'ROLE_ADMIN') {
+                            window.location.href = 'pantallaAdminRoot.html';
+                        } else if (u.tipo === 'ROLE_EMPRESA') {
+                            window.location.href = 'pantallaAdmin.html';
+                        } else {
+                            window.location.href = 'pantallausuario.html';
+                        }
+                    }, 900);
+                } else {
+                    msg.className = 'msg error';
+                    msg.innerText = 'Email o contraseña incorrectos.';
+                    btn.disabled = false;
+                    btn.innerHTML = '<i data-lucide="log-in" style="width:18px"></i> Ingresar';
+                    lucide.createIcons();
+                }
+            } catch {
+                msg.className = 'msg error';
+                msg.innerText = 'Error de conexión. Intentá de nuevo.';
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="log-in" style="width:18px"></i> Ingresar';
+                lucide.createIcons();
+            }
+        }
+    </script>
     <script>lucide.createIcons();</script>
 </body>
+
 </html>
