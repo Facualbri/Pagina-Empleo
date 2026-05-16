@@ -158,7 +158,6 @@
             flex-wrap: wrap;
         }
 
-        /* Foto de perfil */
         .foto-wrap {
             display: flex;
             flex-direction: column;
@@ -213,7 +212,6 @@
             display: none;
         }
 
-        /* Info básica */
         .perfil-info {
             flex: 1;
             min-width: 220px;
@@ -392,12 +390,10 @@
             margin-top: 3px;
         }
 
-        /* Textarea grande para experiencia */
         .textarea-exp {
             min-height: 180px;
         }
 
-        /* Tips de ayuda */
         .tip-box {
             background: var(--pl);
             border: 1px solid #c7d2fe;
@@ -417,7 +413,6 @@
             margin-top: 1px;
         }
 
-        /* Botones */
         .btn-guardar {
             background: var(--ink2);
             color: white;
@@ -443,30 +438,11 @@
             cursor: not-allowed;
         }
 
-        /* ── Sección contraseña ── */
         .pass-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 14px;
             max-width: 400px;
-        }
-
-        /* ── Vista previa (modo lectura) ── */
-        .preview-descripcion {
-            background: var(--bg);
-            padding: 16px;
-            border-radius: 10px;
-            line-height: 1.7;
-            color: #334155;
-            font-size: 0.95rem;
-            border: 1px solid var(--border);
-            white-space: pre-wrap;
-        }
-
-        .vacio {
-            color: var(--muted);
-            font-style: italic;
-            font-size: 0.9rem;
         }
 
         @media (max-width: 600px) {
@@ -504,11 +480,8 @@
             <button class="btn-nav" onclick="window.location.href='pantallausuario.html'">
                 <i data-lucide="arrow-left" style="width:15px"></i> Volver
             </button>
-
             <button class="btn-nav" onclick="cerrarSesion()">Salir</button>
         </div>
-
-
     </nav>
 
     <div class="page">
@@ -554,7 +527,6 @@
                 </div>
             </div>
         </div>
-
 
         <!-- Datos personales -->
         <div class="card">
@@ -610,7 +582,7 @@
                 <div class="form-group">
                     <label>Descripción personal</label>
                     <textarea id="descripcion" class="textarea-exp"
-                        placeholder="Ej: Soy una persona responsable y con ganas de aprender, con 2 años de experiencia en atención al cliente. Busco un trabajo de tiempo completo en el rubro gastronómico o comercial..."
+                        placeholder="Ej: Soy una persona responsable y con ganas de aprender..."
                         oninput="contarCaracteres('descripcion','countDesc',600)"></textarea>
                     <div class="char-count"><span id="countDesc">0</span>/600</div>
                 </div>
@@ -632,15 +604,12 @@
             <div class="card-body">
                 <div class="tip-box">
                     <i data-lucide="lightbulb"></i>
-                    <span>Podés listar tus trabajos anteriores con el cargo, la empresa y el período.
-                        Ejemplo:<br>
-                        <strong>Mozo — Pizzería El Rancho (2022–2024)</strong><br>
-                        Atención al cliente, manejo de caja y organización de salón.</span>
+                    <span>Podés listar tus trabajos anteriores con el cargo, la empresa y el período.</span>
                 </div>
                 <div class="form-group">
                     <label>Experiencia</label>
                     <textarea id="experiencia" class="textarea-exp"
-                        placeholder="Ej:&#10;Repositor — Supermercado Día (2021–2023)&#10;Reposición de mercadería, control de stock y atención al cliente.&#10;&#10;Delivery — Pizzería Don Juan (2020–2021)&#10;Reparto en moto, manejo de efectivo y atención telefónica."
+                        placeholder="Ej:&#10;Repositor — Supermercado Día (2021–2023)&#10;Reposición de mercadería..."
                         oninput="contarCaracteres('experiencia','countExp',1200)"></textarea>
                     <div class="char-count"><span id="countExp">0</span>/1200</div>
                 </div>
@@ -683,7 +652,7 @@
         </div>
 
         <div id="seccionSolicitudEmpresa" class="card"
-            style="border: 1.5px dashed var(--primary); background: var(--primary-l); margin-top: 20px;">
+            style="border: 1.5px dashed var(--primary); background: var(--pl); margin-top: 20px;">
             <div class="card-head">
                 <div class="card-head-icon" style="background: var(--primary); color: white;">
                     <i data-lucide="building-2"></i>
@@ -700,7 +669,7 @@
                 </div>
                 <div style="margin-top:18px">
                     <button id="btnSolicitarEmpresa" class="btn-guardar" onclick="enviarSolicitudEmpresa()"
-                        style="width: 100%; justify-content: center; background: var(--primary); border: none; color: white; padding: 10px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        style="width: 100%; justify-content: center; background: var(--primary);">
                         <i data-lucide="send" style="width:16px"></i> Enviar solicitud
                     </button>
                 </div>
@@ -710,6 +679,12 @@
     </div><!-- /page -->
 
     <script>
+        // ── FIX: helper JWT ──────────────────────────────────────────────────────
+        function authHeaders() {
+            const token = localStorage.getItem('token');
+            return token ? { 'Authorization': 'Bearer ' + token } : {};
+        }
+
         // ── Toast ────────────────────────────────────────────────────────────────
         function toast(msg, tipo = 'info') {
             const el = document.createElement('div');
@@ -743,85 +718,79 @@
             }
         });
 
-       async function cargarPerfil() {
-    try {
-        const res = await fetch(`/api/perfil/${idUsuario}`);
-        if (!res.ok) throw new Error('No se pudo cargar el perfil.');
-        const u = await res.json();
+        async function cargarPerfil() {
+            try {
+                // FIX: agregar authHeaders()
+                const res = await fetch(`/api/perfil/${idUsuario}`, {
+                    headers: authHeaders()
+                });
+                if (!res.ok) throw new Error('No se pudo cargar el perfil.');
+                const u = await res.json();
 
-        // ── Actualizar rol en localStorage con dato fresco del servidor ──
-        localStorage.setItem('usuarioRol', u.tipo);
+                localStorage.setItem('usuarioRol', u.tipo);
 
-        // ── Referencias a elementos ──
-        const btnAdmin = document.getElementById('btnVolverAdmin');
-        const seccionSolicitud = document.getElementById('seccionSolicitudEmpresa');
+                const btnAdmin = document.getElementById('btnVolverAdmin');
+                const seccionSolicitud = document.getElementById('seccionSolicitudEmpresa');
 
-        // ── Lógica según rol ──
-        if (u.tipo === 'ROLE_EMPRESA') {
-            if (btnAdmin) btnAdmin.style.display = 'flex';
-            if (seccionSolicitud) seccionSolicitud.style.display = 'none';
-        } else {
-            if (btnAdmin) btnAdmin.style.display = 'none';
-            if (seccionSolicitud) {
-                seccionSolicitud.style.display = 'block';
-                const btnSolicitar = document.getElementById('btnSolicitarEmpresa');
-                if (u.estadoSolicitud === 'PENDIENTE' && btnSolicitar) {
-                    btnSolicitar.disabled = true;
-                    btnSolicitar.innerHTML = '<i data-lucide="clock" style="width:16px"></i> Solicitud en revisión...';
-                    btnSolicitar.style.background = '#94a3b8';
-                    btnSolicitar.style.cursor = 'not-allowed';
+                if (u.tipo === 'ROLE_EMPRESA') {
+                    if (btnAdmin) btnAdmin.style.display = 'flex';
+                    if (seccionSolicitud) seccionSolicitud.style.display = 'none';
+                } else {
+                    if (btnAdmin) btnAdmin.style.display = 'none';
+                    if (seccionSolicitud) {
+                        seccionSolicitud.style.display = 'block';
+                        const btnSolicitar = document.getElementById('btnSolicitarEmpresa');
+                        if (u.estadoSolicitud === 'PENDIENTE' && btnSolicitar) {
+                            btnSolicitar.disabled = true;
+                            btnSolicitar.innerHTML = '<i data-lucide="clock" style="width:16px"></i> Solicitud en revisión...';
+                            btnSolicitar.style.background = '#94a3b8';
+                            btnSolicitar.style.cursor = 'not-allowed';
+                        }
+                    }
                 }
+
+                document.getElementById('heroNombre').innerText = u.nombre || '—';
+                document.getElementById('heroEmail').innerText = u.email || '—';
+
+                if (u.localidad) {
+                    document.getElementById('localidadTexto').innerText = u.localidad;
+                    document.getElementById('heroLocalidad').style.display = 'flex';
+                }
+                if (u.telefono) {
+                    document.getElementById('telefonoTexto').innerText = u.telefono;
+                    document.getElementById('heroTelefono').style.display = 'flex';
+                }
+
+                const esEmpresa = u.tipo === 'ROLE_EMPRESA';
+                document.getElementById('chipTipo').innerHTML = esEmpresa
+                    ? '<i data-lucide="building-2" style="width:13px"></i> Empresa'
+                    : '<i data-lucide="user" style="width:13px"></i> Candidato';
+
+                if (u.fotoPerfil) {
+                    const img = document.getElementById('fotoImg');
+                    img.src = `/uploads/fotoPerfil/${u.fotoPerfil}`;
+                    img.style.display = 'block';
+                    document.getElementById('fotoPlaceholder').style.display = 'none';
+                }
+
+                document.getElementById('nombre').value = u.nombre || '';
+                document.getElementById('email').value = u.email || '';
+                document.getElementById('telefono').value = u.telefono || '';
+                document.getElementById('localidad').value = u.localidad || '';
+                document.getElementById('descripcion').value = u.descripcion || '';
+                document.getElementById('experiencia').value = u.experiencia || '';
+
+                contarCaracteres('descripcion', 'countDesc', 600);
+                contarCaracteres('experiencia', 'countExp', 1200);
+
+                calcularCompletitud(u);
+                lucide.createIcons();
+
+            } catch (err) {
+                toast('Error al cargar el perfil.', 'error');
             }
         }
 
-        // ── Hero ──
-        document.getElementById('heroNombre').innerText = u.nombre || '—';
-        document.getElementById('heroEmail').innerText = u.email || '—';
-
-        if (u.localidad) {
-            document.getElementById('localidadTexto').innerText = u.localidad;
-            document.getElementById('heroLocalidad').style.display = 'flex';
-        }
-        if (u.telefono) {
-            document.getElementById('telefonoTexto').innerText = u.telefono;
-            document.getElementById('heroTelefono').style.display = 'flex';
-        }
-
-        // ── Chip de tipo ──
-        const esEmpresa = u.tipo === 'ROLE_EMPRESA';
-        document.getElementById('chipTipo').innerHTML = esEmpresa
-            ? '<i data-lucide="building-2" style="width:13px"></i> Empresa'
-            : '<i data-lucide="user" style="width:13px"></i> Candidato';
-
-        // ── Foto ──
-        if (u.fotoPerfil) {
-            const img = document.getElementById('fotoImg');
-            img.src = `/uploads/fotoPerfil/${u.fotoPerfil}`;
-            img.style.display = 'block';
-            document.getElementById('fotoPlaceholder').style.display = 'none';
-        }
-
-        // ── Formularios ──
-        document.getElementById('nombre').value = u.nombre || '';
-        document.getElementById('email').value = u.email || '';
-        document.getElementById('telefono').value = u.telefono || '';
-        document.getElementById('localidad').value = u.localidad || '';
-        document.getElementById('descripcion').value = u.descripcion || '';
-        document.getElementById('experiencia').value = u.experiencia || '';
-
-        // ── Contadores ──
-        contarCaracteres('descripcion', 'countDesc', 600);
-        contarCaracteres('experiencia', 'countExp', 1200);
-
-        // ── Barra de completitud ──
-        calcularCompletitud(u);
-
-        lucide.createIcons();
-
-    } catch (err) {
-        toast('Error al cargar el perfil.', 'error');
-    }
-}
         // ── Completitud ──────────────────────────────────────────────────────────
         function calcularCompletitud(u) {
             const campos = [u.nombre, u.email, u.fotoPerfil, u.descripcion, u.experiencia, u.telefono, u.localidad];
@@ -831,7 +800,7 @@
             document.getElementById('barraFill').style.width = pct + '%';
         }
 
-        // ── Guardar datos de texto ────────────────────────────────────────────────
+        // ── Guardar datos ────────────────────────────────────────────────────────
         async function guardarDatos() {
             const datos = {
                 nombre: document.getElementById('nombre').value.trim(),
@@ -846,9 +815,10 @@
             if (!datos.email || !datos.email.includes('@')) { toast('Ingresá un email válido.', 'error'); return; }
 
             try {
+                // FIX: agregar authHeaders() combinado con Content-Type
                 const res = await fetch(`/api/perfil/${idUsuario}/datos`, {
                     method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
                     body: JSON.stringify(datos)
                 });
                 if (res.ok) {
@@ -884,7 +854,6 @@
                 toast('La imagen no puede superar los 5 MB.', 'error'); return;
             }
 
-            // Preview inmediato
             const reader = new FileReader();
             reader.onload = e => {
                 document.getElementById('fotoImg').src = e.target.result;
@@ -897,7 +866,12 @@
             fd.append('foto', file);
 
             try {
-                const res = await fetch(`/api/perfil/${idUsuario}/foto`, { method: 'POST', body: fd });
+                // FIX: agregar authHeaders() — NO agregar Content-Type con FormData
+                const res = await fetch(`/api/perfil/${idUsuario}/foto`, {
+                    method: 'POST',
+                    headers: authHeaders(),
+                    body: fd
+                });
                 if (res.ok) {
                     toast('¡Foto de perfil actualizada!', 'success');
                 } else {
@@ -926,9 +900,10 @@
             }
 
             try {
+                // FIX: agregar authHeaders() combinado con Content-Type
                 const res = await fetch(`/api/perfil/${idUsuario}/password`, {
                     method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
                     body: JSON.stringify({ passwordActual, passwordNueva, passwordConfirm })
                 });
                 if (res.ok) {
@@ -948,94 +923,72 @@
             window.location.href = 'login.html';
         }
 
-        const btnSolicitar = document.getElementById('btnSolicitarEmpresa');
+        // ── Enviar solicitud de empresa ──────────────────────────────────────────
+        async function enviarSolicitudEmpresa() {
+            const id = localStorage.getItem('usuarioId');
 
-        if (btnSolicitar) {
-            btnSolicitar.onclick = async () => {
-                const id = localStorage.getItem('usuarioId');
-
-                if (!confirm("Se enviará una solicitud a los administradores. ¿Continuar?")) return;
-
-                try {
-                    // Mandamos un PUT para marcar la solicitud como PENDIENTE
-                    const res = await fetch(`/api/usuarios/${id}/solicitar-empresa`, { method: 'PUT' });
-
-                    if (res.ok) {
-                        alert("¡Solicitud enviada! Los encargados la revisarán pronto.");
-                        btnSolicitar.disabled = true;
-                        btnSolicitar.innerText = "Solicitud en revisión...";
-                        btnSolicitar.style.background = "var(--muted)";
-                    }
-                } catch (error) {
-                    console.error("Error al enviar solicitud:", error);
-                }
-            };
-
-            // Reemplazá desde "const btnSolicitar = ..." hasta el final del script
-            // por este código limpio:
-
-            async function enviarSolicitudEmpresa() {
-                const id = localStorage.getItem('usuarioId');
-
-                if (!id || id === "null" || id === "undefined") {
-                    toast("No se detectó tu sesión. Volvé a iniciar sesión.", "error");
-                    return;
-                }
-
-                if (!confirm("¿Querés enviar la solicitud para convertir tu cuenta a Empresa?")) return;
-
-                try {
-                    const res = await fetch(`/api/usuarios/${id}/solicitar-empresa`, { method: 'PUT' });
-                    const data = await res.json();
-
-                    if (res.ok) {
-                        toast("¡Solicitud enviada! Los administradores la revisarán pronto.", "success");
-                        const btn = document.getElementById('btnSolicitarEmpresa');
-                        if (btn) {
-                            btn.disabled = true;
-                            btn.innerHTML = '<i data-lucide="clock" style="width:16px"></i> Solicitud en revisión...';
-                            btn.style.background = "#94a3b8";
-                            btn.style.cursor = "not-allowed";
-                            lucide.createIcons();
-                        }
-                    } else {
-                        toast(data.error || "Error al enviar la solicitud.", "error");
-                    }
-                } catch (err) {
-                    console.error("Error:", err);
-                    toast("No se pudo conectar con el servidor.", "error");
-                }
+            if (!id || id === "null" || id === "undefined") {
+                toast("No se detectó tu sesión. Volvé a iniciar sesión.", "error");
+                return;
             }
 
-            // Deshabilitar el botón si ya hay solicitud pendiente al cargar
-            async function verificarEstadoSolicitud() {
-                const id = localStorage.getItem('usuarioId');
-                if (!id) return;
-                try {
-                    const res = await fetch(`/api/perfil/${id}`);
-                    const u = await res.json();
-                    const btn = document.getElementById('btnSolicitarEmpresa');
-                    const seccion = document.getElementById('seccionSolicitudEmpresa');
+            if (!confirm("¿Querés enviar la solicitud para convertir tu cuenta a Empresa?")) return;
 
-                    // Ocultar sección si ya es empresa
-                    if (u.tipo === 'ROLE_EMPRESA') {
-                        if (seccion) seccion.style.display = 'none';
-                        return;
-                    }
-                    // Deshabilitar botón si ya tiene solicitud pendiente
-                    if (u.estadoSolicitud === 'PENDIENTE' && btn) {
+            try {
+                // FIX: agregar authHeaders()
+                const res = await fetch(`/api/usuarios/${id}/solicitar-empresa`, {
+                    method: 'PUT',
+                    headers: authHeaders()
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    toast("¡Solicitud enviada! Los administradores la revisarán pronto.", "success");
+                    const btn = document.getElementById('btnSolicitarEmpresa');
+                    if (btn) {
                         btn.disabled = true;
                         btn.innerHTML = '<i data-lucide="clock" style="width:16px"></i> Solicitud en revisión...';
                         btn.style.background = "#94a3b8";
                         btn.style.cursor = "not-allowed";
                         lucide.createIcons();
                     }
-                } catch (e) { /* silencioso */ }
+                } else {
+                    toast(data.error || "Error al enviar la solicitud.", "error");
+                }
+            } catch (err) {
+                toast("No se pudo conectar con el servidor.", "error");
             }
         }
+
+        // ── Verificar estado de solicitud al cargar ──────────────────────────────
+        async function verificarEstadoSolicitud() {
+            const id = localStorage.getItem('usuarioId');
+            if (!id) return;
+            try {
+                // FIX: agregar authHeaders()
+                const res = await fetch(`/api/perfil/${id}`, {
+                    headers: authHeaders()
+                });
+                const u = await res.json();
+                const btn = document.getElementById('btnSolicitarEmpresa');
+                const seccion = document.getElementById('seccionSolicitudEmpresa');
+
+                if (u.tipo === 'ROLE_EMPRESA') {
+                    if (seccion) seccion.style.display = 'none';
+                    return;
+                }
+                if (u.estadoSolicitud === 'PENDIENTE' && btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i data-lucide="clock" style="width:16px"></i> Solicitud en revisión...';
+                    btn.style.background = "#94a3b8";
+                    btn.style.cursor = "not-allowed";
+                    lucide.createIcons();
+                }
+            } catch (e) { /* silencioso */ }
+        }
     </script>
+    <!-- FIX: eliminado <script src="js/perfil.js"></script> — ese archivo no existe -->
     <script>lucide.createIcons();</script>
-    <script src="js/perfil.js"></script>
 </body>
 
 </html>

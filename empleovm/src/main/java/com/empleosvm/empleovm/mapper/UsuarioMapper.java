@@ -39,7 +39,6 @@ public class UsuarioMapper {
         dto.setNombre(usuario.getNombre());
         dto.setEmail(usuario.getEmail());
         dto.setTipo(usuario.getTipo() != null ? usuario.getTipo().name() : "ROLE_USER");
-        dto.setTipo(usuario.getTipo() != null ? usuario.getTipo().name() : "ROLE_USER");
         dto.setFechaRegistro(usuario.getFechaRegistro());
 
         // Campos de perfil

@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-EmpleovmApplication<empleovm>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.empleosvm.empleovm.EmpleovmApplication",
+            "projectName": "empleovm",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

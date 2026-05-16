@@ -19,15 +19,37 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class FavoritoController {
 
-    @Autowired private FavoritoRepository favoritoRepository;
-    @Autowired private UsuarioRepository usuarioRepository;
-    @Autowired private EmpleoRepository empleoRepository;
+    @Autowired
+    private FavoritoRepository favoritoRepository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
+    private EmpleoRepository empleoRepository;
 
     // ─── Listar favoritos de un usuario ──────────────────────────────────────
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<?> listarFavoritos(@PathVariable Long idUsuario) {
         List<Favorito> favoritos = favoritoRepository.findByUsuarioId(idUsuario);
-        return ResponseEntity.ok(favoritos);
+
+        List<Map<String, Object>> resultado = favoritos.stream().map(f -> {
+            Map<String, Object> item = new java.util.HashMap<>();
+            item.put("id", f.getId());
+            item.put("fechaGuardado", f.getFechaGuardado());
+
+            Map<String, Object> empleo = new java.util.HashMap<>();
+            empleo.put("id", f.getEmpleo().getId());
+            empleo.put("titulo", f.getEmpleo().getTitulo());
+            empleo.put("empresa", f.getEmpleo().getEmpresa());
+            empleo.put("ubicacion", f.getEmpleo().getUbicacion());
+            empleo.put("sueldo", f.getEmpleo().getSueldo());
+            empleo.put("imagenUrl", f.getEmpleo().getImagenUrl());
+            empleo.put("activo", f.getEmpleo().isActivo());
+
+            item.put("empleo", empleo);
+            return item;
+        }).collect(java.util.stream.Collectors.toList());
+
+        return ResponseEntity.ok(resultado);
     }
 
     // ─── Verificar si un empleo es favorito ───────────────────────────────────

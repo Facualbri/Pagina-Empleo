@@ -38,7 +38,8 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background-image: radial-gradient(ellipse at 80% 20%, rgba(91, 94, 244, .2) 0%, transparent 60%),
+            background-image:
+                radial-gradient(ellipse at 80% 20%, rgba(91, 94, 244, .2) 0%, transparent 60%),
                 radial-gradient(ellipse at 20% 80%, rgba(91, 94, 244, .1) 0%, transparent 60%);
         }
 
@@ -194,23 +195,6 @@
         .footer a:hover {
             text-decoration: underline;
         }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 20px 0;
-            color: var(--muted);
-            font-size: 0.8rem;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
     </style>
 </head>
 
@@ -275,23 +259,27 @@
 
                 if (res.ok) {
                     const u = await res.json();
+
+                    // ── Guardar TODOS los datos de sesión ──────────────────────
                     localStorage.setItem('usuarioNombre', u.nombre);
                     localStorage.setItem('usuarioId', u.id);
                     localStorage.setItem('usuarioRol', u.tipo);
                     localStorage.setItem('usuarioEmail', u.email);
+                    localStorage.setItem('token', u.token);
+                    // Refresh token: persiste 30 días
+                    if (u.refreshToken) {
+                        localStorage.setItem('refreshToken', u.refreshToken);
+                    }
 
                     msg.className = 'msg success';
                     msg.innerText = `¡Bienvenido/a, ${u.nombre}!`;
 
                     setTimeout(() => {
-                        if (u.tipo === 'ROLE_ADMIN') {
-                            window.location.href = 'pantallaAdminRoot.html';
-                        } else if (u.tipo === 'ROLE_EMPRESA') {
-                            window.location.href = 'pantallaAdmin.html';
-                        } else {
-                            window.location.href = 'pantallausuario.html';
-                        }
+                        if (u.tipo === 'ROLE_ADMIN') window.location.href = 'pantallaAdminRoot.html';
+                        else if (u.tipo === 'ROLE_EMPRESA') window.location.href = 'pantallaAdmin.html';
+                        else window.location.href = 'pantallausuario.html';
                     }, 900);
+
                 } else {
                     msg.className = 'msg error';
                     msg.innerText = 'Email o contraseña incorrectos.';

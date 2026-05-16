@@ -970,7 +970,12 @@
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/auth.js"></script>
     <script>
+        // ── Variables globales ───────────────────────────────────────────────────
+        let leafletMap = null;
+        let idEmpleoActual = null;
+
         // ── Toast ───────────────────────────────────────────────────────────────
         function toast(msg, tipo = 'info') {
             const el = document.createElement('div');
@@ -982,16 +987,22 @@
         }
 
         // ── Init ────────────────────────────────────────────────────────────────
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Verificar sesión al cargar
+            if (!verificarSesion()) return;
+
             const nombre = localStorage.getItem('usuarioNombre');
             document.getElementById('nombreUser').innerText = nombre || 'Invitado';
+
+            await cargarFavoritosIniciales();
             cargarOfertas();
+            verificarCambioRol();
         });
 
         // ── Cargar y renderizar ─────────────────────────────────────────────────
         async function cargarOfertas() {
             try {
-                const res = await fetch('/api/empleos');
+                const res = await fetch('/api/empleos'); // ruta pública, no necesita token
                 const empleos = await res.json();
                 renderizarCards(empleos.filter(e => e.activo));
             } catch {
@@ -1024,7 +1035,6 @@
             cargarOfertas();
         }
 
-        // ── Esta es la función que te faltaba y que no encontrabas ──
         function renderizarCards(lista) {
             const cont = document.getElementById('resultados');
             const badge = document.getElementById('countBadge');
@@ -1043,38 +1053,37 @@
             cont.innerHTML = lista.map(e => {
                 const fotoHTML = e.imagenUrl
                     ? `<img class="card-img" src="/uploads/fotos/${e.imagenUrl}" alt="${e.titulo}"
-                onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Empresa&background=5b5ef4&color=fff';">`
+                    onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Empresa&background=5b5ef4&color=fff';">`
                     : `<div class="card-img-placeholder"><i data-lucide="image" style="width:40px;height:40px"></i></div>`;
 
                 const sueldo = (e.sueldo && e.sueldo > 0)
-                    ? `$${Number(e.sueldo).toLocaleString('es-AR')}`
-                    : 'A convenir';
+                    ? `$${Number(e.sueldo).toLocaleString('es-AR')}` : 'A convenir';
+
+                const esFav = favoritosDelUsuario.has(e.id);
 
                 return `
-        <div class="empleo-card" onclick="abrirDetalle(${e.id})">
-            ${fotoHTML}
-            <button class="btn-favorito" id="fav-${e.id}"
-                onclick="event.stopPropagation(); toggleFavorito(${e.id})"
-                title="Guardar en favoritos">
-                <i data-lucide="heart" style="width:16px"></i>
-            </button>
-            <div class="card-body">
-                <div class="card-empresa">${e.empresa || 'Empresa'}</div>
-                <div class="card-titulo">${e.titulo}</div>
-                <div class="card-meta">
-                    <span><i data-lucide="map-pin"></i>${e.ubicacion || 'Villa María'}</span>
+            <div class="empleo-card" onclick="abrirDetalle(${e.id})">
+                ${fotoHTML}
+                <button class="btn-favorito ${esFav ? 'activo' : ''}" id="fav-${e.id}"
+                    onclick="event.stopPropagation(); toggleFavorito(${e.id})"
+                    title="${esFav ? 'Quitar de favoritos' : 'Guardar en favoritos'}">
+                    <i data-lucide="heart" style="width:16px"></i>
+                </button>
+                <div class="card-body">
+                    <div class="card-empresa">${e.empresa || 'Empresa'}</div>
+                    <div class="card-titulo">${e.titulo}</div>
+                    <div class="card-meta">
+                        <span><i data-lucide="map-pin"></i>${e.ubicacion || 'Villa María'}</span>
+                    </div>
+                    <div class="sueldo-tag">${sueldo}</div>
+                    <button class="btn-ver">Ver detalles →</button>
                 </div>
-                <div class="sueldo-tag">${sueldo}</div>
-                <button class="btn-ver">Ver detalles →</button>
-            </div>
-        </div>`;
+            </div>`;
             }).join('');
 
             if (window.lucide) lucide.createIcons();
-
-            // Marcar los que ya son favoritos
-            cargarEstadoFavoritos(lista.map(e => e.id));
         }
+
         async function abrirDetalle(id) {
             idEmpleoActual = id;
             try {
@@ -1095,8 +1104,7 @@
                 }
 
                 document.getElementById('modalSueldo').innerText = (e.sueldo && e.sueldo > 0)
-                    ? `$${Number(e.sueldo).toLocaleString('es-AR')}`
-                    : 'Sueldo a convenir';
+                    ? `$${Number(e.sueldo).toLocaleString('es-AR')}` : 'Sueldo a convenir';
 
                 document.getElementById('avisoPausado').innerHTML = !e.activo
                     ? '<div class="aviso-pausado">⚠️ Esta vacante está temporalmente pausada.</div>' : '';
@@ -1111,22 +1119,32 @@
 
         async function iniciarMapa(direccion) {
             if (leafletMap) { leafletMap.remove(); leafletMap = null; }
+            const mapaEl = document.getElementById('modalMapa');
+            mapaEl.innerHTML = '';
+
             try {
                 const q = encodeURIComponent(`${direccion}, Villa Maria, Cordoba, Argentina`);
                 const geo = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}`);
                 const data = await geo.json();
-                const pos = data.length ? [data[0].lat, data[0].lon] : [-32.4103, -63.2402];
+                const pos = data.length ? [parseFloat(data[0].lat), parseFloat(data[0].lon)] : [-32.4103, -63.2402];
+
                 leafletMap = L.map('modalMapa').setView(pos, 15);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(leafletMap);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap'
+                }).addTo(leafletMap);
                 L.marker(pos).addTo(leafletMap);
-                setTimeout(() => leafletMap.invalidateSize(), 250);
-            } catch { /* sin mapa */ }
+                setTimeout(() => leafletMap && leafletMap.invalidateSize(), 300);
+            } catch {
+                document.getElementById('modalMapa').innerHTML =
+                    '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:0.9rem;">No se pudo cargar el mapa</div>';
+            }
         }
 
         function cerrarModal() {
             document.getElementById('modalDetalle').style.display = 'none';
             document.getElementById('cvArchivo').value = '';
             document.getElementById('modalFoto').src = '';
+            if (leafletMap) { leafletMap.remove(); leafletMap = null; }
         }
 
         // ── Postular ─────────────────────────────────────────────────────────────
@@ -1143,7 +1161,8 @@
             fd.append('idEmpleo', idEmpleoActual);
 
             try {
-                const res = await fetch('/api/postulaciones/aplicar', { method: 'POST', body: fd });
+                // Sin Content-Type en headers con FormData
+                const res = await apiFetch('/api/postulaciones/aplicar', { method: 'POST', body: fd });
                 if (res.ok) {
                     toast('¡Postulación enviada con éxito!', 'success');
                     cerrarModal();
@@ -1167,7 +1186,7 @@
             document.getElementById('modalPostulaciones').style.display = 'flex';
 
             try {
-                const res = await fetch(`/api/postulaciones/mis-postulaciones/${idUsuario}`);
+                const res = await apiFetch(`/api/postulaciones/mis-postulaciones/${idUsuario}`);
                 const datos = await res.json();
 
                 if (!datos.length) {
@@ -1180,21 +1199,15 @@
                 }
 
                 cont.innerHTML = datos.map(p => {
-                    // ── Config de estado ──
                     const estadoConfig = {
                         'PENDIENTE': { clase: 'badge-pendiente', label: '⏳ Pendiente' },
                         'EN_PROCESO': { clase: 'badge-en-proceso', label: '🔄 En proceso' },
                         'CONTACTADO': { clase: 'badge-contactado', label: '✓ Te contactaron' },
                         'DESCARTADO': { clase: 'badge-descartado', label: '✗ No seleccionado' },
                     };
-
                     const estado = estadoConfig[p.estadoCandidato] || estadoConfig['PENDIENTE'];
-
                     const fecha = p.fechaPostulacion
-                        ? new Date(p.fechaPostulacion).toLocaleDateString('es-AR')
-                        : '';
-
-                    // ── Mensaje extra según estado ──
+                        ? new Date(p.fechaPostulacion).toLocaleDateString('es-AR') : '';
                     const mensajeExtra = {
                         'CONTACTADO': '🎉 ¡Buenas noticias! La empresa quiere contactarte.',
                         'DESCARTADO': 'La empresa decidió no continuar con tu postulación.',
@@ -1207,49 +1220,43 @@
                         : '<span style="background:#f1f5f9;color:var(--muted);padding:2px 8px;border-radius:10px;font-size:0.72rem;font-weight:700;">No visto</span>';
 
                     return `
-            <div class="postulacion-item">
-                <div class="postulacion-item-top">
-                    <div>
-                        <div class="pi-titulo">${p.empleo?.titulo || '—'}</div>
-                        <div class="pi-empresa">${p.empleo?.empresa || '—'}</div>
+                <div class="postulacion-item">
+                    <div class="postulacion-item-top">
+                        <div>
+                            <div class="pi-titulo">${p.empleo?.titulo || '—'}</div>
+                            <div class="pi-empresa">${p.empleo?.empresa || '—'}</div>
+                        </div>
+                        <span class="badge-estado ${estado.clase}">${estado.label}</span>
                     </div>
-                    <span class="badge-estado ${estado.clase}">${estado.label}</span>
-                </div>
-                ${mensajeExtra ? `
-                <div style="font-size:0.82rem;color:#475569;background:var(--bg);
-                    padding:8px 12px;border-radius:8px;border-left:3px solid var(--primary)">
-                    ${mensajeExtra}
-                </div>` : ''}
-                <div class="postulacion-item-bottom">
-                    ${vistoBadge}
-                    ${fecha ? `<span>· Enviado el ${fecha}</span>` : ''}
-                </div>
-            </div>`;
+                    ${mensajeExtra ? `
+                    <div style="font-size:0.82rem;color:#475569;background:var(--bg);
+                        padding:8px 12px;border-radius:8px;border-left:3px solid var(--primary)">
+                        ${mensajeExtra}
+                    </div>` : ''}
+                    <div class="postulacion-item-bottom">
+                        ${vistoBadge}
+                        ${fecha ? `<span>· Enviado el ${fecha}</span>` : ''}
+                    </div>
+                </div>`;
                 }).join('');
 
             } catch {
                 toast('Error al cargar postulaciones.', 'error');
             }
         }
-        // ── Verificar si el admin cambió el rol mientras el usuario estaba logueado ──
+
+        // ── Verificar cambio de rol ──────────────────────────────────────────────
         async function verificarCambioRol() {
             const idUsuario = localStorage.getItem('usuarioId');
             const rolGuardado = localStorage.getItem('usuarioRol');
-
-            // Solo aplica si en localStorage figura como ROLE_USER
             if (!idUsuario || rolGuardado !== 'ROLE_USER') return;
 
             try {
-                const res = await fetch(`/api/perfil/${idUsuario}`);
+                const res = await apiFetch(`/api/perfil/${idUsuario}`);
                 if (!res.ok) return;
                 const u = await res.json();
-
-                // Si el servidor dice que ahora es ROLE_EMPRESA → mostrar notificación
                 if (u.tipo === 'ROLE_EMPRESA') {
-                    // Actualizamos el localStorage con el rol nuevo
                     localStorage.setItem('usuarioRol', 'ROLE_EMPRESA');
-
-                    // Mostramos el modal de felicitación
                     document.getElementById('modalAprobado').style.display = 'flex';
                     lucide.createIcons();
                 }
@@ -1257,30 +1264,20 @@
         }
 
         function irAlPanelEmpresa() {
-            // Actualizamos localStorage y redirigimos
             localStorage.setItem('usuarioRol', 'ROLE_EMPRESA');
             window.location.href = 'pantallaAdmin.html';
         }
 
-        // ── Favoritos ────────────────────────────────────────────────────────────────
-        let favoritosDelUsuario = new Set(); // IDs de empleos favoritos
+        // ── Favoritos ────────────────────────────────────────────────────────────
+        let favoritosDelUsuario = new Set();
 
-        async function cargarEstadoFavoritos(idsEmpleos) {
+        async function cargarFavoritosIniciales() {
             const idUsuario = localStorage.getItem('usuarioId');
             if (!idUsuario) return;
-
             try {
-                const res = await fetch(`/api/favoritos/usuario/${idUsuario}`);
+                const res = await apiFetch(`/api/favoritos/usuario/${idUsuario}`);
                 const lista = await res.json();
-
-                // Guardamos los IDs en el Set
                 favoritosDelUsuario = new Set(lista.map(f => f.empleo.id));
-
-                // Marcamos los botones que ya son favoritos
-                favoritosDelUsuario.forEach(idEmpleo => {
-                    const btn = document.getElementById(`fav-${idEmpleo}`);
-                    if (btn) btn.classList.add('activo');
-                });
             } catch { /* silencioso */ }
         }
 
@@ -1293,8 +1290,7 @@
 
             try {
                 if (esFav) {
-                    // Quitar favorito
-                    const res = await fetch(
+                    const res = await apiFetch(
                         `/api/favoritos?idUsuario=${idUsuario}&idEmpleo=${idEmpleo}`,
                         { method: 'DELETE' }
                     );
@@ -1304,8 +1300,7 @@
                         toast('Quitado de favoritos.', 'info');
                     }
                 } else {
-                    // Agregar favorito
-                    const res = await fetch(
+                    const res = await apiFetch(
                         `/api/favoritos?idUsuario=${idUsuario}&idEmpleo=${idEmpleo}`,
                         { method: 'POST' }
                     );
@@ -1327,7 +1322,7 @@
             document.getElementById('modalFavoritos').style.display = 'flex';
 
             try {
-                const res = await fetch(`/api/favoritos/usuario/${idUsuario}`);
+                const res = await apiFetch(`/api/favoritos/usuario/${idUsuario}`);
                 const lista = await res.json();
 
                 if (!lista.length) {
@@ -1335,9 +1330,6 @@
                 <div style="text-align:center;padding:40px;color:var(--muted)">
                     <p style="font-size:2rem;margin-bottom:8px">🤍</p>
                     <p>Todavía no guardaste ninguna vacante.</p>
-                    <p style="font-size:0.85rem;margin-top:6px">
-                        Tocá el corazón en cada aviso para guardarlo acá.
-                    </p>
                 </div>`;
                     return;
                 }
@@ -1345,29 +1337,26 @@
                 cont.innerHTML = lista.map(f => {
                     const e = f.empleo;
                     const sueldo = (e.sueldo && e.sueldo > 0)
-                        ? `$${Number(e.sueldo).toLocaleString('es-AR')}`
-                        : 'A convenir';
+                        ? `$${Number(e.sueldo).toLocaleString('es-AR')}` : 'A convenir';
 
                     return `
-            <div class="favorito-card">
-                <div style="flex:1">
-                    <div class="favorito-titulo">${e.titulo}</div>
-                    <div class="favorito-empresa">${e.empresa || '—'} · ${e.ubicacion || 'Villa María'}</div>
-                    <div class="favorito-sueldo">${sueldo}</div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
-                    <button class="btn-ver" style="padding:8px 14px;font-size:0.82rem;width:auto"
-                        onclick="document.getElementById('modalFavoritos').style.display='none';
-                                abrirDetalle(${e.id})">
-                        Ver →
-                    </button>
-                    <button onclick="toggleFavorito(${e.id});this.closest('.favorito-card').remove()"
-                        style="background:none;border:none;color:var(--danger);
-                            font-size:0.78rem;cursor:pointer;font-family:inherit;font-weight:600">
-                        🗑 Quitar
-                    </button>
-                </div>
-            </div>`;
+                <div class="favorito-card">
+                    <div style="flex:1">
+                        <div class="favorito-titulo">${e.titulo}</div>
+                        <div class="favorito-empresa">${e.empresa || '—'} · ${e.ubicacion || 'Villa María'}</div>
+                        <div class="favorito-sueldo">${sueldo}</div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+                        <button class="btn-ver" style="padding:8px 14px;font-size:0.82rem;width:auto"
+                            onclick="document.getElementById('modalFavoritos').style.display='none';abrirDetalle(${e.id})">
+                            Ver →
+                        </button>
+                        <button onclick="toggleFavorito(${e.id});this.closest('.favorito-card').remove()"
+                            style="background:none;border:none;color:var(--danger);font-size:0.78rem;cursor:pointer;font-family:inherit;font-weight:600">
+                            🗑 Quitar
+                        </button>
+                    </div>
+                </div>`;
                 }).join('');
 
             } catch {
@@ -1375,10 +1364,7 @@
             }
         }
 
-        function cerrarSesion() {
-            localStorage.clear();
-            window.location.href = 'login.html';
-        }
+        // cerrarSesion() es provista por auth.js (invalida el refresh token en servidor)
     </script>
     <script>lucide.createIcons();</script>
 

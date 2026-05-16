@@ -35,30 +35,31 @@ public class Usuario {
 
     // ── Campos de perfil ──────────────────────────────────────────────────────
 
-    // Nombre del archivo guardado en uploads/fotoPerfil/
     private String fotoPerfil;
 
-    // "Soy una persona proactiva con 3 años de experiencia en atención al
-    // cliente..."
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    // Experiencia laboral: cargos, empresas, períodos
     @Column(columnDefinition = "TEXT")
     private String experiencia;
 
-    // Teléfono de contacto
     private String telefono;
 
-    // Ciudad o barrio del candidato
     private String localidad;
+
+    // ── Refresh Token ─────────────────────────────────────────────────────────
+
+    @JsonIgnore
+    @Column(name = "refresh_token", length = 512)
+    private String refreshToken;
+
+    @Column(name = "refresh_token_expiry")
+    private LocalDateTime refreshTokenExpiry;
 
     // ─────────────────────────────────────────────────────────────────────────
 
     private LocalDateTime fechaRegistro;
 
-    // ─── Solicitud empresa
-    // ────────────────────────────────────────────────────────
     @Column(name = "estado_solicitud")
     private String estadoSolicitud;
 

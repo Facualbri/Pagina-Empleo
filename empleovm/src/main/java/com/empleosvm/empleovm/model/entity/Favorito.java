@@ -1,5 +1,6 @@
 package com.empleosvm.empleovm.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,13 +8,8 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-    name = "favoritos",
-    uniqueConstraints = @UniqueConstraint(
-        name = "uk_favorito",
-        columnNames = {"usuario_id", "empleo_id"}
-    )
-)
+@Table(name = "favoritos", uniqueConstraints = @UniqueConstraint(name = "uk_favorito", columnNames = { "usuario_id",
+        "empleo_id" }))
 @Getter
 @Setter
 public class Favorito {
@@ -24,12 +20,12 @@ public class Favorito {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
-    @JsonIgnoreProperties({"password", "empleosPublicados"})
+    @JsonIgnore // ← ignorar completamente el usuario
     private Usuario usuario;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "empleo_id", nullable = false)
-    @JsonIgnoreProperties({"postulaciones", "usuario"})
+    @JsonIgnoreProperties({ "postulaciones", "usuario", "hibernateLazyInitializer", "handler" })
     private Empleo empleo;
 
     private LocalDateTime fechaGuardado;

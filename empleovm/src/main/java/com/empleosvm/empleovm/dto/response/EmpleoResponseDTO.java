@@ -22,6 +22,15 @@ public class EmpleoResponseDTO {
     private boolean activo;
     private long   cantidadPostulantes;
 
-    // Nuevo: fecha de publicación para ordenar/mostrar "Publicado hace X días"
+    // Postulaciones que la empresa aún no revisó (visto = false)
+    private long postulantesNuevos;
+
+    // Cantidad de veces que se abrió el detalle del aviso
+    private long vistas;
+
+    // Fecha de publicación
     private LocalDateTime fechaPublicacion;
+
+    // Fecha de vencimiento — cuando se alcanza, el aviso se pausa automáticamente
+    private LocalDateTime fechaVencimiento;
 }

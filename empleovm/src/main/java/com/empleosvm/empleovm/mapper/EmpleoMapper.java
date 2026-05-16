@@ -21,16 +21,24 @@ public class EmpleoMapper {
         dto.setImagenUrl(empleo.getImagenUrl());
         dto.setSueldo(empleo.getSueldo());
         dto.setActivo(empleo.isActivo());
+        dto.setFechaPublicacion(empleo.getFechaPublicacion());
+        dto.setFechaVencimiento(empleo.getFechaVencimiento());
+        dto.setVistas(empleo.getVistas());
 
         if (empleo.getUsuario() != null) {
             dto.setIdUsuario(empleo.getUsuario().getId());
         }
 
-        dto.setCantidadPostulantes(
-            empleo.getPostulaciones() != null ? empleo.getPostulaciones().size() : 0
-        );
-
-        dto.setFechaPublicacion(empleo.getFechaPublicacion());
+        if (empleo.getPostulaciones() != null) {
+            dto.setCantidadPostulantes(empleo.getPostulaciones().size());
+            long nuevos = empleo.getPostulaciones().stream()
+                    .filter(p -> !p.isVisto())
+                    .count();
+            dto.setPostulantesNuevos(nuevos);
+        } else {
+            dto.setCantidadPostulantes(0);
+            dto.setPostulantesNuevos(0);
+        }
 
         return dto;
     }
@@ -46,6 +54,7 @@ public class EmpleoMapper {
         empleo.setUbicacion(dto.getUbicacion());
         empleo.setSueldo(dto.getSueldo());
         empleo.setImagenUrl(dto.getImagenUrl());
+        empleo.setFechaVencimiento(dto.getFechaVencimiento());
         empleo.setActivo(true);
         return empleo;
     }

@@ -43,7 +43,6 @@
             color: var(--ink);
         }
 
-        /* ── Toast ── */
         #toast-container {
             position: fixed;
             bottom: 24px;
@@ -92,7 +91,6 @@
             }
         }
 
-        /* ── Navbar ── */
         .navbar {
             background: var(--ink2);
             height: 64px;
@@ -141,6 +139,9 @@
             cursor: pointer;
             font-family: inherit;
             transition: .2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .btn-nav:hover {
@@ -158,7 +159,6 @@
             border-color: var(--danger);
         }
 
-        /* ── Layout ── */
         .page {
             max-width: 1100px;
             margin: 0 auto;
@@ -168,10 +168,9 @@
             gap: 28px;
         }
 
-        /* ── Stats ── */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
             gap: 16px;
         }
 
@@ -184,6 +183,7 @@
             align-items: center;
             gap: 16px;
             transition: .2s;
+            cursor: default;
         }
 
         .stat-card:hover {
@@ -246,7 +246,6 @@
             max-width: 130px;
         }
 
-        /* ── Card ── */
         .card {
             background: white;
             border-radius: var(--r-xl);
@@ -286,7 +285,6 @@
             margin-top: 2px;
         }
 
-        /* ── Formulario publicar ── */
         .form-body {
             padding: 24px 28px;
         }
@@ -318,7 +316,8 @@
         }
 
         .form-group input,
-        .form-group textarea {
+        .form-group textarea,
+        .form-group select {
             padding: 11px 14px;
             border: 1.5px solid var(--border);
             border-radius: 10px;
@@ -330,7 +329,8 @@
         }
 
         .form-group input:focus,
-        .form-group textarea:focus {
+        .form-group textarea:focus,
+        .form-group select:focus {
             border-color: var(--primary);
             background: white;
             box-shadow: 0 0 0 3px var(--primary-l);
@@ -385,7 +385,63 @@
             cursor: not-allowed;
         }
 
-        /* ── Tabla ── */
+        .tabla-toolbar {
+            padding: 16px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 9px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            transition: .2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+
+        .filter-select {
+            padding: 9px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+            background: white;
+        }
+
+        .btn-exportar {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            padding: 9px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: .2s;
+        }
+
+        .btn-exportar:hover {
+            background: var(--success);
+            color: white;
+        }
+
         .table-wrap {
             overflow-x: auto;
         }
@@ -404,6 +460,24 @@
             font-weight: 700;
             border-bottom: 2px solid var(--bg);
             white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+            transition: .15s;
+        }
+
+        thead th:hover {
+            color: var(--primary);
+        }
+
+        thead th .sort-icon {
+            display: inline-block;
+            margin-left: 4px;
+            opacity: 0.4;
+        }
+
+        thead th.sorted .sort-icon {
+            opacity: 1;
+            color: var(--primary);
         }
 
         tbody td {
@@ -423,6 +497,12 @@
 
         .td-titulo {
             font-weight: 700;
+        }
+
+        .td-fecha {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-top: 2px;
         }
 
         .td-ubicacion {
@@ -450,29 +530,6 @@
             color: #b91c1c;
         }
 
-        .acciones {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-        }
-
-        .estado-select {
-            padding: 6px 10px;
-            border-radius: 8px;
-            border: 1.5px solid var(--border);
-            font-family: inherit;
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-            outline: none;
-            transition: .2s;
-            background: white;
-        }
-
-        .estado-select:focus {
-            border-color: var(--primary);
-        }
-
         .badge-pendiente {
             background: #f1f5f9;
             color: var(--muted);
@@ -493,33 +550,48 @@
             color: var(--danger);
         }
 
-        .candidato-card {
-            flex-direction: column;
-            /* cambiamos a columna para más espacio */
-            align-items: flex-start;
-            gap: 12px;
+        .badge-nuevo {
+            background: var(--primary);
+            color: white;
+            border-radius: 20px;
+            padding: 2px 7px;
+            font-size: 0.68rem;
+            font-weight: 800;
+            margin-left: 4px;
+            animation: pulse 2s infinite;
         }
 
-        .candidato-card-row {
-            width: 100%;
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .acciones {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
+            gap: 6px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
         }
 
         .btn-accion {
-            padding: 6px 12px;
+            padding: 6px 11px;
             border-radius: 8px;
             border: 1px solid var(--border);
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 600;
             cursor: pointer;
             font-family: inherit;
             transition: .2s;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
 
         .btn-azul {
@@ -555,7 +627,34 @@
             color: white;
         }
 
-        /* ── Modal candidatos ── */
+        .btn-amarillo {
+            background: #fefce8;
+            color: #854d0e;
+            border-color: #fef08a;
+        }
+
+        .btn-amarillo:hover {
+            background: var(--warning);
+            color: white;
+        }
+
+        .estado-select {
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            transition: .2s;
+            background: white;
+        }
+
+        .estado-select:focus {
+            border-color: var(--primary);
+        }
+
         .modal-overlay {
             display: none;
             position: fixed;
@@ -644,20 +743,40 @@
             color: white;
         }
 
+        .modal-candidatos-toolbar {
+            padding: 14px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
         .candidato-card {
             background: white;
             border: 1px solid var(--border);
             border-radius: 14px;
             padding: 16px 20px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 12px;
             transition: .2s;
         }
 
         .candidato-card:hover {
             border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .05);
+        }
+
+        .candidato-card.nuevo-postulante {
+            border-left: 3px solid var(--primary);
+        }
+
+        .candidato-card-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
         }
 
         .candidato-nombre {
@@ -682,6 +801,8 @@
             align-items: center;
             gap: 6px;
             transition: .2s;
+            border: none;
+            cursor: pointer;
         }
 
         .btn-cv:hover {
@@ -689,7 +810,68 @@
             color: white;
         }
 
-        /* ── Modal perfil ── */
+        .edit-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .edit-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .edit-group.full {
+            grid-column: span 2;
+        }
+
+        .edit-group label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .edit-group input,
+        .edit-group textarea {
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            transition: .2s;
+        }
+
+        .edit-group input:focus,
+        .edit-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-l);
+        }
+
+        .edit-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-guardar {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: .2s;
+        }
+
+        .btn-guardar:hover {
+            background: #4a4de0;
+        }
+
         .perfil-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -727,34 +909,103 @@
             border-color: var(--primary);
         }
 
-        .btn-guardar {
-            background: var(--primary);
+        .preview-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .preview-titulo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .preview-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .preview-meta span {
+            font-size: 0.82rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .preview-sueldo {
+            background: var(--ink2);
             color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
             font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.95rem;
-            transition: .2s;
+            margin-bottom: 12px;
         }
 
-        .btn-guardar:hover {
-            background: #4a4de0;
+        .preview-desc {
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: #475569;
         }
 
-        /* ── Empty ── */
+        .preview-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
+        }
+
         .empty {
             text-align: center;
             padding: 40px;
             color: var(--muted);
+            font-size: 0.9rem;
         }
 
-        .empty i {
-            width: 40px;
-            height: 40px;
-            margin-bottom: 12px;
+        .pagination {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 28px;
+            border-top: 1px solid var(--border);
+        }
+
+        .page-btn {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            background: white;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .page-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .page-btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -762,7 +1013,6 @@
 <body>
     <div id="toast-container"></div>
 
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">Villa María <span>Empresas</span></div>
         <div class="nav-right">
@@ -771,19 +1021,21 @@
                 <span id="nombreEmpresa">Cargando...</span>
             </span>
             <button class="btn-nav" onclick="window.location.href='pantallaUsuario.html'"
-                style="border-color: var(--primary); color: var(--primary); background: rgba(91, 94, 244, 0.1); display: flex; align-items: center; gap: 8px;">
-                <i data-lucide="eye" style="width:16px; height:16px;"></i>
-                Ver como Usuario
+                style="border-color:var(--primary);color:var(--primary);background:rgba(91,94,244,0.1)">
+                <i data-lucide="eye" style="width:16px"></i> Ver como Usuario
             </button>
-            <button class="btn-nav" onclick="abrirPerfil()">Mi Perfil</button>
-            <button class="btn-nav danger-nav" onclick="cerrarSesion()">Cerrar Sesión</button>
+            <button class="btn-nav" onclick="abrirPerfil()">
+                <i data-lucide="user" style="width:15px"></i> Mi Perfil
+            </button>
+            <button class="btn-nav danger-nav" onclick="cerrarSesion()">
+                <i data-lucide="log-out" style="width:15px"></i> Cerrar Sesión
+            </button>
         </div>
     </nav>
 
     <div class="page">
 
-        <!-- Stats -->
-        <div class="stats-grid" id="statsGrid">
+        <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon blue"><i data-lucide="briefcase"></i></div>
                 <div>
@@ -813,6 +1065,13 @@
                     <div class="stat-top" id="statTop" title="">—</div>
                 </div>
             </div>
+            <div class="stat-card">
+                <div class="stat-icon red"><i data-lucide="bell"></i></div>
+                <div>
+                    <div class="stat-value" id="statNuevos">—</div>
+                    <div class="stat-label">Sin revisar</div>
+                </div>
+            </div>
         </div>
 
         <!-- Publicar vacante -->
@@ -823,30 +1082,61 @@
                     <h2>Publicar nueva vacante</h2>
                     <p>Llegá a miles de candidatos locales.</p>
                 </div>
+                <button id="btnPreview" onclick="togglePreview()" class="btn-accion btn-gris" style="margin-left:auto">
+                    <i data-lucide="eye" style="width:13px"></i> Vista previa
+                </button>
             </div>
             <div class="form-body">
                 <div class="form-grid">
                     <div class="form-group">
                         <label><i data-lucide="briefcase" style="width:13px"></i> Puesto</label>
-                        <input type="text" id="titulo" placeholder="Ej: Mozo/a para eventos">
+                        <input type="text" id="titulo" placeholder="Ej: Mozo/a para eventos"
+                            oninput="actualizarPreview()">
                     </div>
                     <div class="form-group">
                         <label><i data-lucide="map-pin" style="width:13px"></i> Ubicación</label>
-                        <input type="text" id="ubicacion" placeholder="Ej: San Martín 150, Centro">
+                        <input type="text" id="ubicacion" placeholder="Ej: San Martín 150, Centro"
+                            oninput="actualizarPreview()">
                     </div>
                     <div class="form-group">
                         <label><i data-lucide="banknote" style="width:13px"></i> Sueldo mensual</label>
-                        <input type="number" id="sueldo" placeholder="Ej: 500000">
+                        <input type="number" id="sueldo" placeholder="Ej: 500000" oninput="actualizarPreview()">
                     </div>
                     <div class="form-group">
                         <label><i data-lucide="image" style="width:13px"></i> Imagen del local</label>
                         <input type="file" id="fotoArchivo" accept="image/*" class="file-input-custom">
                     </div>
+                    <div class="form-group">
+                        <label><i data-lucide="calendar-x" style="width:13px"></i> Vence el
+                            <span style="font-weight:400;color:var(--muted);text-transform:none">(opcional)</span>
+                        </label>
+                        <input type="date" id="fechaVencimiento">
+                    </div>
                     <div class="form-group full">
                         <label><i data-lucide="align-left" style="width:13px"></i> Descripción y requisitos</label>
                         <textarea id="descripcion"
-                            placeholder="Describí las tareas, horarios y qué buscás en el candidato..."></textarea>
+                            placeholder="Describí las tareas, horarios y qué buscás en el candidato..."
+                            oninput="actualizarPreview()"></textarea>
                     </div>
+
+                    <div class="form-group full" id="previewContainer" style="display:none">
+                        <span class="preview-label">
+                            <i data-lucide="eye" style="width:11px;display:inline;vertical-align:middle"></i>
+                            Así verán tu aviso los candidatos
+                        </span>
+                        <div class="preview-card">
+                            <div class="preview-titulo" id="pvTitulo">Nombre del puesto</div>
+                            <div class="preview-meta">
+                                <span><i data-lucide="building-2" style="width:12px"></i><span id="pvEmpresa">Tu
+                                        empresa</span></span>
+                                <span><i data-lucide="map-pin" style="width:12px"></i><span
+                                        id="pvUbicacion">Ubicación</span></span>
+                            </div>
+                            <div class="preview-sueldo" id="pvSueldo">Sueldo a convenir</div>
+                            <div class="preview-desc" id="pvDesc">Descripción del puesto...</div>
+                        </div>
+                    </div>
+
                     <button class="btn-publicar" id="btnPublicar" onclick="publicarAviso()">
                         <i data-lucide="send" style="width:18px"></i> Publicar Vacante
                     </button>
@@ -863,38 +1153,75 @@
                     <p>Gestioná el estado de cada vacante.</p>
                 </div>
             </div>
+
+            <div class="tabla-toolbar">
+                <input type="text" class="search-input" placeholder="🔍 Buscar por puesto..." id="searchTabla"
+                    oninput="filtrarTabla()">
+                <select class="filter-select" id="filtroEstado" onchange="filtrarTabla()">
+                    <option value="">Todos los estados</option>
+                    <option value="activa">Solo activos</option>
+                    <option value="pausada">Solo pausados</option>
+                </select>
+                <select class="filter-select" id="filtroOrden" onchange="filtrarTabla()">
+                    <option value="fecha_desc">Más recientes</option>
+                    <option value="fecha_asc">Más antiguos</option>
+                    <option value="postulantes_desc">Más postulantes</option>
+                    <option value="sueldo_desc">Mayor sueldo</option>
+                </select>
+                <button class="btn-exportar" onclick="exportarCSV()">
+                    <i data-lucide="download" style="width:14px"></i> Exportar CSV
+                </button>
+            </div>
+
             <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
-                            <th>Puesto</th>
-                            <th>Ubicación</th>
-                            <th>Sueldo</th>
+                            <th onclick="sortTabla('titulo')">Puesto <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTabla('ubicacion')">Ubicación <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTabla('sueldo')">Sueldo <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTabla('postulantes')">Postulantes <span class="sort-icon">↕</span></th>
                             <th>Estado</th>
                             <th style="text-align:right">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tablaOfertas">
                         <tr>
-                            <td colspan="5" class="empty">Cargando...</td>
+                            <td colspan="6" class="empty">Cargando...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <div class="pagination" id="paginacion"></div>
         </div>
 
-    </div><!-- /page -->
+    </div>
 
-    <!-- Modal candidatos -->
+    <!-- Modal Candidatos -->
     <div id="modalCandidatos" class="modal-overlay">
-        <div class="modal-box">
+        <div class="modal-box" style="max-width:660px">
             <button class="btn-cerrar" onclick="cerrarModalCandidatos()">&times;</button>
             <div class="modal-head">
                 <div class="modal-head-icon"><i data-lucide="users"></i></div>
                 <div>
                     <h3 id="modalCandidatosTitulo">Candidatos</h3>
-                    <p id="modalCandidatosSubtitulo">Gestioná los postulantes para esta vacante</p>
+                    <p id="modalCandidatosSubtitulo">Postulantes para esta vacante</p>
                 </div>
+                <button class="btn-exportar" onclick="exportarCandidatosCSV()"
+                    style="margin-left:auto;font-size:0.78rem;padding:7px 12px">
+                    <i data-lucide="download" style="width:13px"></i> CSV
+                </button>
+            </div>
+            <div class="modal-candidatos-toolbar">
+                <input type="text" class="search-input" id="searchCandidatos" placeholder="Buscar candidato..."
+                    oninput="filtrarCandidatos()" style="flex:1">
+                <select class="filter-select" id="filtroCandidatoEstado" onchange="filtrarCandidatos()">
+                    <option value="">Todos los estados</option>
+                    <option value="PENDIENTE">Pendientes</option>
+                    <option value="EN_PROCESO">En proceso</option>
+                    <option value="CONTACTADO">Contactados</option>
+                    <option value="DESCARTADO">Descartados</option>
+                </select>
             </div>
             <div class="modal-body" id="listaCandidatos">
                 <p class="empty">Cargando...</p>
@@ -902,7 +1229,51 @@
         </div>
     </div>
 
-    <!-- Modal perfil -->
+    <!-- Modal Editar Vacante -->
+    <div id="modalEditar" class="modal-overlay">
+        <div class="modal-box" style="max-width:560px">
+            <button class="btn-cerrar" onclick="cerrarModalEditar()">&times;</button>
+            <div class="modal-head">
+                <div class="modal-head-icon" style="background:#f59e0b"><i data-lucide="pencil"></i></div>
+                <div>
+                    <h3>Editar vacante</h3>
+                    <p>Modificá los datos del aviso publicado</p>
+                </div>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editId">
+                <div class="edit-grid">
+                    <div class="edit-group full">
+                        <label>Puesto / Título</label>
+                        <input type="text" id="editTitulo" placeholder="Nombre del puesto">
+                    </div>
+                    <div class="edit-group">
+                        <label>Ubicación</label>
+                        <input type="text" id="editUbicacion" placeholder="Dirección o zona">
+                    </div>
+                    <div class="edit-group">
+                        <label>Sueldo mensual</label>
+                        <input type="number" id="editSueldo" placeholder="Ej: 500000">
+                    </div>
+                    <div class="edit-group full">
+                        <label>Descripción y requisitos</label>
+                        <textarea id="editDescripcion" style="min-height:120px"
+                            placeholder="Describí el puesto..."></textarea>
+                    </div>
+                </div>
+                <div style="display:flex;gap:12px;margin-top:8px">
+                    <button class="btn-guardar" onclick="guardarEdicion()" style="flex:1">
+                        <i data-lucide="save" style="width:15px;vertical-align:middle;margin-right:4px"></i> Guardar
+                        cambios
+                    </button>
+                    <button class="btn-guardar" style="background:#f1f5f9;color:var(--muted)"
+                        onclick="cerrarModalEditar()">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Perfil -->
     <div id="modalPerfil" class="modal-overlay">
         <div class="modal-box" style="max-width:500px">
             <button class="btn-cerrar" onclick="cerrarModalPerfil()">&times;</button>
@@ -945,8 +1316,19 @@
         </div>
     </div>
 
+    <script src="js/auth.js"></script>
     <script>
-        // ── Toast ───────────────────────────────────────────────────────────────
+        // ── Estado global ──
+        let misEmpleos = [];
+        let empleosFiltrados = [];
+        let candidatosActuales = [];
+        let empleoIdActual = null;
+
+        const POR_PAGINA = 8;
+        let paginaActual = 1;
+        let sortCol = 'fecha';
+        let sortDir = 'desc';
+
         function toast(msg, tipo = 'info') {
             const el = document.createElement('div');
             el.className = `toast ${tipo}`;
@@ -956,34 +1338,30 @@
             setTimeout(() => el.remove(), 4000);
         }
 
-        // ── Init ────────────────────────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', () => {
+            if (!verificarSesion()) return;
             const id = localStorage.getItem('usuarioId');
             const nombre = localStorage.getItem('usuarioNombre');
-            if (!id) { window.location.href = 'login.html'; return; }
             document.getElementById('nombreEmpresa').innerText = nombre || '—';
             cargarEstadisticas(id);
             cargarMisEmpleos(id);
         });
 
-        // ── Estadísticas ─────────────────────────────────────────────────────────
         async function cargarEstadisticas(id) {
             try {
-                const res = await fetch(`/api/estadisticas/empresa/${id}`);
+                const res = await apiFetch(`/api/estadisticas/empresa/${id}`);
                 const s = await res.json();
                 document.getElementById('statTotal').innerText = s.totalAvisos ?? '—';
                 document.getElementById('statActivos').innerText = s.activos ?? '—';
                 document.getElementById('statPausados').innerText = s.pausados ?? '—';
                 document.getElementById('statPostulantes').innerText = s.totalPostulantes ?? '—';
+                document.getElementById('statNuevos').innerText = s.postulantesNuevos ?? '—';
                 const topEl = document.getElementById('statTop');
                 topEl.innerText = s.avisoMasPopular ? `★ ${s.avisoMasPopular}` : '';
                 topEl.title = s.avisoMasPopular || '';
-            } catch {
-                // silencioso — las tarjetas quedan en —
-            }
+            } catch { /* silencioso */ }
         }
 
-        // ── Publicar aviso ───────────────────────────────────────────────────────
         async function publicarAviso() {
             const titulo = document.getElementById('titulo').value.trim();
             const descripcion = document.getElementById('descripcion').value.trim();
@@ -1012,224 +1390,406 @@
             if (foto) fd.append('archivo', foto);
 
             try {
-                const res = await fetch('/api/empleos/con-foto', { method: 'POST', body: fd });
+                // apiFetch inyecta Authorization; NO pasar Content-Type con FormData
+                const res = await apiFetch('/api/empleos/con-foto', { method: 'POST', body: fd });
                 if (res.ok) {
                     toast('¡Vacante publicada con éxito!', 'success');
                     ['titulo', 'descripcion', 'ubicacion', 'sueldo'].forEach(id => document.getElementById(id).value = '');
                     document.getElementById('fotoArchivo').value = '';
+                    actualizarPreview();
                     const id = localStorage.getItem('usuarioId');
-                    cargarMisEmpleos(id);
+                    await cargarMisEmpleos(id);
                     cargarEstadisticas(id);
                 } else {
                     const err = await res.json().catch(() => ({}));
                     toast(err.error || 'Error al publicar.', 'error');
                 }
-            } catch {
-                toast('Error de conexión.', 'error');
-            } finally {
+            } catch { toast('Error de conexión.', 'error'); }
+            finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i data-lucide="send" style="width:18px"></i> Publicar Vacante';
                 lucide.createIcons();
             }
         }
 
-        // ── Cargar mis empleos ───────────────────────────────────────────────────
+        let previewVisible = false;
+        function togglePreview() {
+            previewVisible = !previewVisible;
+            document.getElementById('previewContainer').style.display = previewVisible ? 'flex' : 'none';
+            document.getElementById('btnPreview').innerHTML = previewVisible
+                ? '<i data-lucide="eye-off" style="width:13px"></i> Ocultar previa'
+                : '<i data-lucide="eye" style="width:13px"></i> Vista previa';
+            if (previewVisible) actualizarPreview();
+            lucide.createIcons();
+        }
+
+        function actualizarPreview() {
+            if (!previewVisible) return;
+            const t = document.getElementById('titulo').value.trim() || 'Nombre del puesto';
+            const u = document.getElementById('ubicacion').value.trim() || 'Ubicación';
+            const s = document.getElementById('sueldo').value;
+            const d = document.getElementById('descripcion').value.trim() || 'Descripción del puesto...';
+            document.getElementById('pvTitulo').innerText = t;
+            document.getElementById('pvEmpresa').innerText = localStorage.getItem('usuarioNombre') || 'Tu empresa';
+            document.getElementById('pvUbicacion').innerText = u;
+            document.getElementById('pvSueldo').innerText = s ? `$${Number(s).toLocaleString('es-AR')} / mes` : 'Sueldo a convenir';
+            document.getElementById('pvDesc').innerText = d;
+        }
+
+        // Ruta pública — no necesita token
         async function cargarMisEmpleos(idEmpresa) {
-            const tbody = document.getElementById('tablaOfertas');
             try {
                 const res = await fetch('/api/empleos');
                 const lista = await res.json();
-                const mios = lista.filter(e => String(e.idUsuario) === String(idEmpresa));
+                misEmpleos = lista.filter(e => String(e.idUsuario) === String(idEmpresa));
+                filtrarTabla();
+            } catch {
+                document.getElementById('tablaOfertas').innerHTML =
+                    `<tr><td colspan="6" class="empty">Error al cargar las publicaciones.</td></tr>`;
+            }
+        }
 
-                if (!mios.length) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="empty">
-                    <div style="text-align:center;padding:30px;color:var(--muted)">
-                        Todavía no publicaste ninguna vacante.
-                    </div></td></tr>`;
-                    return;
-                }
+        function filtrarTabla() {
+            const q = (document.getElementById('searchTabla').value || '').toLowerCase();
+            const estado = document.getElementById('filtroEstado').value;
+            const orden = document.getElementById('filtroOrden').value;
 
-                tbody.innerHTML = mios.map(e => {
-                    const sueldo = e.sueldo ? `$${Number(e.sueldo).toLocaleString('es-AR')}` : '—';
-                    const badge = e.activo
-                        ? '<span class="badge badge-activa">● Activa</span>'
-                        : '<span class="badge badge-pausada">● Pausada</span>';
-                    return `<tr>
+            let lista = misEmpleos.filter(e => {
+                const matchQ = !q || e.titulo.toLowerCase().includes(q) || (e.ubicacion || '').toLowerCase().includes(q);
+                const matchE = !estado || (estado === 'activa' ? e.activo : !e.activo);
+                return matchQ && matchE;
+            });
+
+            lista.sort((a, b) => {
+                if (orden === 'fecha_desc') return new Date(b.fechaPublicacion || 0) - new Date(a.fechaPublicacion || 0);
+                if (orden === 'fecha_asc') return new Date(a.fechaPublicacion || 0) - new Date(b.fechaPublicacion || 0);
+                if (orden === 'postulantes_desc') return (b.cantidadPostulantes || 0) - (a.cantidadPostulantes || 0);
+                if (orden === 'sueldo_desc') return (b.sueldo || 0) - (a.sueldo || 0);
+                return 0;
+            });
+
+            empleosFiltrados = lista;
+            paginaActual = 1;
+            renderTabla();
+        }
+
+        function sortTabla(col) {
+            if (sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+            else { sortCol = col; sortDir = 'asc'; }
+            empleosFiltrados.sort((a, b) => {
+                let va = a[col] ?? '', vb = b[col] ?? '';
+                if (col === 'postulantes') { va = a.cantidadPostulantes || 0; vb = b.cantidadPostulantes || 0; }
+                if (typeof va === 'string') return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+                return sortDir === 'asc' ? va - vb : vb - va;
+            });
+            document.querySelectorAll('thead th').forEach(th => th.classList.remove('sorted'));
+            renderTabla();
+        }
+
+        function renderTabla() {
+            const tbody = document.getElementById('tablaOfertas');
+            const inicio = (paginaActual - 1) * POR_PAGINA;
+            const pagina = empleosFiltrados.slice(inicio, inicio + POR_PAGINA);
+
+            if (!empleosFiltrados.length) {
+                tbody.innerHTML = `<tr><td colspan="6" class="empty">No se encontraron vacantes con esos filtros.</td></tr>`;
+                document.getElementById('paginacion').innerHTML = '';
+                return;
+            }
+
+            tbody.innerHTML = pagina.map(e => {
+                const sueldo = e.sueldo ? `$${Number(e.sueldo).toLocaleString('es-AR')}` : '—';
+                const badge = e.activo
+                    ? '<span class="badge badge-activa">● Activa</span>'
+                    : '<span class="badge badge-pausada">● Pausada</span>';
+                const fecha = e.fechaPublicacion
+                    ? new Date(e.fechaPublicacion).toLocaleDateString('es-AR') : '';
+                const nuevos = e.postulantesNuevos > 0
+                    ? `<span class="badge-nuevo">+${e.postulantesNuevos} nuevo${e.postulantesNuevos > 1 ? 's' : ''}</span>` : '';
+
+                return `<tr>
                     <td>
-                        <div class="td-titulo">${e.titulo}</div>
+                        <div class="td-titulo">${escHtml(e.titulo)}</div>
+                        ${fecha ? `<div class="td-fecha">Publicado: ${fecha}</div>` : ''}
                     </td>
-                    <td class="td-ubicacion">${e.ubicacion || '—'}</td>
+                    <td class="td-ubicacion">${escHtml(e.ubicacion || '—')}</td>
                     <td>${sueldo}</td>
+                    <td>
+                        <button class="btn-accion btn-azul" onclick="verCandidatos(${e.id},'${escHtml(e.titulo)}')">
+                            <i data-lucide="users" style="width:13px"></i> ${e.cantidadPostulantes || 0}
+                        </button>
+                        ${nuevos}
+                    </td>
                     <td>${badge}</td>
                     <td>
                         <div class="acciones">
-                            <button class="btn-accion btn-azul" onclick="verCandidatos(${e.id},'${escHtml(e.titulo)}')">
-                                <i data-lucide="users" style="width:13px"></i> ${e.cantidadPostulantes || 0}
+                            <button class="btn-accion btn-amarillo" onclick="abrirEditar(${e.id})" title="Editar">
+                                <i data-lucide="pencil" style="width:13px"></i>
                             </button>
                             <button class="btn-accion btn-gris" onclick="cambiarEstado(${e.id})">
                                 ${e.activo ? 'Pausar' : 'Activar'}
                             </button>
-                            <button class="btn-accion btn-rojo" onclick="eliminarEmpleo(${e.id})">
+                            <button class="btn-accion btn-rojo" onclick="eliminarEmpleo(${e.id})" title="Eliminar">
                                 <i data-lucide="trash-2" style="width:13px"></i>
                             </button>
                         </div>
                     </td>
                 </tr>`;
-                }).join('');
-                lucide.createIcons();
-            } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="5" class="empty">Error al cargar las publicaciones.</td></tr>`;
+            }).join('');
+
+            lucide.createIcons();
+            renderPaginacion();
+        }
+
+        function renderPaginacion() {
+            const total = Math.ceil(empleosFiltrados.length / POR_PAGINA);
+            const cont = document.getElementById('paginacion');
+            if (total <= 1) { cont.innerHTML = ''; return; }
+
+            let btns = `<button class="page-btn" onclick="irPagina(${paginaActual - 1})" ${paginaActual === 1 ? 'disabled' : ''}>‹</button>`;
+            for (let i = 1; i <= total; i++) {
+                btns += `<button class="page-btn ${i === paginaActual ? 'active' : ''}" onclick="irPagina(${i})">${i}</button>`;
             }
+            btns += `<button class="page-btn" onclick="irPagina(${paginaActual + 1})" ${paginaActual === total ? 'disabled' : ''}>›</button>`;
+            cont.innerHTML = btns;
+        }
+
+        function irPagina(n) {
+            const total = Math.ceil(empleosFiltrados.length / POR_PAGINA);
+            if (n < 1 || n > total) return;
+            paginaActual = n;
+            renderTabla();
         }
 
         function escHtml(str) {
-            return str.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+            if (!str) return '';
+            return String(str).replace(/'/g, "&#39;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
 
-        // ── Cambiar estado ───────────────────────────────────────────────────────
         async function cambiarEstado(id) {
             try {
-                const res = await fetch(`/api/empleos/${id}/cambiar-estado`, { method: 'PATCH' });
+                const res = await apiFetch(`/api/empleos/${id}/cambiar-estado`, { method: 'PATCH' });
                 const data = await res.json();
                 toast(data.mensaje || 'Estado actualizado.', 'success');
                 const idE = localStorage.getItem('usuarioId');
-                cargarMisEmpleos(idE);
+                await cargarMisEmpleos(idE);
                 cargarEstadisticas(idE);
-            } catch {
-                toast('Error al cambiar el estado.', 'error');
-            }
+            } catch { toast('Error al cambiar el estado.', 'error'); }
         }
 
-        // ── Eliminar ─────────────────────────────────────────────────────────────
         async function eliminarEmpleo(id) {
             if (!confirm('¿Borrar esta vacante? Esta acción no se puede deshacer.')) return;
             try {
-                await fetch(`/api/empleos/${id}`, { method: 'DELETE' });
+                await apiFetch(`/api/empleos/${id}`, { method: 'DELETE' });
                 toast('Vacante eliminada.', 'info');
                 const idE = localStorage.getItem('usuarioId');
-                cargarMisEmpleos(idE);
+                await cargarMisEmpleos(idE);
                 cargarEstadisticas(idE);
-            } catch {
-                toast('Error al eliminar.', 'error');
-            }
+            } catch { toast('Error al eliminar.', 'error'); }
         }
 
-        // ── Candidatos ───────────────────────────────────────────────────────────
+        function abrirEditar(id) {
+            const e = misEmpleos.find(x => x.id === id);
+            if (!e) return;
+            document.getElementById('editId').value = e.id;
+            document.getElementById('editTitulo').value = e.titulo || '';
+            document.getElementById('editUbicacion').value = e.ubicacion || '';
+            document.getElementById('editSueldo').value = e.sueldo || '';
+            document.getElementById('editDescripcion').value = e.descripcion || '';
+            document.getElementById('modalEditar').style.display = 'flex';
+        }
+
+        function cerrarModalEditar() { document.getElementById('modalEditar').style.display = 'none'; }
+
+        async function guardarEdicion() {
+            const id = document.getElementById('editId').value;
+            const titulo = document.getElementById('editTitulo').value.trim();
+            const ubicacion = document.getElementById('editUbicacion').value.trim();
+            const sueldo = document.getElementById('editSueldo').value;
+            const descripcion = document.getElementById('editDescripcion').value.trim();
+
+            if (!titulo || !descripcion) {
+                toast('El título y la descripción son obligatorios.', 'error'); return;
+            }
+
+            try {
+                const res = await apiFetch(`/api/empleos/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ titulo, ubicacion, sueldo: Number(sueldo), descripcion })
+                });
+                if (res.ok) {
+                    toast('Vacante actualizada correctamente.', 'success');
+                    cerrarModalEditar();
+                    const idE = localStorage.getItem('usuarioId');
+                    await cargarMisEmpleos(idE);
+                    cargarEstadisticas(idE);
+                } else {
+                    const err = await res.json().catch(() => ({}));
+                    toast(err.error || 'Error al guardar.', 'error');
+                }
+            } catch { toast('Error de conexión.', 'error'); }
+        }
+
         async function verCandidatos(id, titulo) {
+            empleoIdActual = id;
             document.getElementById('modalCandidatosTitulo').innerText = titulo;
             document.getElementById('modalCandidatosSubtitulo').innerText = 'Postulantes para esta vacante';
             document.getElementById('listaCandidatos').innerHTML = '<p class="empty">Cargando...</p>';
+            document.getElementById('searchCandidatos').value = '';
+            document.getElementById('filtroCandidatoEstado').value = '';
             document.getElementById('modalCandidatos').style.display = 'flex';
 
             try {
-                const res = await fetch(`/api/postulaciones/por-empleo/${id}`);
-                const lista = await res.json();
-                const cont = document.getElementById('listaCandidatos');
-
-                if (!lista.length) {
-                    cont.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted)">
-                Aún no hay postulantes para esta vacante.</div>`;
-                    return;
-                }
-
-                cont.innerHTML = lista.map(p => {
-                    const fecha = p.fechaPostulacion
-                        ? new Date(p.fechaPostulacion).toLocaleDateString('es-AR')
-                        : '';
-
-                    // Badge de estado actual
-                    const estadoClass = {
-                        'PENDIENTE': 'badge-pendiente',
-                        'EN_PROCESO': 'badge-en-proceso',
-                        'CONTACTADO': 'badge-contactado',
-                        'DESCARTADO': 'badge-descartado'
-                    }[p.estadoCandidato] || 'badge-pendiente';
-
-                    const estadoLabel = {
-                        'PENDIENTE': '⏳ Pendiente',
-                        'EN_PROCESO': '🔄 En proceso',
-                        'CONTACTADO': '✓ Contactado',
-                        'DESCARTADO': '✗ Descartado'
-                    }[p.estadoCandidato] || '⏳ Pendiente';
-
-                    return `
-            <div class="candidato-card" id="card-postulacion-${p.id}">
-                <div class="candidato-card-row">
-                    <div>
-                        <div class="candidato-nombre">${p.postulante?.nombre || 'Sin nombre'}</div>
-                        <div class="candidato-fecha">
-                            ${p.postulante?.email || ''} ${fecha ? '· ' + fecha : ''}
-                        </div>
-                    </div>
-                    <span class="badge ${estadoClass}" id="badge-estado-${p.id}">
-                        ${estadoLabel}
-                    </span>
-                </div>
-                <div class="candidato-card-row">
-                    <select class="estado-select" onchange="cambiarEstadoCandidato(${p.id}, this.value)">
-                        <option value="PENDIENTE"  ${p.estadoCandidato === 'PENDIENTE' ? 'selected' : ''}>⏳ Pendiente</option>
-                        <option value="EN_PROCESO" ${p.estadoCandidato === 'EN_PROCESO' ? 'selected' : ''}>🔄 En proceso</option>
-                        <option value="CONTACTADO" ${p.estadoCandidato === 'CONTACTADO' ? 'selected' : ''}>✓ Contactado</option>
-                        <option value="DESCARTADO" ${p.estadoCandidato === 'DESCARTADO' ? 'selected' : ''}>✗ Descartado</option>
-                    </select>
-                    <a href="/uploads/cvs/${p.archivoCv}" target="_blank" class="btn-cv">
-                        <i data-lucide="file-text" style="width:14px"></i> Ver CV
-                    </a>
-                </div>
-            </div>`;
-                }).join('');
-
+                const res = await apiFetch(`/api/postulaciones/por-empleo/${id}`);
+                candidatosActuales = await res.json();
+                renderCandidatos(candidatosActuales);
                 lucide.createIcons();
-            } catch {
-                toast('Error al cargar candidatos.', 'error');
-            }
+            } catch { toast('Error al cargar candidatos.', 'error'); }
         }
 
-        // ── Cambiar estado de un candidato ──────────────────────────────────────────
+        function filtrarCandidatos() {
+            const q = (document.getElementById('searchCandidatos').value || '').toLowerCase();
+            const estado = document.getElementById('filtroCandidatoEstado').value;
+            const filtrados = candidatosActuales.filter(p => {
+                const nombre = (p.postulante?.nombre || '').toLowerCase();
+                const email = (p.postulante?.email || '').toLowerCase();
+                const matchQ = !q || nombre.includes(q) || email.includes(q);
+                const matchE = !estado || p.estadoCandidato === estado;
+                return matchQ && matchE;
+            });
+            renderCandidatos(filtrados);
+        }
+
+        function renderCandidatos(lista) {
+            const cont = document.getElementById('listaCandidatos');
+            document.getElementById('modalCandidatosSubtitulo').innerText =
+                `${lista.length} postulante${lista.length !== 1 ? 's' : ''}`;
+
+            if (!lista.length) {
+                cont.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted)">No se encontraron postulantes.</div>`;
+                return;
+            }
+
+            const ESTADO_CLASS = { PENDIENTE: 'badge-pendiente', EN_PROCESO: 'badge-en-proceso', CONTACTADO: 'badge-contactado', DESCARTADO: 'badge-descartado' };
+            const ESTADO_LABEL = { PENDIENTE: '⏳ Pendiente', EN_PROCESO: '🔄 En proceso', CONTACTADO: '✓ Contactado', DESCARTADO: '✗ Descartado' };
+
+            cont.innerHTML = lista.map(p => {
+                const fecha = p.fechaPostulacion ? new Date(p.fechaPostulacion).toLocaleDateString('es-AR') : '';
+                const estadoC = ESTADO_CLASS[p.estadoCandidato] || 'badge-pendiente';
+                const estadoL = ESTADO_LABEL[p.estadoCandidato] || '⏳ Pendiente';
+                const esNuevo = !p.visto;
+
+                return `
+                <div class="candidato-card ${esNuevo ? 'nuevo-postulante' : ''}" id="card-postulacion-${p.id}">
+                    <div class="candidato-card-row">
+                        <div>
+                            <div class="candidato-nombre">
+                                ${escHtml(p.postulante?.nombre || 'Sin nombre')}
+                                ${esNuevo ? '<span class="badge-nuevo">NUEVO</span>' : ''}
+                            </div>
+                            <div class="candidato-fecha">
+                                ${escHtml(p.postulante?.email || '')} ${fecha ? '· ' + fecha : ''}
+                            </div>
+                        </div>
+                        <span class="badge ${estadoC}" id="badge-estado-${p.id}">${estadoL}</span>
+                    </div>
+                    <div class="candidato-card-row">
+                        <select class="estado-select" onchange="cambiarEstadoCandidato(${p.id}, this.value)">
+                            <option value="PENDIENTE"  ${p.estadoCandidato === 'PENDIENTE' ? 'selected' : ''}>⏳ Pendiente</option>
+                            <option value="EN_PROCESO" ${p.estadoCandidato === 'EN_PROCESO' ? 'selected' : ''}>🔄 En proceso</option>
+                            <option value="CONTACTADO" ${p.estadoCandidato === 'CONTACTADO' ? 'selected' : ''}>✓ Contactado</option>
+                            <option value="DESCARTADO" ${p.estadoCandidato === 'DESCARTADO' ? 'selected' : ''}>✗ Descartado</option>
+                        </select>
+                        <button class="btn-cv" onclick="verCV('${p.archivoCv}')">
+                            <i data-lucide="file-text" style="width:14px"></i> Ver CV
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        async function verCV(filename) {
+            try {
+                const res = await apiFetch(`/api/postulaciones/cv/${filename}`);
+                if (!res.ok) { toast('No se pudo cargar el CV.', 'error'); return; }
+                const blob = await res.blob();
+                window.open(URL.createObjectURL(blob), '_blank');
+            } catch { toast('Error al abrir el CV.', 'error'); }
+        }
+
         async function cambiarEstadoCandidato(idPostulacion, nuevoEstado) {
             try {
-                const res = await fetch(`/api/postulaciones/${idPostulacion}/estado`, {
+                const res = await apiFetch(`/api/postulaciones/${idPostulacion}/estado`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ estado: nuevoEstado })
                 });
-
                 if (res.ok) {
-                    // Actualizar el badge sin recargar todo
-                    const estadoClass = {
-                        'PENDIENTE': 'badge-pendiente',
-                        'EN_PROCESO': 'badge-en-proceso',
-                        'CONTACTADO': 'badge-contactado',
-                        'DESCARTADO': 'badge-descartado'
-                    }[nuevoEstado];
-
-                    const estadoLabel = {
-                        'PENDIENTE': '⏳ Pendiente',
-                        'EN_PROCESO': '🔄 En proceso',
-                        'CONTACTADO': '✓ Contactado',
-                        'DESCARTADO': '✗ Descartado'
-                    }[nuevoEstado];
-
+                    const ESTADO_CLASS = { PENDIENTE: 'badge-pendiente', EN_PROCESO: 'badge-en-proceso', CONTACTADO: 'badge-contactado', DESCARTADO: 'badge-descartado' };
+                    const ESTADO_LABEL = { PENDIENTE: '⏳ Pendiente', EN_PROCESO: '🔄 En proceso', CONTACTADO: '✓ Contactado', DESCARTADO: '✗ Descartado' };
                     const badge = document.getElementById(`badge-estado-${idPostulacion}`);
-                    if (badge) {
-                        badge.className = `badge ${estadoClass}`;
-                        badge.innerText = estadoLabel;
-                    }
-
+                    if (badge) { badge.className = `badge ${ESTADO_CLASS[nuevoEstado]}`; badge.innerText = ESTADO_LABEL[nuevoEstado]; }
+                    const p = candidatosActuales.find(x => x.id === idPostulacion);
+                    if (p) { p.estadoCandidato = nuevoEstado; p.visto = true; }
+                    const card = document.getElementById(`card-postulacion-${idPostulacion}`);
+                    if (card) card.classList.remove('nuevo-postulante');
                     toast('Estado actualizado.', 'success');
-                } else {
-                    toast('Error al actualizar el estado.', 'error');
-                }
-            } catch {
-                toast('Error de conexión.', 'error');
-            }
+                } else { toast('Error al actualizar el estado.', 'error'); }
+            } catch { toast('Error de conexión.', 'error'); }
         }
 
         function cerrarModalCandidatos() {
             document.getElementById('modalCandidatos').style.display = 'none';
+            const idE = localStorage.getItem('usuarioId');
+            cargarMisEmpleos(idE);
+            cargarEstadisticas(idE);
         }
 
-        // ── Perfil ───────────────────────────────────────────────────────────────
+        function exportarCSV() {
+            if (!empleosFiltrados.length) { toast('No hay datos para exportar.', 'error'); return; }
+            const headers = ['ID', 'Título', 'Ubicación', 'Sueldo', 'Estado', 'Postulantes', 'Fecha publicación'];
+            const filas = empleosFiltrados.map(e => [
+                e.id,
+                `"${(e.titulo || '').replace(/"/g, '""')}"`,
+                `"${(e.ubicacion || '').replace(/"/g, '""')}"`,
+                e.sueldo || '',
+                e.activo ? 'Activo' : 'Pausado',
+                e.cantidadPostulantes || 0,
+                e.fechaPublicacion ? new Date(e.fechaPublicacion).toLocaleDateString('es-AR') : ''
+            ]);
+            descargarCSV([headers, ...filas], 'mis-vacantes.csv');
+            toast('CSV descargado.', 'success');
+        }
+
+        function exportarCandidatosCSV() {
+            if (!candidatosActuales.length) { toast('No hay candidatos para exportar.', 'error'); return; }
+            const headers = ['Nombre', 'Email', 'Estado', 'Visto', 'Fecha postulación', 'CV'];
+            const filas = candidatosActuales.map(p => [
+                `"${(p.postulante?.nombre || '').replace(/"/g, '""')}"`,
+                `"${(p.postulante?.email || '').replace(/"/g, '""')}"`,
+                p.estadoCandidato || 'PENDIENTE',
+                p.visto ? 'Sí' : 'No',
+                p.fechaPostulacion ? new Date(p.fechaPostulacion).toLocaleDateString('es-AR') : '',
+                p.archivoCv || ''
+            ]);
+            const empleo = misEmpleos.find(e => e.id === empleoIdActual);
+            const nombre = empleo ? empleo.titulo.replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'candidatos';
+            descargarCSV([headers, ...filas], `candidatos_${nombre}.csv`);
+            toast('CSV de candidatos descargado.', 'success');
+        }
+
+        function descargarCSV(filas, nombre) {
+            const contenido = '\uFEFF' + filas.map(f => f.join(',')).join('\n');
+            const blob = new Blob([contenido], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = nombre; a.click();
+            URL.revokeObjectURL(url);
+        }
+
         function abrirPerfil() {
             document.getElementById('perfilNombre').value = localStorage.getItem('usuarioNombre') || '';
             document.getElementById('perfilEmail').value = localStorage.getItem('usuarioEmail') || '';
@@ -1239,9 +1799,7 @@
             document.getElementById('modalPerfil').style.display = 'flex';
         }
 
-        function cerrarModalPerfil() {
-            document.getElementById('modalPerfil').style.display = 'none';
-        }
+        function cerrarModalPerfil() { document.getElementById('modalPerfil').style.display = 'none'; }
 
         async function guardarPerfil() {
             const id = localStorage.getItem('usuarioId');
@@ -1251,9 +1809,8 @@
             const nueva = document.getElementById('perfilPassNueva').value;
             const confirm = document.getElementById('perfilPassConfirm').value;
 
-            // Actualizar nombre/email
             try {
-                const res = await fetch(`/api/usuarios/${id}/perfil`, {
+                const res = await apiFetch(`/api/usuarios/${id}/perfil`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nombre, email })
@@ -1266,43 +1823,27 @@
                     toast('Datos actualizados correctamente.', 'success');
                 } else {
                     const err = await res.text();
-                    toast(err || 'Error al actualizar.', 'error');
-                    return;
+                    toast(err || 'Error al actualizar.', 'error'); return;
                 }
-            } catch {
-                toast('Error de conexión.', 'error'); return;
-            }
+            } catch { toast('Error de conexión.', 'error'); return; }
 
-            // Cambiar contraseña (solo si completó los campos)
             if (actual || nueva || confirm) {
-                if (nueva !== confirm) {
-                    toast('Las contraseñas nuevas no coinciden.', 'error'); return;
-                }
+                if (nueva !== confirm) { toast('Las contraseñas nuevas no coinciden.', 'error'); return; }
                 try {
-                    const res = await fetch(`/api/usuarios/${id}/cambiar-password`, {
+                    const res = await apiFetch(`/api/usuarios/${id}/cambiar-password`, {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ passwordActual: actual, passwordNueva: nueva })
                     });
-                    if (res.ok) {
-                        toast('Contraseña actualizada.', 'success');
-                    } else {
-                        const err = await res.text();
-                        toast(err || 'Error al cambiar contraseña.', 'error');
-                        return;
-                    }
-                } catch {
-                    toast('Error de conexión.', 'error'); return;
-                }
+                    if (res.ok) toast('Contraseña actualizada.', 'success');
+                    else { const err = await res.text(); toast(err || 'Error al cambiar contraseña.', 'error'); return; }
+                } catch { toast('Error de conexión.', 'error'); return; }
             }
 
             cerrarModalPerfil();
         }
 
-        function cerrarSesion() {
-            localStorage.clear();
-            window.location.href = 'login.html';
-        }
+        // cerrarSesion() es provista por auth.js
     </script>
     <script>lucide.createIcons();</script>
 </body>

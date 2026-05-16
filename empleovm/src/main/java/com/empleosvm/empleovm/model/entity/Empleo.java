@@ -41,23 +41,37 @@ public class Empleo {
 
     private String imagenUrl;
 
-    // Fecha de publicación — se setea automáticamente al crear
+    // ── Fechas ────────────────────────────────────────────────────────────────
+
+    /** Se setea automáticamente al persistir */
     private LocalDateTime fechaPublicacion;
+
+    /**
+     * Opcional: si se define, el aviso se pausa automáticamente cuando
+     * la fecha actual supera este valor (chequeado al listar en el service).
+     */
+    private LocalDateTime fechaVencimiento;
 
     @PrePersist
     protected void onCreate() {
         fechaPublicacion = LocalDateTime.now();
-        if (activo == false) activo = true; // Siempre arranca activo
+        if (!activo) activo = true;
     }
 
+    // ── Estado ────────────────────────────────────────────────────────────────
     private boolean activo = true;
 
-    // Relación con el usuario (empresa) que publicó
+    // ── Contador de visitas ───────────────────────────────────────────────────
+    /** Se incrementa cada vez que un candidato abre el detalle del aviso. */
+    @Column(name = "vistas", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    private long vistas = 0;
+
+    // ── Relaciones ────────────────────────────────────────────────────────────
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
-    // EAGER para que el contador de postulantes funcione sin lazy init exceptions
     @JsonIgnore
     @OneToMany(mappedBy = "empleo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Postulacion> postulaciones = new ArrayList<>();

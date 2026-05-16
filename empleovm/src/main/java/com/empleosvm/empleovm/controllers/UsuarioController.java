@@ -4,13 +4,15 @@ import com.empleosvm.empleovm.dto.request.UsuarioRequestDTO;
 import com.empleosvm.empleovm.dto.response.UsuarioResponseDTO;
 import com.empleosvm.empleovm.mapper.UsuarioMapper;
 import com.empleosvm.empleovm.model.entity.Usuario;
+import com.empleosvm.empleovm.repository.UsuarioRepository;
+import com.empleosvm.empleovm.security.JwtService;
 import com.empleosvm.empleovm.service.interfaces.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.empleosvm.empleovm.repository.UsuarioRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,10 +26,13 @@ public class UsuarioController {
     private IUsuarioService usuarioService;
 
     @Autowired
+    private JwtService jwtService;
+
+    @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private UsuarioMapper usuarioMapper; // ← esto faltaba
+    private UsuarioMapper usuarioMapper;
 
     // ─── Crear usuario ────────────────────────────────────────────────────────
     @PostMapping
@@ -72,10 +77,31 @@ public class UsuarioController {
         if (loginDTO.getEmail() == null || loginDTO.getPassword() == null)
             return ResponseEntity.badRequest().body("Email y contraseña son obligatorios.");
 
-        UsuarioResponseDTO usuario = usuarioService.autenticar(loginDTO.getEmail(), loginDTO.getPassword());
-        if (usuario != null) {
-            return ResponseEntity.ok(usuario);
+        UsuarioResponseDTO usuarioDTO = usuarioService.autenticar(loginDTO.getEmail(), loginDTO.getPassword());
+
+        if (usuarioDTO != null) {
+            // Access token (8 horas)
+            String accessToken = jwtService.generarToken(
+                    usuarioDTO.getId(), usuarioDTO.getEmail(), usuarioDTO.getTipo());
+            usuarioDTO.setToken(accessToken);
+
+            // Refresh token (30 días) — persistido en BD
+            String refreshToken = jwtService.generarRefreshToken();
+            LocalDateTime expiry = LocalDateTime.now()
+                    .plusNanos(jwtService.getRefreshExpirationMs() * 1_000_000L);
+
+            usuarioRepository.findByEmail(loginDTO.getEmail()).ifPresent(usuario -> {
+                usuario.setRefreshToken(refreshToken);
+                usuario.setRefreshTokenExpiry(expiry);
+                usuarioRepository.save(usuario);
+            });
+
+            // Devolvemos ambos tokens al frontend
+            usuarioDTO.setRefreshToken(refreshToken);
+
+            return ResponseEntity.ok(usuarioDTO);
         }
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Credenciales inválidas. Verificá tu email y contraseña."));
     }
@@ -113,7 +139,7 @@ public class UsuarioController {
         }
     }
 
-    // ─── Switch rol (toggle manual) ───────────────────────────────────────────
+    // ─── Switch rol ───────────────────────────────────────────────────────────
     @PutMapping("/{id}/switch-rol")
     public ResponseEntity<?> switchRol(@PathVariable Long id) {
         return usuarioRepository.findById(id).map(u -> {
@@ -147,17 +173,17 @@ public class UsuarioController {
         }).orElse(ResponseEntity.status(404).body(Map.of("error", "Usuario no encontrado")));
     }
 
-    // ─── Ver solicitudes pendientes (para el admin) ───────────────────────────
+    // ─── Ver solicitudes pendientes ───────────────────────────────────────────
     @GetMapping("/solicitudes-empresa")
     public ResponseEntity<List<UsuarioResponseDTO>> getSolicitudesPendientes() {
         List<Usuario> pendientes = usuarioRepository.findByEstadoSolicitud("PENDIENTE");
         List<UsuarioResponseDTO> dtos = pendientes.stream()
-                .map(usuarioMapper::toResponseDTO) // ← ahora sí funciona
+                .map(usuarioMapper::toResponseDTO)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
-    // ─── Aprobar solicitud (admin cambia el rol) ──────────────────────────────
+    // ─── Aprobar solicitud ────────────────────────────────────────────────────
     @PutMapping("/{id}/aprobar-empresa")
     public ResponseEntity<?> aprobarEmpresa(@PathVariable Long id) {
         return usuarioRepository.findById(id).map(u -> {
@@ -180,4 +206,9 @@ public class UsuarioController {
         }).orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/generar-hash/{password}")
+    public ResponseEntity<?> generarHash(@PathVariable String password) {
+        return ResponseEntity.ok(Map.of("hash",
+                new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder().encode(password)));
+    }
 }

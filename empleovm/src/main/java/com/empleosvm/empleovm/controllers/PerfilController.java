@@ -7,6 +7,7 @@ import com.empleosvm.empleovm.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +27,9 @@ public class PerfilController {
 
     @Autowired
     private UsuarioMapper usuarioMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder; // ← AGREGADO: necesario para BCrypt
 
     // ─── GET: obtener perfil completo ─────────────────────────────────────────
     @GetMapping("/{id}")
@@ -63,7 +67,6 @@ public class PerfilController {
         // Email con validación básica
         if (datos.containsKey("email") && datos.get("email").contains("@")) {
             String nuevoEmail = datos.get("email").trim().toLowerCase();
-            // Verificar que no esté en uso por otro usuario
             usuarioRepository.findByEmail(nuevoEmail).ifPresent(otro -> {
                 if (!otro.getId().equals(id))
                     throw new RuntimeException("Ese email ya está en uso.");
@@ -90,7 +93,6 @@ public class PerfilController {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "Solo se aceptan imágenes (JPG, PNG, WEBP)."));
 
-        // Tamaño máximo 5 MB
         if (foto.getSize() > 5 * 1024 * 1024)
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "La imagen no puede superar los 5 MB."));
@@ -99,17 +101,16 @@ public class PerfilController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
 
         try {
-            // Limpiar nombre y armar ruta
             String ext = foto.getOriginalFilename() != null &&
-                         foto.getOriginalFilename().contains(".")
-                    ? foto.getOriginalFilename().substring(foto.getOriginalFilename().lastIndexOf("."))
-                    : ".jpg";
+                    foto.getOriginalFilename().contains(".")
+                            ? foto.getOriginalFilename().substring(foto.getOriginalFilename().lastIndexOf("."))
+                            : ".jpg";
             String nombreArchivo = "perfil_" + id + "_" + System.currentTimeMillis() + ext;
 
             Path directorio = Paths.get("uploads", "fotoPerfil").toAbsolutePath();
-            if (!Files.exists(directorio)) Files.createDirectories(directorio);
+            if (!Files.exists(directorio))
+                Files.createDirectories(directorio);
 
-            // Eliminar foto anterior si existe
             if (usuario.getFotoPerfil() != null) {
                 Path fotoAnterior = directorio.resolve(usuario.getFotoPerfil());
                 Files.deleteIfExists(fotoAnterior);
@@ -123,8 +124,7 @@ public class PerfilController {
 
             return ResponseEntity.ok(Map.of(
                     "mensaje", "Foto actualizada correctamente.",
-                    "fotoPerfil", nombreArchivo
-            ));
+                    "fotoPerfil", nombreArchivo));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,8 +139,8 @@ public class PerfilController {
             @PathVariable Long id,
             @RequestBody Map<String, String> body) {
 
-        String actual  = body.get("passwordActual");
-        String nueva   = body.get("passwordNueva");
+        String actual = body.get("passwordActual");
+        String nueva = body.get("passwordNueva");
         String confirm = body.get("passwordConfirm");
 
         if (actual == null || nueva == null || confirm == null)
@@ -158,11 +158,13 @@ public class PerfilController {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
 
-        if (!usuario.getPassword().equals(actual))
+        // ← FIX: usar BCrypt para comparar, no .equals()
+        if (!passwordEncoder.matches(actual, usuario.getPassword()))
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "La contraseña actual no es correcta."));
 
-        usuario.setPassword(nueva);
+        // ← FIX: hashear la nueva contraseña antes de guardar
+        usuario.setPassword(passwordEncoder.encode(nueva));
         usuarioRepository.save(usuario);
 
         return ResponseEntity.ok(Map.of("mensaje", "Contraseña actualizada correctamente."));
