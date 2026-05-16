@@ -55,7 +55,8 @@ public class Empleo {
     @PrePersist
     protected void onCreate() {
         fechaPublicacion = LocalDateTime.now();
-        if (!activo) activo = true;
+        if (!activo)
+            activo = true;
     }
 
     // ── Estado ────────────────────────────────────────────────────────────────
@@ -63,7 +64,7 @@ public class Empleo {
 
     // ── Contador de visitas ───────────────────────────────────────────────────
     /** Se incrementa cada vez que un candidato abre el detalle del aviso. */
-    @Column(name = "vistas", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    @Column(name = "vistas", nullable = false)
     private long vistas = 0;
 
     // ── Relaciones ────────────────────────────────────────────────────────────

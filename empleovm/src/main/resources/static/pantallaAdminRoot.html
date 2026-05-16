@@ -239,35 +239,6 @@
             overflow: hidden;
         }
 
-        .card-head {
-            padding: 18px 26px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .card-head-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card-head h2 {
-            font-family: 'Syne', sans-serif;
-            font-size: 1rem;
-            font-weight: 800;
-        }
-
-        .card-head p {
-            font-size: 0.8rem;
-            color: var(--muted);
-            margin-top: 2px;
-        }
-
         /* ── Tabs ── */
         .tabs {
             display: flex;
@@ -702,16 +673,6 @@
         </div>
     </div>
 
-    <!--
-    INSTRUCCIONES PARA pantallaAdminRoot.html
-    ==========================================
-    1. Agregar en el <head> o antes del <script> grande:
-       <script src="js/auth.js"></script>
-
-    2. Reemplazar el bloque <script> completo por este.
-    
-    El HTML no cambia nada.
--->
     <script src="js/auth.js"></script>
     <script>
         let todosLosUsuarios = [];
@@ -731,7 +692,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Verificar sesión y rol admin
             if (!verificarSesion()) return;
             const rol = localStorage.getItem('usuarioRol');
             if (rol !== 'ROLE_ADMIN') {
@@ -759,7 +719,7 @@
                 document.getElementById('statPendientes').innerText = pendientes;
                 document.getElementById('badgeSolicitudes').innerText = pendientes;
 
-                // Avisos activos — ruta pública
+                // Avisos activos — ruta pública, no necesita token
                 const resE = await fetch('/api/empleos');
                 const empleos = await resE.json();
                 document.getElementById('statEmpleos').innerText = empleos.filter(e => e.activo).length;
@@ -778,45 +738,45 @@
                 }
 
                 cont.innerHTML = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Localidad</th>
-                        <th>Registro</th>
-                        <th style="text-align:right">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${lista.map(u => `
-                    <tr>
-                        <td>
-                            <div class="user-info">
-                                ${avatarHTML(u)}
-                                <div>
-                                    <div class="user-nombre">${u.nombre}</div>
-                                    <div class="user-email">${u.email}</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Localidad</th>
+                            <th>Registro</th>
+                            <th style="text-align:right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${lista.map(u => `
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    ${avatarHTML(u)}
+                                    <div>
+                                        <div class="user-nombre">${u.nombre}</div>
+                                        <div class="user-email">${u.email}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td>${u.localidad || '—'}</td>
-                        <td>${u.fechaRegistro ? new Date(u.fechaRegistro).toLocaleDateString('es-AR') : '—'}</td>
-                        <td>
-                            <div class="acciones" style="justify-content:flex-end">
-                                <button class="btn-accion btn-gris" onclick="verPerfil(${u.id})">
-                                    <i data-lucide="eye" style="width:13px"></i> Ver perfil
-                                </button>
-                                <button class="btn-accion btn-verde" onclick="aprobar(${u.id}, '${u.nombre.replace(/'/g, "\\'")}')">
-                                    <i data-lucide="check" style="width:13px"></i> Aprobar
-                                </button>
-                                <button class="btn-accion btn-rojo" onclick="rechazar(${u.id}, '${u.nombre.replace(/'/g, "\\'")}')">
-                                    <i data-lucide="x" style="width:13px"></i> Rechazar
-                                </button>
-                            </div>
-                        </td>
-                    </tr>`).join('')}
-                </tbody>
-            </table>`;
+                            </td>
+                            <td>${u.localidad || '—'}</td>
+                            <td>${u.fechaRegistro ? new Date(u.fechaRegistro).toLocaleDateString('es-AR') : '—'}</td>
+                            <td>
+                                <div class="acciones" style="justify-content:flex-end">
+                                    <button class="btn-accion btn-gris" onclick="verPerfil(${u.id})">
+                                        <i data-lucide="eye" style="width:13px"></i> Ver perfil
+                                    </button>
+                                    <button class="btn-accion btn-verde" onclick="aprobar(${u.id}, '${u.nombre.replace(/'/g, "\\'")}')">
+                                        <i data-lucide="check" style="width:13px"></i> Aprobar
+                                    </button>
+                                    <button class="btn-accion btn-rojo" onclick="rechazar(${u.id}, '${u.nombre.replace(/'/g, "\\'")}')">
+                                        <i data-lucide="x" style="width:13px"></i> Rechazar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`).join('')}
+                    </tbody>
+                </table>`;
                 lucide.createIcons();
             } catch {
                 cont.innerHTML = '<div class="empty">Error al cargar solicitudes.</div>';
@@ -860,28 +820,28 @@
                 document.getElementById('modalEmail').innerText = u.email;
 
                 document.getElementById('modalDetalle').innerHTML = `
-            <div class="perfil-row"><strong>Localidad:</strong> ${u.localidad || '—'}</div>
-            <div class="perfil-row"><strong>Teléfono:</strong>  ${u.telefono || '—'}</div>
-            <div class="perfil-row"><strong>Estado:</strong>
-                <span class="badge badge-pendiente">${u.estadoSolicitud || '—'}</span>
-            </div>
-            ${u.descripcion ? `
-                <div style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:4px">Sobre mí</div>
-                <div class="perfil-desc">${u.descripcion}</div>
-            ` : ''}
-            ${u.experiencia ? `
-                <div style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:4px">Experiencia</div>
-                <div class="perfil-desc">${u.experiencia}</div>
-            ` : ''}`;
+                <div class="perfil-row"><strong>Localidad:</strong> ${u.localidad || '—'}</div>
+                <div class="perfil-row"><strong>Teléfono:</strong>  ${u.telefono || '—'}</div>
+                <div class="perfil-row"><strong>Estado:</strong>
+                    <span class="badge badge-pendiente">${u.estadoSolicitud || '—'}</span>
+                </div>
+                ${u.descripcion ? `
+                    <div style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:4px">Sobre mí</div>
+                    <div class="perfil-desc">${u.descripcion}</div>
+                ` : ''}
+                ${u.experiencia ? `
+                    <div style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-top:4px">Experiencia</div>
+                    <div class="perfil-desc">${u.experiencia}</div>
+                ` : ''}`;
 
                 const nombreEsc = u.nombre.replace(/'/g, "\\'");
                 document.getElementById('modalAcciones').innerHTML = `
-            <button class="btn-accion btn-verde" style="flex:1;justify-content:center" onclick="aprobar(${u.id}, '${nombreEsc}')">
-                <i data-lucide="check" style="width:14px"></i> Aprobar como empresa
-            </button>
-            <button class="btn-accion btn-rojo" style="flex:1;justify-content:center" onclick="rechazar(${u.id}, '${nombreEsc}')">
-                <i data-lucide="x" style="width:14px"></i> Rechazar
-            </button>`;
+                <button class="btn-accion btn-verde" style="flex:1;justify-content:center" onclick="aprobar(${u.id}, '${nombreEsc}')">
+                    <i data-lucide="check" style="width:14px"></i> Aprobar como empresa
+                </button>
+                <button class="btn-accion btn-rojo" style="flex:1;justify-content:center" onclick="rechazar(${u.id}, '${nombreEsc}')">
+                    <i data-lucide="x" style="width:14px"></i> Rechazar
+                </button>`;
 
                 document.getElementById('modalPerfil').style.display = 'flex';
                 lucide.createIcons();
@@ -911,15 +871,15 @@
                 return;
             }
             cont.innerHTML = `
-        <table>
-            <thead>
-                <tr>
-                    <th>Usuario</th><th>Rol</th><th>Solicitud</th><th>Registro</th>
-                    <th style="text-align:right">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${lista.map(u => {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuario</th><th>Rol</th><th>Solicitud</th><th>Registro</th>
+                        <th style="text-align:right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${lista.map(u => {
                 const rolBadge = u.tipo === 'ROLE_ADMIN'
                     ? `<span class="badge badge-admin">Admin</span>`
                     : u.tipo === 'ROLE_EMPRESA'
@@ -931,29 +891,29 @@
                         ? `<span class="badge badge-aprobado">Aprobado</span>`
                         : `<span class="badge badge-ninguna">—</span>`;
                 return `<tr>
-                        <td>
-                            <div class="user-info">
-                                ${avatarHTML(u)}
-                                <div>
-                                    <div class="user-nombre">${u.nombre}</div>
-                                    <div class="user-email">${u.email}</div>
+                            <td>
+                                <div class="user-info">
+                                    ${avatarHTML(u)}
+                                    <div>
+                                        <div class="user-nombre">${u.nombre}</div>
+                                        <div class="user-email">${u.email}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td>${rolBadge}</td>
-                        <td>${solicitudBadge}</td>
-                        <td>${u.fechaRegistro ? new Date(u.fechaRegistro).toLocaleDateString('es-AR') : '—'}</td>
-                        <td>
-                            <div class="acciones" style="justify-content:flex-end">
-                                <button class="btn-accion btn-gris" onclick="verPerfil(${u.id})">
-                                    <i data-lucide="eye" style="width:13px"></i> Ver
-                                </button>
-                            </div>
-                        </td>
-                    </tr>`;
+                            </td>
+                            <td>${rolBadge}</td>
+                            <td>${solicitudBadge}</td>
+                            <td>${u.fechaRegistro ? new Date(u.fechaRegistro).toLocaleDateString('es-AR') : '—'}</td>
+                            <td>
+                                <div class="acciones" style="justify-content:flex-end">
+                                    <button class="btn-accion btn-gris" onclick="verPerfil(${u.id})">
+                                        <i data-lucide="eye" style="width:13px"></i> Ver
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>`;
             }).join('')}
-            </tbody>
-        </table>`;
+                </tbody>
+            </table>`;
             lucide.createIcons();
         }
 
