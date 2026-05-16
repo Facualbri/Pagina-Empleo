@@ -19,7 +19,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/perfil")
-@CrossOrigin(origins = "*")
 public class PerfilController {
 
     @Autowired
@@ -110,11 +109,6 @@ public class PerfilController {
             Path directorio = Paths.get("uploads", "fotoPerfil").toAbsolutePath();
             if (!Files.exists(directorio))
                 Files.createDirectories(directorio);
-
-            if (usuario.getFotoPerfil() != null) {
-                Path fotoAnterior = directorio.resolve(usuario.getFotoPerfil());
-                Files.deleteIfExists(fotoAnterior);
-            }
 
             Files.copy(foto.getInputStream(), directorio.resolve(nombreArchivo),
                     StandardCopyOption.REPLACE_EXISTING);

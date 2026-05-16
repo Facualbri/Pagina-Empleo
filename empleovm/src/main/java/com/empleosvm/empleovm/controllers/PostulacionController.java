@@ -23,10 +23,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/postulaciones")
-@CrossOrigin(origins = "*")
 public class PostulacionController {
 
     @Autowired
@@ -82,11 +82,10 @@ public class PostulacionController {
             String nombreLimpio = archivo.getOriginalFilename() != null
                     ? archivo.getOriginalFilename().replaceAll("[^a-zA-Z0-9._-]", "_")
                     : "cv.pdf";
-            String nombreArchivo = System.currentTimeMillis() + "_" + nombreLimpio;
+            String nombreArchivo = UUID.randomUUID().toString() + "_" + nombreLimpio;
 
             Path rutaCvs = Paths.get("uploads", "cvs").toAbsolutePath();
-            if (!Files.exists(rutaCvs))
-                Files.createDirectories(rutaCvs);
+            if (!Files.exists(rutaCvs)) Files.createDirectories(rutaCvs);
             Files.copy(archivo.getInputStream(), rutaCvs.resolve(nombreArchivo), StandardCopyOption.REPLACE_EXISTING);
 
             Postulacion nueva = new Postulacion();
@@ -104,29 +103,23 @@ public class PostulacionController {
         }
     }
 
-    // ─── 2. Ver CV de un postulante (solo empresa/admin autenticados) ─────────
+    // ─── 2. Ver CV de un postulante ──────────────────────────────────────────
     @GetMapping("/cv/{filename}")
     public ResponseEntity<Resource> verCV(@PathVariable String filename) {
         try {
-            // Sanitizar el nombre para evitar path traversal
-            String nombreSanitizado = Paths.get(filename).getFileName().toString();
-
-            Path filePath = Paths.get("uploads", "cvs").toAbsolutePath().resolve(nombreSanitizado);
+            Path filePath = Paths.get("uploads", "cvs").toAbsolutePath().resolve(filename);
             Resource resource = new UrlResource(filePath.toUri());
-
-            System.out.println("Buscando CV en: " + filePath.toString());
 
             if (!resource.exists() || !resource.isReadable()) {
                 return ResponseEntity.notFound().build();
             }
 
             String contentType = Files.probeContentType(filePath);
-            if (contentType == null)
-                contentType = "application/pdf";
+            if (contentType == null) contentType = "application/pdf";
 
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + nombreSanitizado + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
                     .body(resource);
 
         } catch (MalformedURLException e) {

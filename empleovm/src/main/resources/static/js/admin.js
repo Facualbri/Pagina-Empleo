@@ -37,7 +37,7 @@ async function publicarAviso() {
     }
 
     try {
-        const response = await fetch('/api/empleos/con-foto', {
+        const response = await apiFetch('/api/empleos/con-foto', {
             method: 'POST',
             body: formData
         });
@@ -56,7 +56,7 @@ async function cargarMisEmpleos(idEmpresa) {
     const tabla = document.getElementById('tablaOfertas');
     if (!tabla) return;
     try {
-        const response = await fetch('/api/empleos');
+        const response = await apiFetch('/api/empleos');
         const lista = await response.json();
         const misEmpleos = lista.filter(e => String(e.idUsuario) === String(idEmpresa));
 
@@ -112,7 +112,7 @@ async function eliminarEmpleo(id) {
 }
 
 async function verPostulantes(id, titulo) {
-    const res = await fetch(`/api/postulaciones/por-empleo/${id}`);
+    const res = await apiFetch(`/api/postulaciones/por-empleo/${id}`);
     const postulaciones = await res.json();
     const contenedor = document.getElementById('listaPostulantes');
     document.getElementById('modalTituloPuesto').innerText = titulo;
@@ -122,7 +122,7 @@ async function verPostulantes(id, titulo) {
             <div class="postulante-card">
                 <div><strong>${p.postulante.nombre}</strong></div>
                 <div class="card-actions">
-                    <a href="/uploads/cvs/${p.archivoCv}" target="_blank" class="btn-cv-view">CV</a>
+                    <a href="${p.archivoCv}" target="_blank" class="btn-cv-view">CV</a>
                 </div>
             </div>`;
     });

@@ -16,10 +16,8 @@ async function abrirDetalle(id) {
         
         const fotoModal = document.getElementById('modalFoto');
         
-        // --- CORRECCIÓN DE RUTA AQUÍ ---
         if (emp.imagenUrl && emp.imagenUrl !== "null") {
-            // Agregamos el prefijo de la carpeta que configuramos en WebConfig
-            fotoModal.src = '/uploads/fotos/' + emp.imagenUrl;
+            fotoModal.src = emp.imagenUrl;
             fotoModal.style.display = 'block';
         } else {
             fotoModal.src = 'https://via.placeholder.com/400x200?text=Logo+no+disponible';

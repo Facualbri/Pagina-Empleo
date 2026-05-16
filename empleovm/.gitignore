@@ -34,3 +34,4 @@ build/
 
 .env
 uploads/
+src/main/resources/application-local.properties

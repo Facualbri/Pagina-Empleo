@@ -51,7 +51,7 @@ function renderizarTarjetas(listaEmpleos) {
 
     listaEmpleos.forEach(empleo => {
         const fotoURL = empleo.imagenUrl 
-            ? `/uploads/fotos/${empleo.imagenUrl}` 
+            ? empleo.imagenUrl 
             : 'https://placehold.co/400x200?text=Sin+Imagen';
 
         const card = `
@@ -123,4 +123,3 @@ async function verMisPostulaciones() {
 function cerrarModalPostulaciones() {
     document.getElementById('modalMisPostulaciones').style.display = 'none';
 }
-
