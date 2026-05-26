@@ -1039,7 +1039,7 @@
 
             cont.innerHTML = lista.map(e => {
                 const fotoHTML = e.imagenUrl
-                    ? `<img class="card-img" src="/uploads/fotos/${e.imagenUrl}" alt="${e.titulo}"
+                    ? `<img class="card-img" src="${e.imagenUrl}" alt="${e.titulo}"
                         onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=Empresa&background=5b5ef4&color=fff';">`
                     : `<div class="card-img-placeholder"><i data-lucide="image" style="width:40px;height:40px"></i></div>`;
 
@@ -1083,8 +1083,8 @@
                 document.getElementById('modalDescripcion').innerText = e.descripcion || '';
 
                 const foto = document.getElementById('modalFoto');
-                if (e.imagenUrl && e.imagenUrl !== 'null') {
-                    foto.src = '/uploads/fotos/' + e.imagenUrl;
+                if (e.imagenUrl) {
+                    foto.src = e.imagenUrl;
                     foto.style.display = 'block';
                 } else {
                     foto.style.display = 'none';

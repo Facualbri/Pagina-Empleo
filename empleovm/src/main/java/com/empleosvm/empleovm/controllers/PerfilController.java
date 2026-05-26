@@ -4,6 +4,7 @@ import com.empleosvm.empleovm.dto.response.UsuarioResponseDTO;
 import com.empleosvm.empleovm.mapper.UsuarioMapper;
 import com.empleosvm.empleovm.model.entity.Usuario;
 import com.empleosvm.empleovm.repository.UsuarioRepository;
+import com.empleosvm.empleovm.service.CloudinaryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 @Slf4j
@@ -26,14 +23,17 @@ public class PerfilController {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
     private final PasswordEncoder passwordEncoder;
+    private final CloudinaryService cloudinaryService;
 
     public PerfilController(UsuarioRepository usuarioRepository,
             UsuarioMapper usuarioMapper,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            CloudinaryService cloudinaryService) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioMapper = usuarioMapper;
         this.passwordEncoder = passwordEncoder;
-    } // ← AGREGADO: necesario para BCrypt
+        this.cloudinaryService = cloudinaryService;
+    }
 
     // ─── GET: obtener perfil completo ─────────────────────────────────────────
     @GetMapping("/{id}")
@@ -110,25 +110,14 @@ public class PerfilController {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
 
         try {
-            String ext = foto.getOriginalFilename() != null &&
-                    foto.getOriginalFilename().contains(".")
-                            ? foto.getOriginalFilename().substring(foto.getOriginalFilename().lastIndexOf("."))
-                            : ".jpg";
-            String nombreArchivo = "perfil_" + id + "_" + System.currentTimeMillis() + ext;
+            String fotoUrl = cloudinaryService.uploadImage(foto, "empleovm/perfiles");
 
-            Path directorio = Paths.get("uploads", "fotoPerfil").toAbsolutePath();
-            if (!Files.exists(directorio))
-                Files.createDirectories(directorio);
-
-            Files.copy(foto.getInputStream(), directorio.resolve(nombreArchivo),
-                    StandardCopyOption.REPLACE_EXISTING);
-
-            usuario.setFotoPerfil(nombreArchivo);
+            usuario.setFotoPerfil(fotoUrl);
             usuarioRepository.save(usuario);
 
             return ResponseEntity.ok(Map.of(
                     "mensaje", "Foto actualizada correctamente.",
-                    "fotoPerfil", nombreArchivo));
+                    "fotoPerfil", fotoUrl));
 
         } catch (Exception e) {
             log.error("Error al guardar la foto de perfil para usuario {}", id, e);

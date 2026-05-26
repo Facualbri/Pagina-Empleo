@@ -768,7 +768,7 @@
 
                 if (u.fotoPerfil) {
                     const img = document.getElementById('fotoImg');
-                    img.src = `/uploads/fotoPerfil/${u.fotoPerfil}`;
+                    img.src = u.fotoPerfil;
                     img.style.display = 'block';
                     document.getElementById('fotoPlaceholder').style.display = 'none';
                 }

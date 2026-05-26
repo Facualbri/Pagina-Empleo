@@ -4,6 +4,7 @@ import com.empleosvm.empleovm.dto.request.EmpleoRequestDTO;
 import com.empleosvm.empleovm.dto.response.EmpleoResponseDTO;
 import com.empleosvm.empleovm.model.entity.Empleo;
 import com.empleosvm.empleovm.repository.EmpleoRepository;
+import com.empleosvm.empleovm.service.CloudinaryService;
 import com.empleosvm.empleovm.service.interfaces.IEmpleoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -12,10 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -28,10 +25,13 @@ public class EmpleoController {
 
     private final EmpleoRepository empleoRepository;
     private final IEmpleoService empleoService;
+    private final CloudinaryService cloudinaryService;
 
-    public EmpleoController(EmpleoRepository empleoRepository, IEmpleoService empleoService) {
+    public EmpleoController(EmpleoRepository empleoRepository, IEmpleoService empleoService,
+            CloudinaryService cloudinaryService) {
         this.empleoRepository = empleoRepository;
         this.empleoService = empleoService;
+        this.cloudinaryService = cloudinaryService;
     }
 
     // ─── 1. Listar todos (con auto-pausa por vencimiento) ────────────────────
@@ -107,7 +107,7 @@ public class EmpleoController {
             return ResponseEntity.badRequest().body(Map.of("error", "El sueldo debe ser mayor a 0."));
 
         try {
-            String nombreArchivo = null;
+            String imagenUrl = null;
 
             if (archivo != null && !archivo.isEmpty()) {
                 String contentType = archivo.getContentType();
@@ -120,16 +120,7 @@ public class EmpleoController {
                 if (validationError != null) {
                     return ResponseEntity.badRequest().body(Map.of("error", validationError));
                 }
-                String nombreOriginal = archivo.getOriginalFilename() != null
-                        ? archivo.getOriginalFilename().replaceAll("[^a-zA-Z0-9._-]", "_")
-                        : "foto.jpg";
-                nombreArchivo = System.currentTimeMillis() + "_" + nombreOriginal;
-                Path rutaDirectorio = Paths.get("uploads", "fotos").toAbsolutePath();
-                if (!Files.exists(rutaDirectorio))
-                    Files.createDirectories(rutaDirectorio);
-                Files.copy(archivo.getInputStream(),
-                        rutaDirectorio.resolve(nombreArchivo),
-                        StandardCopyOption.REPLACE_EXISTING);
+                imagenUrl = cloudinaryService.uploadImage(archivo, "empleovm/fotos");
             }
 
             EmpleoRequestDTO dto = new EmpleoRequestDTO();
@@ -139,7 +130,7 @@ public class EmpleoController {
             dto.setEmpresa(empresa.trim());
             dto.setIdUsuario(idUsuario);
             dto.setSueldo(sueldo);
-            dto.setImagenUrl(nombreArchivo);
+            dto.setImagenUrl(imagenUrl);
 
             if (fechaVencimientoStr != null && !fechaVencimientoStr.isBlank()) {
                 try {
