@@ -65,8 +65,10 @@ public class SecurityConfig {
                         // FRONTEND / ARCHIVOS ESTÁTICOS
                         // =====================================================
 
-                        // Página principal
-                        .requestMatchers("/", "/index.html").permitAll()
+                        // Página principal + SEO
+                        .requestMatchers("/", "/index.html",
+                                "/robots.txt",
+                                "/sitemap.xml").permitAll()
 
                         // HTML / CSS / JS
                         .requestMatchers(
