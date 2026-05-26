@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     // ─── Guardar nuevo usuario ────────────────────────────────────────────────
     @Override
+    @Transactional
     public UsuarioResponseDTO guardarUsuario(UsuarioRequestDTO dto) {
         String emailNorm = dto.getEmail().trim().toLowerCase();
 
@@ -77,6 +79,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     // ─── Actualizar perfil ────────────────────────────────────────────────────
     @Override
+    @Transactional
     public UsuarioResponseDTO actualizarPerfil(Long id, Map<String, String> cambios) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
@@ -102,6 +105,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     // ─── Cambiar contraseña ───────────────────────────────────────────────────
     // ✅ Verifica con BCrypt y hashea la nueva
     @Override
+    @Transactional
     public void cambiarPassword(Long id, String passwordActual, String passwordNueva) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));

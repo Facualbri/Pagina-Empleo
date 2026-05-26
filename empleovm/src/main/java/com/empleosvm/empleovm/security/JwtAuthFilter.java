@@ -48,10 +48,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
                 if (jwtService.esValido(token, userDetails)) {
+                    Long userId = jwtService.extraerUserId(token);
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails, null, userDetails.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    authToken.setDetails(userId);
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }

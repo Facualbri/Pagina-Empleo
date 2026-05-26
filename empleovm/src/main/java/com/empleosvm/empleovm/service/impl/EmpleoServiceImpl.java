@@ -8,7 +8,6 @@ import com.empleosvm.empleovm.model.entity.Usuario;
 import com.empleosvm.empleovm.repository.EmpleoRepository;
 import com.empleosvm.empleovm.repository.UsuarioRepository;
 import com.empleosvm.empleovm.service.interfaces.IEmpleoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,17 +17,20 @@ import java.util.stream.Collectors;
 @Service
 public class EmpleoServiceImpl implements IEmpleoService {
 
-    @Autowired
-    private EmpleoRepository empleoRepository;
+    private final EmpleoRepository empleoRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final EmpleoMapper empleoMapper;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    public EmpleoServiceImpl(EmpleoRepository empleoRepository,
+                              UsuarioRepository usuarioRepository,
+                              EmpleoMapper empleoMapper) {
+        this.empleoRepository = empleoRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.empleoMapper = empleoMapper;
+    }
 
-    @Autowired
-    private EmpleoMapper empleoMapper;
-
-    // ─── Publicar empleo ──────────────────────────────────────────────────────
     @Override
+    @Transactional
     public EmpleoResponseDTO publicarEmpleo(EmpleoRequestDTO dto) {
         if (dto.getIdUsuario() == null) {
             throw new RuntimeException("El ID del usuario es obligatorio para publicar un empleo.");

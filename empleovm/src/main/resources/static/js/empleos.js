@@ -16,8 +16,8 @@ async function buscar() {
         empleos.forEach(emp => {
     resultadosDiv.innerHTML += `
         <div class="empleo-item">
-            <h3>${emp.titulo}</h3>
-            <p>📍 ${emp.ubicacion}</p>
+            <h3>${escapeHtml(emp.titulo)}</h3>
+            <p>📍 ${escapeHtml(emp.ubicacion)}</p>
             
             <!-- Cambiamos el link por un botón que llama a abrirDetalle -->
             <button onclick="abrirDetalle(${emp.id})" class="btn-postular">

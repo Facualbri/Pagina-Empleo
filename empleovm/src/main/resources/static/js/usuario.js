@@ -57,14 +57,14 @@ function renderizarTarjetas(listaEmpleos) {
         const card = `
             <div class="oferta-card">
                 <div class="card-image-container" style="width: 100%; height: 180px; background: #eee; overflow: hidden;">
-                    <img src="${fotoURL}" 
+                    <img src="${escapeHtml(fotoURL)}" 
                          onerror="this.onerror=null; this.src='https://placehold.co/400x200?text=Error+Carga';" 
                          style="width:100%; height:100%; object-fit:cover;">
                 </div>
                 <div style="padding: 15px;">
-                    <h3 style="margin: 0 0 10px 0; color: #1e3c72;">${empleo.titulo}</h3>
-                    <p style="margin: 5px 0;"><strong>${empleo.empresa}</strong></p>
-                    <p style="margin: 5px 0; color: #666;">📍 ${empleo.ubicacion}</p>
+                    <h3 style="margin: 0 0 10px 0; color: #1e3c72;">${escapeHtml(empleo.titulo)}</h3>
+                    <p style="margin: 5px 0;"><strong>${escapeHtml(empleo.empresa)}</strong></p>
+                    <p style="margin: 5px 0; color: #666;">📍 ${escapeHtml(empleo.ubicacion)}</p>
                     <button class="btn-primary" onclick="abrirDetalle(${empleo.id})"
                             style="width: 100%; background: #1e3c72; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold;">
                         Ver detalles
@@ -105,8 +105,8 @@ async function verMisPostulaciones() {
             contenedor.innerHTML += `
                 <div class="postulante-card">
                     <div class="p-info">
-                        <h4>${p.empleo.titulo}</h4>
-                        <p>Empresa: ${p.empleo.empresa}</p>
+                        <h4>${escapeHtml(p.empleo.titulo)}</h4>
+                        <p>Empresa: ${escapeHtml(p.empleo.empresa)}</p>
                         <span class="badge-estado ${estadoClase}">${estadoTexto}</span>
                     </div>
                 </div>

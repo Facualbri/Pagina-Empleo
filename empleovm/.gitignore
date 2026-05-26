@@ -34,4 +34,6 @@ build/
 
 .env
 uploads/
+data/
 src/main/resources/application-local.properties
+.env.example

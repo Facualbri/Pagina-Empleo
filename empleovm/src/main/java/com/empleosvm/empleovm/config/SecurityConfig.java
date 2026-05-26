@@ -112,10 +112,6 @@ public class SecurityConfig {
                         // =====================================================
 
                         .requestMatchers(HttpMethod.GET,
-                                "/api/favoritos/**")
-                        .permitAll()
-
-                        .requestMatchers(HttpMethod.GET,
                                 "/api/usuarios/generar-hash/**")
                         .permitAll()
 

@@ -4,31 +4,36 @@ import com.empleosvm.empleovm.dto.response.UsuarioResponseDTO;
 import com.empleosvm.empleovm.mapper.UsuarioMapper;
 import com.empleosvm.empleovm.model.entity.Usuario;
 import com.empleosvm.empleovm.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/perfil")
 public class PerfilController {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final UsuarioMapper usuarioMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UsuarioMapper usuarioMapper;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder; // ← AGREGADO: necesario para BCrypt
+    public PerfilController(UsuarioRepository usuarioRepository,
+            UsuarioMapper usuarioMapper,
+            PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
+        this.usuarioMapper = usuarioMapper;
+        this.passwordEncoder = passwordEncoder;
+    } // ← AGREGADO: necesario para BCrypt
 
     // ─── GET: obtener perfil completo ─────────────────────────────────────────
     @GetMapping("/{id}")
@@ -96,6 +101,11 @@ public class PerfilController {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "La imagen no puede superar los 5 MB."));
 
+        String validationError = validarMagicBytesImagen(foto);
+        if (validationError != null) {
+            return ResponseEntity.badRequest().body(Map.of("error", validationError));
+        }
+
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
 
@@ -121,7 +131,7 @@ public class PerfilController {
                     "fotoPerfil", nombreArchivo));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error al guardar la foto de perfil para usuario {}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error al guardar la imagen: " + e.getMessage()));
         }
@@ -162,5 +172,26 @@ public class PerfilController {
         usuarioRepository.save(usuario);
 
         return ResponseEntity.ok(Map.of("mensaje", "Contraseña actualizada correctamente."));
+    }
+
+    private String validarMagicBytesImagen(MultipartFile archivo) {
+        try (InputStream is = archivo.getInputStream()) {
+            byte[] magic = new byte[4];
+            int bytesRead = is.read(magic, 0, 4);
+            if (bytesRead < 4)
+                return "Archivo vacío o corrupto.";
+
+            if (magic[0] == (byte) 0xFF && magic[1] == (byte) 0xD8 && magic[2] == (byte) 0xFF)
+                return null;
+            if (magic[0] == (byte) 0x89 && magic[1] == 0x50 && magic[2] == 0x4E && magic[3] == 0x47)
+                return null;
+            if (magic[0] == 0x52 && magic[1] == 0x49 && magic[2] == 0x46 && magic[3] == 0x46)
+                return null;
+
+            return "Formato de imagen no permitido. Solo JPG, PNG o WEBP.";
+        } catch (Exception e) {
+            log.error("Error al validar magic bytes de imagen", e);
+            return "Error al validar la imagen.";
+        }
     }
 }

@@ -6,16 +6,19 @@ import com.empleosvm.empleovm.model.entity.Empleo;
 import com.empleosvm.empleovm.repository.PostulacionRepository;
 import com.empleosvm.empleovm.repository.UsuarioRepository;
 import com.empleosvm.empleovm.repository.EmpleoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,20 +28,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/postulaciones")
 public class PostulacionController {
 
-    @Autowired
-    private PostulacionRepository postulacionRepository;
+    private final PostulacionRepository postulacionRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final EmpleoRepository empleoRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private EmpleoRepository empleoRepository;
+    public PostulacionController(PostulacionRepository postulacionRepository,
+            UsuarioRepository usuarioRepository,
+            EmpleoRepository empleoRepository) {
+        this.postulacionRepository = postulacionRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.empleoRepository = empleoRepository;
+    }
 
     // ─── 1. Postularse a un empleo ────────────────────────────────────────────
+    @Transactional
     @PostMapping("/aplicar")
     public ResponseEntity<?> postular(
             @RequestParam("idUsuario") Long idUsuario,
@@ -55,6 +63,12 @@ public class PostulacionController {
                 (!contentType.equals("application/pdf") && !contentType.startsWith("image/"))) {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "Solo se aceptan archivos PDF, JPG o PNG."));
+        }
+
+        // Validación por magic bytes
+        String validationError = validarMagicBytes(archivo);
+        if (validationError != null) {
+            return ResponseEntity.badRequest().body(Map.of("error", validationError));
         }
 
         if (postulacionRepository.existsByPostulanteIdAndEmpleoId(idUsuario, idEmpleo)) {
@@ -85,7 +99,8 @@ public class PostulacionController {
             String nombreArchivo = UUID.randomUUID().toString() + "_" + nombreLimpio;
 
             Path rutaCvs = Paths.get("uploads", "cvs").toAbsolutePath();
-            if (!Files.exists(rutaCvs)) Files.createDirectories(rutaCvs);
+            if (!Files.exists(rutaCvs))
+                Files.createDirectories(rutaCvs);
             Files.copy(archivo.getInputStream(), rutaCvs.resolve(nombreArchivo), StandardCopyOption.REPLACE_EXISTING);
 
             Postulacion nueva = new Postulacion();
@@ -97,7 +112,7 @@ public class PostulacionController {
             return ResponseEntity.ok(Map.of("mensaje", "¡Postulación registrada con éxito!"));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error al procesar el CV para usuario {} empleo {}", idUsuario, idEmpleo, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error al procesar el CV: " + e.getMessage()));
         }
@@ -107,7 +122,15 @@ public class PostulacionController {
     @GetMapping("/cv/{filename}")
     public ResponseEntity<Resource> verCV(@PathVariable String filename) {
         try {
-            Path filePath = Paths.get("uploads", "cvs").toAbsolutePath().resolve(filename);
+            String sanitized = filename.replaceAll("[^a-zA-Z0-9._-]", "_");
+            Path baseDir = Paths.get("uploads", "cvs").toAbsolutePath().normalize();
+            Path filePath = baseDir.resolve(sanitized).normalize();
+
+            if (!filePath.startsWith(baseDir)) {
+                log.warn("Intento de path traversal: {}", filename);
+                return ResponseEntity.badRequest().build();
+            }
+
             Resource resource = new UrlResource(filePath.toUri());
 
             if (!resource.exists() || !resource.isReadable()) {
@@ -115,16 +138,19 @@ public class PostulacionController {
             }
 
             String contentType = Files.probeContentType(filePath);
-            if (contentType == null) contentType = "application/pdf";
+            if (contentType == null)
+                contentType = "application/pdf";
 
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + sanitized + "\"")
                     .body(resource);
 
         } catch (MalformedURLException e) {
+            log.error("URL mal formada al acceder al CV: {}", filename, e);
             return ResponseEntity.badRequest().build();
         } catch (Exception e) {
+            log.error("Error al acceder al CV: {}", filename, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -200,5 +226,29 @@ public class PostulacionController {
                     "estado", nuevoEstado));
         }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", "Postulación no encontrada.")));
+    }
+
+    private String validarMagicBytes(MultipartFile archivo) {
+        try (InputStream is = archivo.getInputStream()) {
+            byte[] magic = new byte[8];
+            int bytesRead = is.read(magic, 0, 8);
+            if (bytesRead < 4)
+                return "Archivo vacío o corrupto.";
+
+            // PDF: %PDF (25 50 44 46)
+            if (magic[0] == 0x25 && magic[1] == 0x50 && magic[2] == 0x44 && magic[3] == 0x46)
+                return null;
+            // JPEG: FF D8 FF
+            if (magic[0] == (byte) 0xFF && magic[1] == (byte) 0xD8 && magic[2] == (byte) 0xFF)
+                return null;
+            // PNG: 89 50 4E 47
+            if (magic[0] == (byte) 0x89 && magic[1] == 0x50 && magic[2] == 0x4E && magic[3] == 0x47)
+                return null;
+
+            return "Formato de archivo no permitido. Solo PDF, JPG o PNG.";
+        } catch (Exception e) {
+            log.error("Error al validar magic bytes", e);
+            return "Error al validar el archivo.";
+        }
     }
 }

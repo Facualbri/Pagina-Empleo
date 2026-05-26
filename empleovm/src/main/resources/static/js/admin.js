@@ -68,13 +68,13 @@ async function cargarMisEmpleos(idEmpresa) {
 
             tabla.innerHTML += `
             <tr>
-                <td><strong>${empleo.titulo}</strong></td>
-                <td><small>${empleo.ubicacion}</small></td>
+                <td><strong>${escapeHtml(empleo.titulo)}</strong></td>
+                <td><small>${escapeHtml(empleo.ubicacion)}</small></td>
                 <td>$${Number(empleo.sueldo).toLocaleString('es-AR')}</td>
                 <td><span class="${estadoClase}">${estadoTexto}</span></td>
                 <td>
                     <div style="display: flex; gap: 5px; justify-content: flex-end;">
-                        <button class="btn-tabla btn-azul" onclick="verPostulantes(${empleo.id}, '${empleo.titulo}')">
+                        <button class="btn-tabla btn-azul" onclick="verPostulantes(${empleo.id}, '${escapeHtml(empleo.titulo).replace(/'/g, "\\'")}')">
                             Candidatos (${total})
                         </button>
                         <button class="btn-tabla btn-gris" onclick="cambiarEstadoVacante(${empleo.id})">
@@ -120,9 +120,9 @@ async function verPostulantes(id, titulo) {
     postulaciones.forEach(p => {
         contenedor.innerHTML += `
             <div class="postulante-card">
-                <div><strong>${p.postulante.nombre}</strong></div>
+                <div><strong>${escapeHtml(p.postulante.nombre)}</strong></div>
                 <div class="card-actions">
-                    <a href="${p.archivoCv}" target="_blank" class="btn-cv-view">CV</a>
+                    <a href="${escapeHtml(p.archivoCv)}" target="_blank" class="btn-cv-view">CV</a>
                 </div>
             </div>`;
     });

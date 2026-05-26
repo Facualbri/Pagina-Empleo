@@ -23,7 +23,7 @@ async function abrirDetalle(id) {
             fotoModal.src = 'https://via.placeholder.com/400x200?text=Logo+no+disponible';
             fotoModal.style.display = 'block';
         }
-
+        
         // --- LÓGICA DE SUELDO ---
         const sueldoSpan = document.getElementById('modalSueldo');
         sueldoSpan.innerText = (emp.sueldo && emp.sueldo > 0) 

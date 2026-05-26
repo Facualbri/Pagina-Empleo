@@ -5,12 +5,13 @@ import com.empleosvm.empleovm.dto.response.EmpleoResponseDTO;
 import com.empleosvm.empleovm.model.entity.Empleo;
 import com.empleosvm.empleovm.repository.EmpleoRepository;
 import com.empleosvm.empleovm.service.interfaces.IEmpleoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,15 +21,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/empleos")
 public class EmpleoController {
 
-    @Autowired
-    private EmpleoRepository empleoRepository;
+    private final EmpleoRepository empleoRepository;
+    private final IEmpleoService empleoService;
 
-    @Autowired
-    private IEmpleoService empleoService;
+    public EmpleoController(EmpleoRepository empleoRepository, IEmpleoService empleoService) {
+        this.empleoRepository = empleoRepository;
+        this.empleoService = empleoService;
+    }
 
     // ─── 1. Listar todos (con auto-pausa por vencimiento) ────────────────────
     @GetMapping
@@ -111,6 +115,11 @@ public class EmpleoController {
                     return ResponseEntity.badRequest()
                             .body(Map.of("error", "Solo se permiten imágenes (jpg, png, gif)."));
                 }
+
+                String validationError = validarMagicBytesImagen(archivo);
+                if (validationError != null) {
+                    return ResponseEntity.badRequest().body(Map.of("error", validationError));
+                }
                 String nombreOriginal = archivo.getOriginalFilename() != null
                         ? archivo.getOriginalFilename().replaceAll("[^a-zA-Z0-9._-]", "_")
                         : "foto.jpg";
@@ -146,7 +155,7 @@ public class EmpleoController {
             return new ResponseEntity<>(resultado, HttpStatus.CREATED);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error al publicar empleo", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error al publicar: " + e.getMessage()));
         }
@@ -219,7 +228,7 @@ public class EmpleoController {
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", ex.getMessage()));
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.error("Error inesperado al editar empleo {}", id, ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error inesperado: " + ex.getMessage()));
         }
@@ -249,7 +258,7 @@ public class EmpleoController {
             empleoService.eliminar(id);
             return ResponseEntity.ok(Map.of("mensaje", "Empleo eliminado correctamente."));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error al eliminar empleo {}", id, e);
             return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
         }
     }
@@ -282,6 +291,30 @@ public class EmpleoController {
                 empleoRepository.saveAll(vencidos);
             }
         } catch (Exception ignored) {
+        }
+    }
+
+    private String validarMagicBytesImagen(MultipartFile archivo) {
+        try (InputStream is = archivo.getInputStream()) {
+            byte[] magic = new byte[4];
+            int bytesRead = is.read(magic, 0, 4);
+            if (bytesRead < 4)
+                return "Archivo vacío o corrupto.";
+
+            // JPEG: FF D8 FF
+            if (magic[0] == (byte) 0xFF && magic[1] == (byte) 0xD8 && magic[2] == (byte) 0xFF)
+                return null;
+            // PNG: 89 50 4E 47
+            if (magic[0] == (byte) 0x89 && magic[1] == 0x50 && magic[2] == 0x4E && magic[3] == 0x47)
+                return null;
+            // WEBP: 52 49 46 46 ... 57 45 42 50
+            if (magic[0] == 0x52 && magic[1] == 0x49 && magic[2] == 0x46 && magic[3] == 0x46)
+                return null;
+
+            return "Formato de imagen no permitido. Solo JPG, PNG o WEBP.";
+        } catch (Exception e) {
+            log.error("Error al validar magic bytes de imagen", e);
+            return "Error al validar la imagen.";
         }
     }
 }

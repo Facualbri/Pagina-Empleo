@@ -6,8 +6,9 @@ import com.empleosvm.empleovm.mapper.UsuarioMapper;
 import com.empleosvm.empleovm.model.entity.Usuario;
 import com.empleosvm.empleovm.repository.UsuarioRepository;
 import com.empleosvm.empleovm.security.JwtService;
+import com.empleosvm.empleovm.security.RateLimiter;
 import com.empleosvm.empleovm.service.interfaces.IUsuarioService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,21 +18,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
 
-    @Autowired
-    private IUsuarioService usuarioService;
+    private final IUsuarioService usuarioService;
+    private final JwtService jwtService;
+    private final UsuarioRepository usuarioRepository;
+    private final UsuarioMapper usuarioMapper;
+    private final RateLimiter rateLimiter;
 
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
-    private UsuarioMapper usuarioMapper;
+    public UsuarioController(IUsuarioService usuarioService,
+                              JwtService jwtService,
+                              UsuarioRepository usuarioRepository,
+                              UsuarioMapper usuarioMapper,
+                              RateLimiter rateLimiter) {
+        this.usuarioService = usuarioService;
+        this.jwtService = jwtService;
+        this.usuarioRepository = usuarioRepository;
+        this.usuarioMapper = usuarioMapper;
+        this.rateLimiter = rateLimiter;
+    }
 
     // ─── Crear usuario ────────────────────────────────────────────────────────
     @PostMapping
@@ -76,6 +84,14 @@ public class UsuarioController {
         if (loginDTO.getEmail() == null || loginDTO.getPassword() == null)
             return ResponseEntity.badRequest().body("Email y contraseña son obligatorios.");
 
+        String ip = rateLimiter.obtenerIpCliente();
+        String rateKey = "login:" + loginDTO.getEmail() + ":" + ip;
+        if (!rateLimiter.permite(rateKey)) {
+            log.warn("Rate limit excedido para login: {}", loginDTO.getEmail());
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(Map.of("error", "Demasiados intentos. Esperá 15 minutos."));
+        }
+
         UsuarioResponseDTO usuarioDTO = usuarioService.autenticar(loginDTO.getEmail(), loginDTO.getPassword());
 
         if (usuarioDTO != null) {
@@ -97,6 +113,8 @@ public class UsuarioController {
 
             // Devolvemos ambos tokens al frontend
             usuarioDTO.setRefreshToken(refreshToken);
+
+            rateLimiter.reset(rateKey);
 
             return ResponseEntity.ok(usuarioDTO);
         }

@@ -22,6 +22,17 @@ const USUARIO_EMAIL_KEY = 'usuarioEmail';
 // ── Estado interno ────────────────────────────────────────────────────────────
 let _refreshPromise = null; // evita múltiples refreshes en paralelo
 
+// ── Helper anti-XSS ────────────────────────────────────────────────────────────
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 // ── Helpers de storage ────────────────────────────────────────────────────────
 function getToken()        { return localStorage.getItem(TOKEN_KEY); }
 function getRefreshToken() { return localStorage.getItem(REFRESH_TOKEN_KEY); }
