@@ -11,13 +11,31 @@ function toast(msg, tipo = 'info') {
     setTimeout(() => el.remove(), 4000);
 }
 
+function haySesion() {
+    return !!localStorage.getItem('token') || !!localStorage.getItem('refreshToken');
+}
+
+function requiereAuth() {
+    if (!haySesion()) {
+        window.location.href = 'login.html';
+        return false;
+    }
+    return true;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-    if (!verificarSesion()) return;
-    const nombre = localStorage.getItem('usuarioNombre');
-    document.getElementById('nombreUser').innerText = nombre || 'Invitado';
-    await cargarFavoritosIniciales();
+    const sesion = haySesion();
+    document.getElementById('navAnon').style.display = sesion ? 'none' : 'flex';
+    document.getElementById('navUser').style.display = sesion ? 'flex' : 'none';
+
+    if (sesion) {
+        const nombre = localStorage.getItem('usuarioNombre');
+        document.getElementById('nombreUser').innerText = nombre || 'Usuario';
+        await cargarFavoritosIniciales();
+        verificarCambioRol();
+    }
+
     cargarOfertas();
-    verificarCambioRol();
 });
 
 async function cargarOfertas() {
@@ -127,6 +145,30 @@ async function abrirDetalle(id) {
         document.getElementById('avisoPausado').innerHTML = !e.activo
             ? '<div class="aviso-pausado">⚠️ Esta vacante está temporalmente pausada.</div>' : '';
 
+        // Si no hay sesión, mostrar botón de login en vez del formulario de postulación
+        const postulacionBox = document.querySelector('.postulacion-box');
+        if (!haySesion()) {
+            postulacionBox.innerHTML = `
+                <h3>¿Te interesa esta vacante?</h3>
+                <p style="color:var(--muted);margin-bottom:16px">Iniciá sesión o registrate para postularte y guardar vacantes.</p>
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                    <button onclick="window.location.href='login.html'" style="flex:1;background:var(--primary);color:white;border:none;padding:13px;border-radius:12px;font-weight:700;font-size:0.95rem;cursor:pointer;font-family:inherit">
+                        <i data-lucide="log-in" style="width:16px;vertical-align:middle;margin-right:6px"></i> Ingresar
+                    </button>
+                    <button onclick="window.location.href='registro.html'" style="flex:1;background:transparent;color:var(--primary);border:1.5px solid var(--primary);padding:13px;border-radius:12px;font-weight:700;font-size:0.95rem;cursor:pointer;font-family:inherit">
+                        <i data-lucide="user-plus" style="width:16px;vertical-align:middle;margin-right:6px"></i> Registrarse
+                    </button>
+                </div>
+            `;
+        } else {
+            postulacionBox.innerHTML = `
+                <h3>¿Te interesa esta vacante?</h3>
+                <p>Subí tu CV actualizado (PDF, JPG o PNG) para aplicar directamente.</p>
+                <input type="file" id="cvArchivo" accept=".pdf,.jpg,.jpeg,.png" class="file-input">
+                <button class="btn-postular" onclick="enviarPostulacion()">Enviar mi Postulación ✓</button>
+            `;
+        }
+
         document.getElementById('modalDetalle').style.display = 'flex';
         setTimeout(() => iniciarMapa(e.ubicacion), 150);
         lucide.createIcons();
@@ -160,17 +202,19 @@ async function iniciarMapa(direccion) {
 
 function cerrarModal() {
     document.getElementById('modalDetalle').style.display = 'none';
-    document.getElementById('cvArchivo').value = '';
+    const cvInput = document.getElementById('cvArchivo');
+    if (cvInput) cvInput.value = '';
     document.getElementById('modalFoto').src = '';
     if (leafletMap) { leafletMap.remove(); leafletMap = null; }
 }
 
 async function enviarPostulacion() {
+    if (!requiereAuth()) return;
+
     const file = document.getElementById('cvArchivo').files[0];
     if (!file) { toast('Seleccioná tu CV antes de enviar.', 'error'); return; }
 
     const idUsuario = localStorage.getItem('usuarioId');
-    if (!idUsuario) { toast('Debés iniciar sesión para postularte.', 'error'); return; }
 
     const fd = new FormData();
     fd.append('archivoCv', file);
@@ -188,9 +232,13 @@ async function enviarPostulacion() {
     } catch { toast('Error de conexión.', 'error'); }
 }
 
-function irPerfil() { window.location.href = 'perfil.html'; }
+function irPerfil() {
+    if (!requiereAuth()) return;
+    window.location.href = 'perfil.html';
+}
 
 async function abrirMisPostulaciones() {
+    if (!requiereAuth()) return;
     const idUsuario = localStorage.getItem('usuarioId');
     const cont = document.getElementById('listaPostulaciones');
     cont.innerHTML = '<p style="color:var(--muted)">Cargando...</p>';
@@ -286,8 +334,8 @@ async function cargarFavoritosIniciales() {
 }
 
 async function toggleFavorito(idEmpleo) {
+    if (!requiereAuth()) return;
     const idUsuario = localStorage.getItem('usuarioId');
-    if (!idUsuario) { toast('Debés iniciar sesión.', 'error'); return; }
 
     const btn = document.getElementById(`fav-${idEmpleo}`);
     const esFav = favoritosDelUsuario.has(idEmpleo);
@@ -318,6 +366,7 @@ async function toggleFavorito(idEmpleo) {
 }
 
 async function abrirFavoritos() {
+    if (!requiereAuth()) return;
     const idUsuario = localStorage.getItem('usuarioId');
     const cont = document.getElementById('listaFavoritos');
     cont.innerHTML = '<p style="color:var(--muted)">Cargando...</p>';

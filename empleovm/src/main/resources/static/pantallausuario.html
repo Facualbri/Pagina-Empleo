@@ -10,7 +10,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="icon" href="data:,">
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
     <link rel="stylesheet" href="css/usuario.css">
 </head>
 
@@ -20,7 +20,15 @@
     <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">Villa María <span>Empleos</span></div>
-        <div class="nav-actions">
+        <div class="nav-actions" id="navAnon">
+            <button class="btn-nav" onclick="window.location.href='login.html'">
+                <i data-lucide="log-in" style="width:15px"></i> Ingresar
+            </button>
+            <button class="btn-nav accent" onclick="window.location.href='registro.html'">
+                <i data-lucide="user-plus" style="width:15px"></i> Registrarse
+            </button>
+        </div>
+        <div class="nav-actions" id="navUser" style="display:none">
             <button class="btn-nav accent" onclick="abrirMisPostulaciones()">
                 <i data-lucide="send" style="width:15px"></i> Mis Postulaciones
             </button>
@@ -32,7 +40,7 @@
             </button>
             <span class="nav-user">
                 <i data-lucide="user" style="width:15px"></i>
-                <span id="nombreUser">Cargando...</span>
+                <span id="nombreUser">Invitado</span>
             </span>
             <button class="btn-nav" onclick="cerrarSesion()">Salir</button>
         </div>
