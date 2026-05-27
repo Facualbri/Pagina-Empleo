@@ -1,63 +1,67 @@
+let rolSeleccionado = 'USER';
 
-async function registrarNuevo() {
-    const nombre = document.getElementById('nombre').value;
-    const email = document.getElementById('email').value;
+function setRol(rol) {
+    rolSeleccionado = rol;
+    document.getElementById('tabUser').classList.toggle('active', rol === 'USER');
+    document.getElementById('tabEmpresa').classList.toggle('active', rol === 'EMPRESA');
+    document.getElementById('hintEmpresa').classList.toggle('visible', rol === 'EMPRESA');
+    document.getElementById('labelNombre').innerText = rol === 'EMPRESA'
+        ? 'Nombre de la empresa'
+        : 'Nombre completo';
+    document.getElementById('nombre').placeholder = rol === 'EMPRESA'
+        ? 'Ej: Pizzería El Rancho'
+        : 'Tu nombre completo';
+}
+
+async function registrar() {
+    const nombre   = document.getElementById('nombre').value.trim();
+    const email    = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
-    const msg = document.getElementById('msg');
+    const msg      = document.getElementById('msg');
+    const btn      = document.getElementById('btnRegister');
 
-    // Validamos que no haya campos vacíos
-    if (!nombre || !email || !password) {
-        msg.innerText = "⚠️ Por favor, completa todos los campos.";
-        msg.style.color = "red";
-        return;
-    }
+    msg.className = 'msg';
 
-    // registro.js - Línea 20 aproximadamente
-    const usuarioDTO = {
-        nombre: nombre,
-        email: email,
-        password: password,
-        tipo: (rolSeleccionado === 'EMPRESA') ? 'ROLE_EMPRESA' : 'ROLE_USER' // ✅
+    if (!nombre) { msg.className='msg error'; msg.innerText='El nombre es obligatorio.'; return; }
+    if (!email || !email.includes('@')) { msg.className='msg error'; msg.innerText='Ingresá un email válido.'; return; }
+    if (!password || password.length < 6) { msg.className='msg error'; msg.innerText='La contraseña debe tener al menos 6 caracteres.'; return; }
+
+    btn.disabled = true;
+    btn.innerHTML = 'Creando cuenta...';
+
+    const dto = {
+        nombre,
+        email,
+        password,
+        tipo: rolSeleccionado === 'EMPRESA' ? 'ROLE_EMPRESA' : 'ROLE_USER'
     };
-    try {
-        console.log("Enviando registro:", JSON.stringify(usuarioDTO));
 
-        const response = await fetch('/api/usuarios', {
+    try {
+        const res = await fetch('/api/usuarios', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(usuarioDTO)
+            body: JSON.stringify(dto)
         });
 
-        if (response.ok) {
-            // Mensaje personalizado según el rol
-            if (rolSeleccionado === 'EMPRESA') {
-                msg.innerText = "✅ Solicitud enviada. Un administrador revisará tu empresa pronto.";
-                msg.style.color = "#0f172a";
-            } else {
-                msg.innerText = "✅ ¡Registro exitoso! Ya podés iniciar sesión.";
-                msg.style.color = "green";
-            }
-
-            // Limpiamos los campos
-            document.querySelectorAll('input').forEach(i => i.value = '');
-
-            // Redirigir al login después de un momento
-            setTimeout(() => {
-                window.location.href = "login.html";
-            }, 3500);
-
+        if (res.ok) {
+            msg.className = 'msg success';
+            msg.innerText = rolSeleccionado === 'EMPRESA'
+                ? '✓ Cuenta de empresa creada. ¡Ya podés iniciar sesión!'
+                : '✓ ¡Registro exitoso! Redirigiendo...';
+            setTimeout(() => window.location.href = 'login.html', 2000);
         } else {
-            // ESTO ES CLAVE: Vamos a ver qué dice el servidor
-            const textoError = await response.text();
-            console.error("EL SERVIDOR DICE:", textoError);
-            msg.innerText = "Error 500: Revisá la consola del navegador.";
-            msg.style.color = "red";
+            const txt = await res.text();
+            msg.className = 'msg error';
+            msg.innerText = txt || 'Error al registrarse.';
+            btn.disabled  = false;
+            btn.innerHTML = '<i data-lucide="user-plus" style="width:18px"></i> Crear cuenta';
+            lucide.createIcons();
         }
-    } catch (error) {
-        console.error("Error de conexión:", error);
-        msg.innerText = "Error de conexión con el servidor.";
-        msg.style.color = "red";
+    } catch {
+        msg.className = 'msg error';
+        msg.innerText = 'Error de conexión. Intentá de nuevo.';
+        btn.disabled  = false;
+        btn.innerHTML = '<i data-lucide="user-plus" style="width:18px"></i> Crear cuenta';
+        lucide.createIcons();
     }
-
-    console.log("ROL SELECCIONADO:", rolSeleccionado);
 }

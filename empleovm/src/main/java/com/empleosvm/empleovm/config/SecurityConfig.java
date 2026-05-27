@@ -83,12 +83,6 @@ public class SecurityConfig {
                                 "/favicon.ico")
                         .permitAll()
 
-                        // Uploads
-                        .requestMatchers(
-                                "/uploads/fotos/**",
-                                "/uploads/fotoPerfil/**")
-                        .permitAll()
-
                         // =====================================================
                         // AUTH
                         // =====================================================

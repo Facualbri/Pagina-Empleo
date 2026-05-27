@@ -6,11 +6,9 @@ import com.empleosvm.empleovm.model.entity.Empleo;
 import com.empleosvm.empleovm.repository.PostulacionRepository;
 import com.empleosvm.empleovm.repository.UsuarioRepository;
 import com.empleosvm.empleovm.repository.EmpleoRepository;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
+import com.empleosvm.empleovm.service.CloudinaryService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -36,13 +29,16 @@ public class PostulacionController {
     private final PostulacionRepository postulacionRepository;
     private final UsuarioRepository usuarioRepository;
     private final EmpleoRepository empleoRepository;
+    private final CloudinaryService cloudinaryService;
 
     public PostulacionController(PostulacionRepository postulacionRepository,
             UsuarioRepository usuarioRepository,
-            EmpleoRepository empleoRepository) {
+            EmpleoRepository empleoRepository,
+            CloudinaryService cloudinaryService) {
         this.postulacionRepository = postulacionRepository;
         this.usuarioRepository = usuarioRepository;
         this.empleoRepository = empleoRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     // ─── 1. Postularse a un empleo ────────────────────────────────────────────
@@ -93,20 +89,12 @@ public class PostulacionController {
         }
 
         try {
-            String nombreLimpio = archivo.getOriginalFilename() != null
-                    ? archivo.getOriginalFilename().replaceAll("[^a-zA-Z0-9._-]", "_")
-                    : "cv.pdf";
-            String nombreArchivo = UUID.randomUUID().toString() + "_" + nombreLimpio;
-
-            Path rutaCvs = Paths.get("uploads", "cvs").toAbsolutePath();
-            if (!Files.exists(rutaCvs))
-                Files.createDirectories(rutaCvs);
-            Files.copy(archivo.getInputStream(), rutaCvs.resolve(nombreArchivo), StandardCopyOption.REPLACE_EXISTING);
+            String cvUrl = cloudinaryService.uploadFile(archivo, "cvs");
 
             Postulacion nueva = new Postulacion();
             nueva.setPostulante(postulante);
             nueva.setEmpleo(empleo);
-            nueva.setArchivoCv(nombreArchivo);
+            nueva.setArchivoCv(cvUrl);
             postulacionRepository.save(nueva);
 
             return ResponseEntity.ok(Map.of("mensaje", "¡Postulación registrada con éxito!"));
@@ -120,39 +108,20 @@ public class PostulacionController {
 
     // ─── 2. Ver CV de un postulante ──────────────────────────────────────────
     @GetMapping("/cv/{filename}")
-    public ResponseEntity<Resource> verCV(@PathVariable String filename) {
-        try {
-            String sanitized = filename.replaceAll("[^a-zA-Z0-9._-]", "_");
-            Path baseDir = Paths.get("uploads", "cvs").toAbsolutePath().normalize();
-            Path filePath = baseDir.resolve(sanitized).normalize();
-
-            if (!filePath.startsWith(baseDir)) {
-                log.warn("Intento de path traversal: {}", filename);
-                return ResponseEntity.badRequest().build();
-            }
-
-            Resource resource = new UrlResource(filePath.toUri());
-
-            if (!resource.exists() || !resource.isReadable()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            String contentType = Files.probeContentType(filePath);
-            if (contentType == null)
-                contentType = "application/pdf";
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + sanitized + "\"")
-                    .body(resource);
-
-        } catch (MalformedURLException e) {
-            log.error("URL mal formada al acceder al CV: {}", filename, e);
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            log.error("Error al acceder al CV: {}", filename, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    public ResponseEntity<?> verCV(@PathVariable String filename) {
+        if (filename == null || filename.isBlank()) {
+            return ResponseEntity.notFound().build();
         }
+
+        // Si es URL de Cloudinary → redirect
+        if (filename.startsWith("http://") || filename.startsWith("https://")) {
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create(filename))
+                    .build();
+        }
+
+        // Si no, asumimos que es un filename de uploads local (legacy)
+        return ResponseEntity.notFound().build();
     }
 
     // ─── 3. Ver postulantes de un empleo (para la empresa) ───────────────────

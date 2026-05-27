@@ -23,6 +23,14 @@ public class CloudinaryService {
         return (String) result.get("secure_url");
     }
 
+    public String uploadFile(MultipartFile file, String folder) throws IOException {
+        Map<String, Object> params = new java.util.HashMap<>(Map.of("folder", folder));
+        params.put("resource_type", "raw");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> result = cloudinary.uploader().upload(file.getBytes(), params);
+        return (String) result.get("secure_url");
+    }
+
     @SuppressWarnings("unchecked")
     public Map<String, Object> deleteImage(String publicId) throws IOException {
         return cloudinary.uploader().destroy(publicId, Map.of());
