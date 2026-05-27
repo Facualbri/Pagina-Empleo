@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin - Villa MarÃ­a Empleos</title>
+    <title>Panel Admin - Villa María Empleos</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet">
@@ -18,11 +18,11 @@
 
     <nav class="navbar">
         <div class="logo">
-            Villa MarÃ­a <span>Empleos</span>
+            Villa María <span>Empleos</span>
             <small>ADMIN</small>
         </div>
         <div style="display:flex;gap:10px;align-items:center">
-            <span style="color:#94a3b8;font-size:0.85rem" id="nombreAdmin">â€”</span>
+            <span style="color:#94a3b8;font-size:0.85rem" id="nombreAdmin">—</span>
             <button class="btn-nav danger" onclick="cerrarSesion()">
                 <i data-lucide="log-out" style="width:14px"></i> Salir
             </button>
@@ -36,28 +36,28 @@
             <div class="stat-card">
                 <div class="stat-icon blue"><i data-lucide="users"></i></div>
                 <div>
-                    <div class="stat-value" id="statUsuarios">â€”</div>
+                    <div class="stat-value" id="statUsuarios">—</div>
                     <div class="stat-label">Usuarios</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon green"><i data-lucide="building-2"></i></div>
                 <div>
-                    <div class="stat-value" id="statEmpresas">â€”</div>
+                    <div class="stat-value" id="statEmpresas">—</div>
                     <div class="stat-label">Empresas</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon orange"><i data-lucide="clock"></i></div>
                 <div>
-                    <div class="stat-value" id="statPendientes">â€”</div>
+                    <div class="stat-value" id="statPendientes">—</div>
                     <div class="stat-label">Solicitudes</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon blue"><i data-lucide="briefcase"></i></div>
                 <div>
-                    <div class="stat-value" id="statEmpleos">â€”</div>
+                    <div class="stat-value" id="statEmpleos">—</div>
                     <div class="stat-label">Avisos activos</div>
                 </div>
             </div>
@@ -104,8 +104,8 @@
         <div class="modal-box">
             <button class="btn-cerrar" onclick="cerrarModal()">&times;</button>
             <div class="modal-head">
-                <h3 id="modalNombre">â€”</h3>
-                <p id="modalEmail">â€”</p>
+                <h3 id="modalNombre">—</h3>
+                <p id="modalEmail">—</p>
             </div>
             <div class="modal-body">
                 <div class="perfil-detalle" id="modalDetalle"></div>

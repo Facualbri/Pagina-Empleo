@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Empresa - Villa MarÃ­a Empleos</title>
+    <title>Panel Empresa - Villa María Empleos</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet">
@@ -17,7 +17,7 @@
     <div id="toast-container"></div>
 
     <nav class="navbar">
-        <div class="logo">Villa MarÃ­a <span>Empresas</span></div>
+        <div class="logo">Villa María <span>Empresas</span></div>
         <div class="nav-right">
             <span class="nav-user">
                 <i data-lucide="building-2" style="width:15px"></i>
@@ -31,7 +31,7 @@
                 <i data-lucide="user" style="width:15px"></i> Mi Perfil
             </button>
             <button class="btn-nav danger-nav" onclick="cerrarSesion()">
-                <i data-lucide="log-out" style="width:15px"></i> Cerrar SesiÃ³n
+                <i data-lucide="log-out" style="width:15px"></i> Cerrar Sesión
             </button>
         </div>
     </nav>
@@ -42,36 +42,36 @@
             <div class="stat-card">
                 <div class="stat-icon blue"><i data-lucide="briefcase"></i></div>
                 <div>
-                    <div class="stat-value" id="statTotal">â€”</div>
+                    <div class="stat-value" id="statTotal">—</div>
                     <div class="stat-label">Avisos totales</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon green"><i data-lucide="check-circle"></i></div>
                 <div>
-                    <div class="stat-value" id="statActivos">â€”</div>
+                    <div class="stat-value" id="statActivos">—</div>
                     <div class="stat-label">Activos</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon orange"><i data-lucide="pause-circle"></i></div>
                 <div>
-                    <div class="stat-value" id="statPausados">â€”</div>
+                    <div class="stat-value" id="statPausados">—</div>
                     <div class="stat-label">Pausados</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon blue"><i data-lucide="users"></i></div>
                 <div>
-                    <div class="stat-value" id="statPostulantes">â€”</div>
+                    <div class="stat-value" id="statPostulantes">—</div>
                     <div class="stat-label">Postulantes totales</div>
-                    <div class="stat-top" id="statTop" title="">â€”</div>
+                    <div class="stat-top" id="statTop" title="">—</div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon red"><i data-lucide="bell"></i></div>
                 <div>
-                    <div class="stat-value" id="statNuevos">â€”</div>
+                    <div class="stat-value" id="statNuevos">—</div>
                     <div class="stat-label">Sin revisar</div>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                 <div class="card-header-icon"><i data-lucide="plus-circle"></i></div>
                 <div>
                     <h2>Publicar nueva vacante</h2>
-                    <p>LlegÃ¡ a miles de candidatos locales.</p>
+                    <p>Llegá a miles de candidatos locales.</p>
                 </div>
                 <button id="btnPreview" onclick="togglePreview()" class="btn-accion btn-gris" style="margin-left:auto">
                     <i data-lucide="eye" style="width:13px"></i> Vista previa
@@ -97,8 +97,8 @@
                             oninput="actualizarPreview()">
                     </div>
                     <div class="form-group">
-                        <label><i data-lucide="map-pin" style="width:13px"></i> UbicaciÃ³n</label>
-                        <input type="text" id="ubicacion" placeholder="Ej: San MartÃ­n 150, Centro"
+                        <label><i data-lucide="map-pin" style="width:13px"></i> Ubicación</label>
+                        <input type="text" id="ubicacion" placeholder="Ej: San Martín 150, Centro"
                             oninput="actualizarPreview()">
                     </div>
                     <div class="form-group">
@@ -116,16 +116,16 @@
                         <input type="date" id="fechaVencimiento">
                     </div>
                     <div class="form-group full">
-                        <label><i data-lucide="align-left" style="width:13px"></i> DescripciÃ³n y requisitos</label>
+                        <label><i data-lucide="align-left" style="width:13px"></i> Descripción y requisitos</label>
                         <textarea id="descripcion"
-                            placeholder="DescribÃ­ las tareas, horarios y quÃ© buscÃ¡s en el candidato..."
+                            placeholder="Describí las tareas, horarios y qué buscás en el candidato..."
                             oninput="actualizarPreview()"></textarea>
                     </div>
 
                     <div class="form-group full" id="previewContainer" style="display:none">
                         <span class="preview-label">
                             <i data-lucide="eye" style="width:11px;display:inline;vertical-align:middle"></i>
-                            AsÃ­ verÃ¡n tu aviso los candidatos
+                            Así verán tu aviso los candidatos
                         </span>
                         <div class="preview-card">
                             <div class="preview-titulo" id="pvTitulo">Nombre del puesto</div>
@@ -133,10 +133,10 @@
                                 <span><i data-lucide="building-2" style="width:12px"></i><span id="pvEmpresa">Tu
                                         empresa</span></span>
                                 <span><i data-lucide="map-pin" style="width:12px"></i><span
-                                        id="pvUbicacion">UbicaciÃ³n</span></span>
+                                        id="pvUbicacion">Ubicación</span></span>
                             </div>
                             <div class="preview-sueldo" id="pvSueldo">Sueldo a convenir</div>
-                            <div class="preview-desc" id="pvDesc">DescripciÃ³n del puesto...</div>
+                            <div class="preview-desc" id="pvDesc">Descripción del puesto...</div>
                         </div>
                     </div>
 
@@ -153,12 +153,12 @@
                 <div class="card-header-icon"><i data-lucide="clipboard-list"></i></div>
                 <div>
                     <h2>Mis publicaciones</h2>
-                    <p>GestionÃ¡ el estado de cada vacante.</p>
+                    <p>Gestioná el estado de cada vacante.</p>
                 </div>
             </div>
 
             <div class="tabla-toolbar">
-                <input type="text" class="search-input" placeholder="ðŸ” Buscar por puesto..." id="searchTabla"
+                <input type="text" class="search-input" placeholder="🔍 Buscar por puesto..." id="searchTabla"
                     oninput="filtrarTabla()">
                 <select class="filter-select" id="filtroEstado" onchange="filtrarTabla()">
                     <option value="">Todos los estados</option>
@@ -166,9 +166,9 @@
                     <option value="pausada">Solo pausados</option>
                 </select>
                 <select class="filter-select" id="filtroOrden" onchange="filtrarTabla()">
-                    <option value="fecha_desc">MÃ¡s recientes</option>
-                    <option value="fecha_asc">MÃ¡s antiguos</option>
-                    <option value="postulantes_desc">MÃ¡s postulantes</option>
+                    <option value="fecha_desc">Más recientes</option>
+                    <option value="fecha_asc">Más antiguos</option>
+                    <option value="postulantes_desc">Más postulantes</option>
                     <option value="sueldo_desc">Mayor sueldo</option>
                 </select>
                 <button class="btn-exportar" onclick="exportarCSV()">
@@ -180,10 +180,10 @@
                 <table>
                     <thead>
                         <tr>
-                            <th onclick="sortTabla('titulo')">Puesto <span class="sort-icon">â†•</span></th>
-                            <th onclick="sortTabla('ubicacion')">UbicaciÃ³n <span class="sort-icon">â†•</span></th>
-                            <th onclick="sortTabla('sueldo')">Sueldo <span class="sort-icon">â†•</span></th>
-                            <th onclick="sortTabla('postulantes')">Postulantes <span class="sort-icon">â†•</span></th>
+                            <th onclick="sortTabla('titulo')">Puesto <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTabla('ubicacion')">Ubicación <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTabla('sueldo')">Sueldo <span class="sort-icon">↕</span></th>
+                            <th onclick="sortTabla('postulantes')">Postulantes <span class="sort-icon">↕</span></th>
                             <th>Estado</th>
                             <th style="text-align:right">Acciones</th>
                         </tr>
@@ -240,28 +240,28 @@
                 <div class="modal-head-icon" style="background:#f59e0b"><i data-lucide="pencil"></i></div>
                 <div>
                     <h3>Editar vacante</h3>
-                    <p>ModificÃ¡ los datos del aviso publicado</p>
+                    <p>Modificá los datos del aviso publicado</p>
                 </div>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="editId">
                 <div class="edit-grid">
                     <div class="edit-group full">
-                        <label>Puesto / TÃ­tulo</label>
+                        <label>Puesto / Título</label>
                         <input type="text" id="editTitulo" placeholder="Nombre del puesto">
                     </div>
                     <div class="edit-group">
-                        <label>UbicaciÃ³n</label>
-                        <input type="text" id="editUbicacion" placeholder="DirecciÃ³n o zona">
+                        <label>Ubicación</label>
+                        <input type="text" id="editUbicacion" placeholder="Dirección o zona">
                     </div>
                     <div class="edit-group">
                         <label>Sueldo mensual</label>
                         <input type="number" id="editSueldo" placeholder="Ej: 500000">
                     </div>
                     <div class="edit-group full">
-                        <label>DescripciÃ³n y requisitos</label>
+                        <label>Descripción y requisitos</label>
                         <textarea id="editDescripcion" style="min-height:120px"
-                            placeholder="DescribÃ­ el puesto..."></textarea>
+                            placeholder="Describí el puesto..."></textarea>
                     </div>
                 </div>
                 <div style="display:flex;gap:12px;margin-top:8px">
@@ -284,13 +284,13 @@
                 <div class="modal-head-icon"><i data-lucide="user"></i></div>
                 <div>
                     <h3>Mi Perfil</h3>
-                    <p>ActualizÃ¡ tus datos de empresa</p>
+                    <p>Actualizá tus datos de empresa</p>
                 </div>
             </div>
             <div class="modal-body">
                 <div class="perfil-grid">
                     <div class="perfil-group full">
-                        <label>Nombre / RazÃ³n social</label>
+                        <label>Nombre / Razón social</label>
                         <input type="text" id="perfilNombre" placeholder="Nombre de tu empresa">
                     </div>
                     <div class="perfil-group full">
@@ -298,16 +298,16 @@
                         <input type="email" id="perfilEmail" placeholder="email@empresa.com">
                     </div>
                     <div class="perfil-group full" style="margin-top:8px">
-                        <label>ContraseÃ±a actual</label>
-                        <input type="password" id="perfilPassActual" placeholder="ContraseÃ±a actual">
+                        <label>Contraseña actual</label>
+                        <input type="password" id="perfilPassActual" placeholder="Contraseña actual">
                     </div>
                     <div class="perfil-group">
-                        <label>Nueva contraseÃ±a</label>
-                        <input type="password" id="perfilPassNueva" placeholder="MÃ­nimo 6 caracteres">
+                        <label>Nueva contraseña</label>
+                        <input type="password" id="perfilPassNueva" placeholder="Mínimo 6 caracteres">
                     </div>
                     <div class="perfil-group">
-                        <label>Confirmar contraseÃ±a</label>
-                        <input type="password" id="perfilPassConfirm" placeholder="Repetir nueva contraseÃ±a">
+                        <label>Confirmar contraseña</label>
+                        <input type="password" id="perfilPassConfirm" placeholder="Repetir nueva contraseña">
                     </div>
                 </div>
                 <div style="display:flex;gap:12px;margin-top:20px">

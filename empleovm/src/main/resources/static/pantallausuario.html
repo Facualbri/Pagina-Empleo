@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Villa MarÃ­a Empleos</title>
+    <title>Villa María Empleos</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet">
@@ -19,7 +19,7 @@
 
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="logo">Villa MarÃ­a <span>Empleos</span></div>
+        <div class="logo">Villa María <span>Empleos</span></div>
         <div class="nav-actions">
             <button class="btn-nav accent" onclick="abrirMisPostulaciones()">
                 <i data-lucide="send" style="width:15px"></i> Mis Postulaciones
@@ -41,10 +41,10 @@
     <!-- Hero -->
     <header class="hero">
         <div class="hero-content">
-            <h1>EncontrÃ¡ tu prÃ³ximo<br><span>desafÃ­o profesional</span></h1>
-            <p>Las mejores vacantes en Villa MarÃ­a y zona, en un solo lugar.</p>
+            <h1>Encontrá tu próximo<br><span>desafío profesional</span></h1>
+            <p>Las mejores vacantes en Villa María y zona, en un solo lugar.</p>
             <div class="search-wrap">
-                <input type="text" id="busqueda" placeholder="Â¿QuÃ© trabajo buscÃ¡s? Ej: Mozo, Cajero...">
+                <input type="text" id="busqueda" placeholder="¿Qué trabajo buscás? Ej: Mozo, Cajero...">
                 <button class="btn-search" onclick="buscar()">Buscar</button>
             </div>
         </div>
@@ -54,15 +54,15 @@
     <div class="filtros-bar">
         <div class="filtros-card">
             <div>
-                <label>UbicaciÃ³n</label>
+                <label>Ubicación</label>
                 <input type="text" id="filtroUbicacion" placeholder="Ej: Centro, Belgrano">
             </div>
             <div>
-                <label>Sueldo mÃ­nimo</label>
+                <label>Sueldo mínimo</label>
                 <input type="number" id="filtroSueldoMin" placeholder="Ej: 200000">
             </div>
             <div>
-                <label>Sueldo mÃ¡ximo</label>
+                <label>Sueldo máximo</label>
                 <input type="number" id="filtroSueldoMax" placeholder="Ej: 800000">
             </div>
             <button class="btn-filtrar" onclick="buscar()">
@@ -91,23 +91,23 @@
             <button class="btn-cerrar" onclick="cerrarModal()">&times;</button>
             <img id="modalFoto" class="modal-img" src="" alt="" onerror="this.style.display='none'">
             <div class="modal-scroll">
-                <div class="modal-empresa" id="modalEmpresa">â€”</div>
+                <div class="modal-empresa" id="modalEmpresa">—</div>
                 <h2 class="modal-titulo" id="modalTitulo">Cargando...</h2>
                 <div id="avisoPausado"></div>
                 <div class="modal-meta">
-                    <p><i data-lucide="map-pin" style="width:16px"></i><strong>UbicaciÃ³n:</strong><span
-                            id="modalUbicacion">â€”</span></p>
+                    <p><i data-lucide="map-pin" style="width:16px"></i><strong>Ubicación:</strong><span
+                            id="modalUbicacion">—</span></p>
                 </div>
-                <div class="modal-sueldo" id="modalSueldo">$â€”</div>
-                <div class="modal-section-title">DescripciÃ³n del puesto</div>
+                <div class="modal-sueldo" id="modalSueldo">$—</div>
+                <div class="modal-section-title">Descripción del puesto</div>
                 <div class="modal-descripcion" id="modalDescripcion"></div>
-                <div class="modal-section-title">UbicaciÃ³n en el mapa</div>
+                <div class="modal-section-title">Ubicación en el mapa</div>
                 <div id="modalMapa"></div>
                 <div class="postulacion-box">
-                    <h3>Â¿Te interesa esta vacante?</h3>
-                    <p>SubÃ­ tu CV actualizado (PDF, JPG o PNG) para aplicar directamente.</p>
+                    <h3>¿Te interesa esta vacante?</h3>
+                    <p>Subí tu CV actualizado (PDF, JPG o PNG) para aplicar directamente.</p>
                     <input type="file" id="cvArchivo" accept=".pdf,.jpg,.jpeg,.png" class="file-input">
-                    <button class="btn-postular" onclick="enviarPostulacion()">Enviar mi PostulaciÃ³n âœ“</button>
+                    <button class="btn-postular" onclick="enviarPostulacion()">Enviar mi Postulación ✓</button>
                 </div>
             </div>
         </div>
@@ -133,26 +133,26 @@
                 onclick="document.getElementById('modalFavoritos').style.display='none'">&times;</button>
             <div class="modal-scroll">
                 <h2 class="modal-titulo">Mis Favoritos</h2>
-                <p style="color:var(--muted);margin-bottom:20px">Vacantes que guardaste para ver despuÃ©s.</p>
+                <p style="color:var(--muted);margin-bottom:20px">Vacantes que guardaste para ver después.</p>
                 <div id="listaFavoritos" style="display:flex;flex-direction:column;gap:12px"></div>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Â¡Tu cuenta fue aprobada como empresa! -->
+    <!-- Modal: ¡Tu cuenta fue aprobada como empresa! -->
     <div id="modalAprobado" class="modal-overlay">
         <div class="modal-box" style="position:relative; max-width:480px; overflow:visible">
             <div class="modal-scroll" style="text-align:center; padding:40px 36px">
-                <div style="font-size:3.5rem;margin-bottom:16px">ðŸŽ‰</div>
-                <h2 class="modal-titulo" style="font-size:1.6rem;margin-bottom:10px">Â¡Felicitaciones!</h2>
+                <div style="font-size:3.5rem;margin-bottom:16px">🎉</div>
+                <h2 class="modal-titulo" style="font-size:1.6rem;margin-bottom:10px">¡Felicitaciones!</h2>
                 <p style="color:var(--muted);font-size:0.95rem;line-height:1.6;margin-bottom:24px">
                     Tu cuenta fue aprobada como <strong>Empresa</strong>.<br>
-                    Ahora podÃ©s publicar vacantes y encontrar candidatos en Villa MarÃ­a.
+                    Ahora podés publicar vacantes y encontrar candidatos en Villa María.
                 </p>
                 <div style="background:var(--primary-l);border-radius:12px;padding:16px;margin-bottom:24px">
                     <p style="color:var(--primary);font-size:0.88rem;font-weight:600">
-                        Tu cuenta fue actualizada automÃ¡ticamente. La prÃ³xima vez que inicies sesiÃ³n
-                        entrarÃ¡s directo al Panel Empresa.
+                        Tu cuenta fue actualizada automáticamente. La próxima vez que inicies sesión
+                        entrarás directo al Panel Empresa.
                     </p>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:10px">
@@ -167,7 +167,7 @@
                     <button onclick="document.getElementById('modalAprobado').style.display='none'" style="width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);
                         padding:12px;border-radius:12px;font-weight:600;font-size:0.9rem;
                         cursor:pointer;font-family:inherit">
-                        Quedarme aquÃ­ por ahora
+                        Quedarme aquí por ahora
                     </button>
                 </div>
             </div>
