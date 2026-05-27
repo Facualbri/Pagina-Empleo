@@ -10,10 +10,18 @@
     <meta property="og:description" content="Encontrá trabajo en Villa María y zona. Portal de empleos local.">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="es_AR">
+    <meta property="og:image" content="https://pagina-empleo.onrender.com/img/default-cover.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
+    <script src="js/auth.js"></script>
 </head>
 <body>
     <script>
-        window.location.href = 'login.html';
+        redirigirSiSesionActiva().then(redirigio => {
+            if (!redirigio) {
+                window.location.href = 'login.html';
+            }
+        });
     </script>
 </body>
 </html>

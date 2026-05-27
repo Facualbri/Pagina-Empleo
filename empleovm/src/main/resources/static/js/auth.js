@@ -175,3 +175,42 @@ function verificarSesion() {
     }
     return true;
 }
+
+// ── Redirigir automáticamente si ya hay sesión activa ─────────────────────────
+// Llamar en páginas públicas (login, index) para saltar el login si ya estás autenticado.
+async function redirigirSiSesionActiva() {
+    const token = getToken();
+    const rol = localStorage.getItem(USUARIO_ROL_KEY);
+
+    if (token && rol) {
+        redirigirPorRol(rol);
+        return true;
+    }
+
+    // Si no hay token pero hay refresh token, intentar renovar
+    const refreshToken = getRefreshToken();
+    if (refreshToken) {
+        try {
+            await renovarToken();
+            const nuevoRol = localStorage.getItem(USUARIO_ROL_KEY);
+            if (nuevoRol) {
+                redirigirPorRol(nuevoRol);
+                return true;
+            }
+        } catch {
+            // No se pudo renovar, dejamos que vea el login
+        }
+    }
+
+    return false;
+}
+
+function redirigirPorRol(rol) {
+    if (rol === 'ROLE_ADMIN') {
+        window.location.href = 'pantallaAdminRoot.html';
+    } else if (rol === 'ROLE_EMPRESA') {
+        window.location.href = 'pantallaAdmin.html';
+    } else {
+        window.location.href = 'pantallausuario.html';
+    }
+}

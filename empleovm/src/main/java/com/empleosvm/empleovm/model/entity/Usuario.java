@@ -56,6 +56,15 @@ public class Usuario {
     @Column(name = "refresh_token_expiry")
     private LocalDateTime refreshTokenExpiry;
 
+    // ── Password Reset Token ──────────────────────────────────────────────────
+
+    @JsonIgnore
+    @Column(name = "reset_token", length = 512)
+    private String resetToken;
+
+    @Column(name = "reset_token_expiry")
+    private LocalDateTime resetTokenExpiry;
+
     // ─────────────────────────────────────────────────────────────────────────
 
     private LocalDateTime fechaRegistro;

@@ -80,6 +80,7 @@ public class SecurityConfig {
                                 "/assets/**",
                                 "/images/**",
                                 "/img/**",
+                                "/error/**",
                                 "/favicon.ico")
                         .permitAll()
 
@@ -101,6 +102,18 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.POST,
                                 "/api/auth/logout")
+                        .permitAll()
+
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/auth/olvide-password")
+                        .permitAll()
+
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/auth/validar-token")
+                        .permitAll()
+
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/auth/restablecer-password")
                         .permitAll()
 
                         // =====================================================

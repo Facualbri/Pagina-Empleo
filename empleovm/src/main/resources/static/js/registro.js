@@ -16,15 +16,17 @@ function setRol(rol) {
 async function registrar() {
     const nombre   = document.getElementById('nombre').value.trim();
     const email    = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const msg      = document.getElementById('msg');
-    const btn      = document.getElementById('btnRegister');
+    const password  = document.getElementById('password').value;
+    const password2 = document.getElementById('password2').value;
+    const msg       = document.getElementById('msg');
+    const btn       = document.getElementById('btnRegister');
 
     msg.className = 'msg';
 
     if (!nombre) { msg.className='msg error'; msg.innerText='El nombre es obligatorio.'; return; }
     if (!email || !email.includes('@')) { msg.className='msg error'; msg.innerText='Ingresá un email válido.'; return; }
     if (!password || password.length < 6) { msg.className='msg error'; msg.innerText='La contraseña debe tener al menos 6 caracteres.'; return; }
+    if (password !== password2) { msg.className='msg error'; msg.innerText='Las contraseñas no coinciden.'; return; }
 
     btn.disabled = true;
     btn.innerHTML = 'Creando cuenta...';

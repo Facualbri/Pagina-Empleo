@@ -17,4 +17,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     List<Usuario> findByEstadoSolicitud(String estadoSolicitud);
 
     Optional<Usuario> findByRefreshToken(String refreshToken);
+
+    Optional<Usuario> findByResetToken(String resetToken);
 }
