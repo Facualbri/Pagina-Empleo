@@ -155,7 +155,7 @@ async function cerrarSesion() {
     }
 
     limpiarStorage();
-    window.location.href = 'login.html';
+    window.location.href = 'pantallausuario.html';
 }
 
 // ── Redirigir al login ────────────────────────────────────────────────────────
