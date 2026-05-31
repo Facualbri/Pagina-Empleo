@@ -90,7 +90,7 @@ body {
 }
 
 .logo {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 800;
     font-size: 1.2rem;
     color: white;
@@ -201,10 +201,9 @@ body {
 }
 
 .perfil-nombre {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 1.8rem;
-    font-weight: 800;
-    letter-spacing: -.03em;
+    font-weight: 700;
     margin-bottom: 6px;
 }
 
@@ -300,9 +299,9 @@ body {
 }
 
 .card-head h2 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 1rem;
-    font-weight: 800;
+    font-weight: 700;
 }
 
 .card-head p {

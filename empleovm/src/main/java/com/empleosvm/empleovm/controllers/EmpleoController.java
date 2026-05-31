@@ -254,7 +254,31 @@ public class EmpleoController {
         }
     }
 
-    // ─── 9. Cambiar estado activo/pausado ─────────────────────────────────────
+    // ─── 9. Eliminar múltiples por IDs (batch) ─────────────────────────────────
+    @DeleteMapping("/batch")
+    public ResponseEntity<?> eliminarBatch(@RequestBody List<Long> ids) {
+        try {
+            List<Long> eliminados = new java.util.ArrayList<>();
+            List<Long> noEncontrados = new java.util.ArrayList<>();
+            for (Long id : ids) {
+                if (empleoRepository.existsById(id)) {
+                    empleoRepository.deleteByIdManual(id);
+                    eliminados.add(id);
+                } else {
+                    noEncontrados.add(id);
+                }
+            }
+            return ResponseEntity.ok(Map.of(
+                    "mensaje", "Eliminados: " + eliminados.size(),
+                    "eliminados", eliminados,
+                    "noEncontrados", noEncontrados));
+        } catch (Exception e) {
+            log.error("Error al eliminar empleos en batch", e);
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ─── 10. Cambiar estado activo/pausado ─────────────────────────────────────
     @PatchMapping("/{id}/cambiar-estado")
     public ResponseEntity<?> cambiarEstado(@PathVariable Long id) {
         try {

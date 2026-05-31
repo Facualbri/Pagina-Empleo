@@ -90,7 +90,7 @@ body {
 }
 
 .logo {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 800;
     font-size: 1.2rem;
     color: white;
@@ -164,9 +164,9 @@ body {
 }
 
 .hero h1 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 800;
+    font-weight: 700;
     color: white;
     line-height: 1.1;
     margin-bottom: 12px;
@@ -305,9 +305,9 @@ body {
 }
 
 .section-title {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 1.4rem;
-    font-weight: 800;
+    font-weight: 700;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
@@ -377,7 +377,7 @@ body {
 }
 
 .card-titulo {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: 8px;
@@ -549,9 +549,9 @@ body {
 }
 
 .modal-titulo {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 1.8rem;
-    font-weight: 800;
+    font-weight: 700;
     margin: 8px 0;
 }
 
@@ -591,9 +591,9 @@ body {
 }
 
 .modal-section-title {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 1rem;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--ink2);
     margin: 24px 0 12px;
     padding-bottom: 8px;
@@ -626,7 +626,7 @@ body {
 }
 
 .postulacion-box h3 {
-    font-family: 'Syne', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     margin-bottom: 6px;
 }
 

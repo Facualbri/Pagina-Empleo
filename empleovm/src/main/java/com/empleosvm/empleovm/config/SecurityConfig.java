@@ -70,18 +70,26 @@ public class SecurityConfig {
                                 "/robots.txt",
                                 "/sitemap.xml").permitAll()
 
-                        // HTML / CSS / JS
+                        // HTML / CSS / JS / Archivos estáticos
                         .requestMatchers(
                                 "/*.html",
                                 "/*.css",
                                 "/*.js",
+                                "/*.jpg",
+                                "/*.jpeg",
+                                "/*.jfif",
+                                "/*.png",
+                                "/*.pdf",
+                                "/*.svg",
+                                "/*.ico",
                                 "/js/**",
                                 "/css/**",
                                 "/assets/**",
                                 "/images/**",
                                 "/img/**",
                                 "/error/**",
-                                "/favicon.ico")
+                                "/favicon.ico",
+                                "/favicon.svg")
                         .permitAll()
 
                         // =====================================================

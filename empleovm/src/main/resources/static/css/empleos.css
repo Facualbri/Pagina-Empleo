@@ -1,6 +1,9 @@
 /* Estilos específicos para la lista de empleos */
+body { font-family: 'DM Sans', sans-serif; background: #f7f7fb; margin: 0; }
+h1 { font-family: 'DM Sans', sans-serif; font-weight: 700; color: #0a0a0f; }
 .search-container { max-width: 800px; margin: auto; padding: 20px; }
-#busqueda { width: 100%; padding: 15px; font-size: 1.2rem; border: 2px solid #007bff; }
+#busqueda { width: 100%; padding: 15px; font-size: 1.2rem; border: 2px solid var(--primary, #5b5ef4); border-radius: 10px; font-family: inherit; outline: none; }
+#busqueda:focus { border-color: #4a4de0; box-shadow: 0 0 0 3px rgba(91,94,244,.1); }
 .empleo-item { 
     background: white; 
     border-left: 5px solid #007bff; /* Azul para empleos */
@@ -10,17 +13,18 @@
 
 .btn-ver-detalle {
     display: block;
-    background-color: #1e3c72; /* El azul de tu diseño */
+    background-color: #5b5ef4;
     color: white !important;
     text-align: center;
     padding: 12px;
     margin-top: 10px;
-    text-decoration: none; /* Quita el subrayado del link */
-    border-radius: 4px;
-    font-weight: bold;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 700;
     cursor: pointer;
+    transition: .2s;
 }
 
 .btn-ver-detalle:hover {
-    background-color: #2a5298;
+    background-color: #4a4de0;
 }

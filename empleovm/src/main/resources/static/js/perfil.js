@@ -1,8 +1,3 @@
-function authHeaders() {
-    const token = localStorage.getItem('token');
-    return token ? { 'Authorization': 'Bearer ' + token } : {};
-}
-
 function toast(msg, tipo = 'info') {
     const el = document.createElement('div');
     el.className = `toast ${tipo}`;
@@ -35,9 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function cargarPerfil() {
     try {
-        const res = await fetch(`/api/perfil/${idUsuario}`, {
-            headers: authHeaders()
-        });
+        const res = await apiFetch(`/api/perfil/${idUsuario}`);
         if (!res.ok) throw new Error('No se pudo cargar el perfil.');
         const u = await res.json();
 
@@ -127,9 +120,9 @@ async function guardarDatos() {
     if (!datos.email || !datos.email.includes('@')) { toast('Ingresá un email válido.', 'error'); return; }
 
     try {
-        const res = await fetch(`/api/perfil/${idUsuario}/datos`, {
+        const res = await apiFetch(`/api/perfil/${idUsuario}/datos`, {
             method: 'PATCH',
-            headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(datos)
         });
         if (res.ok) {
@@ -176,9 +169,8 @@ async function subirFoto(input) {
     fd.append('foto', file);
 
     try {
-        const res = await fetch(`/api/perfil/${idUsuario}/foto`, {
+        const res = await apiFetch(`/api/perfil/${idUsuario}/foto`, {
             method: 'POST',
-            headers: authHeaders(),
             body: fd
         });
         if (res.ok) {
@@ -208,9 +200,9 @@ async function cambiarPassword() {
     }
 
     try {
-        const res = await fetch(`/api/perfil/${idUsuario}/password`, {
+        const res = await apiFetch(`/api/perfil/${idUsuario}/password`, {
             method: 'PATCH',
-            headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ passwordActual, passwordNueva, passwordConfirm })
         });
         if (res.ok) {
@@ -225,10 +217,7 @@ async function cambiarPassword() {
     }
 }
 
-function cerrarSesion() {
-    localStorage.clear();
-    window.location.href = 'login.html';
-}
+// cerrarSesion definida en auth.js
 
 async function enviarSolicitudEmpresa() {
     const id = localStorage.getItem('usuarioId');
@@ -241,9 +230,8 @@ async function enviarSolicitudEmpresa() {
     if (!confirm("¿Querés enviar la solicitud para convertir tu cuenta a Empresa?")) return;
 
     try {
-        const res = await fetch(`/api/usuarios/${id}/solicitar-empresa`, {
-            method: 'PUT',
-            headers: authHeaders()
+        const res = await apiFetch(`/api/usuarios/${id}/solicitar-empresa`, {
+            method: 'PUT'
         });
         const data = await res.json();
 
@@ -269,9 +257,7 @@ async function verificarEstadoSolicitud() {
     const id = localStorage.getItem('usuarioId');
     if (!id) return;
     try {
-        const res = await fetch(`/api/perfil/${id}`, {
-            headers: authHeaders()
-        });
+        const res = await apiFetch(`/api/perfil/${id}`);
         const u = await res.json();
         const btn = document.getElementById('btnSolicitarEmpresa');
         const seccion = document.getElementById('seccionSolicitudEmpresa');

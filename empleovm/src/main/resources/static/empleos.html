@@ -13,6 +13,10 @@
     <meta name="twitter:title" content="Buscar Trabajo en Villa María - Villa María Empleos">
     <meta name="twitter:description" content="Encontrá las mejores ofertas de trabajo en Villa María y zona.">
     <meta name="google-site-verification" content="pgu1pJ3PhJKsEEopqdxyqUsYAmCWjiYw33BtfdOD4cc">
+    <meta property="og:image" content="https://pagina-empleo.onrender.com/img/default-cover.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -27,9 +31,14 @@
 <body>
     <div class="search-container">
         <h1>Buscador de Empleos</h1>
+        <a href="login.html" style="display:inline-block;margin-bottom:15px;color:#5b5ef4;text-decoration:none;font-weight:600;font-size:0.9rem;">← Ingresar o registrarse</a>
         <input type="text" id="busqueda" onkeyup="buscar()" placeholder="Ej: Mozo, Programador...">
         <div id="resultados"></div>
     </div>
+    <footer style="text-align:center;padding:20px;font-size:0.82rem;color:#94a3b8;font-family:'DM Sans',sans-serif;margin-top:20px;border-top:1px solid #e5e7eb">
+        Armada por <strong><span style="color:#38bdf8">K</span>odeaSoftware</strong>
+    </footer>
+
     <script src="js/empleos.js"></script>
 </body>
 </html>
